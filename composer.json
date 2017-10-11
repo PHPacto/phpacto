@@ -1,0 +1,55 @@
+{
+    "type": "library",
+    "license": "proprietary",
+    "name": "bigfoot90/phpacto",
+    "description": "Php contract testing tool integrated with Guzzle and Phpunit",
+    "authors": [
+        {
+            "name": "Damian Długosz",
+            "email": "bigfootdd@gmail.com",
+            "homepage": "https://github.com/bigfoot90"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "psr/http-message": "^1",
+        "symfony/console": "^2.8|^3",
+        "symfony/finder": "^2.3|^3",
+        "symfony/serializer": "^3.3",
+        "symfony/yaml": "^2|^3",
+        "vlucas/phpdotenv": "^2.4",
+        "zendframework/zend-diactoros": "^1.3"
+    },
+    "require-dev": {
+        "guzzlehttp/guzzle": "^5.3.1|^6",
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/php-code-coverage": "^5",
+        "phpunit/phpunit": "^6"
+    },
+    "suggest": {
+        "guzzlehttp/guzzle": "Required if you need to test your http requests and have mocked responses"
+    },
+    "conflict": {
+        "guzzlehttp/guzzle": "<5.0"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Bigfoot\\PHPacto\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bigfoot\\PHPacto\\": "tests/"
+        }
+    },
+    "bin": ["bin/phpacto"],
+    "archive": {
+        "exclude": ["!vendor/", "tests/", ".travis.yml"]
+    }
+}

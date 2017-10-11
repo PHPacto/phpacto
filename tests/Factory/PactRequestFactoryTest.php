@@ -1,0 +1,92 @@
+<?php
+
+namespace Bigfoot\PHPacto\Factory;
+
+use Bigfoot\PHPacto\PactRequest;
+use PHPUnit\Framework\TestCase;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\Stream;
+
+class PactRequestFactoryTest extends TestCase
+{
+    public function test_it_returns_pact_request_minimal()
+    {
+        $request = new Request('/path', 'get');
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        self::assertInstanceOf(PactRequest::class, $pactRequest);
+        self::assertEquals('GET', $pactRequest->getMethod()->getValue());
+        self::assertEquals('/path', $pactRequest->getUri()->getValue());
+        self::assertCount(0, $pactRequest->getHeaders());
+        self::assertNull($pactRequest->getBody());
+    }
+
+    /**
+     * @depends test_it_returns_pact_request_minimal
+     */
+    public function test_it_returns_pact_request_with_headers()
+    {
+        $request = new Request('/', 'get', 'php://memory', ['X-CUSTOM' => 'a custom header']);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        self::assertContains('custom header', $pactRequest->getHeaders()['X-CUSTOM']->getValue());
+    }
+
+    /**
+     * @depends test_it_returns_pact_request_minimal
+     */
+    public function test_it_returns_pact_request_with_body_plain_string()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('some content');
+
+        $request = new Request('/', 'get', $stream);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        self::assertEquals('some content', $pactRequest->getBody()->getValue());
+    }
+
+    /**
+     * @depends test_it_returns_pact_request_with_body_plain_string
+     */
+    public function test_it_returns_pact_request_with_body_url_encoded()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('a=1&b%5B0%5D=2.1&b%5B1%5D=3');
+
+        $request = new Request('/', 'get', $stream, ['Content-Type' => 'application/x-www-form-urlencoded']);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        $expectedBody = [
+            'a' => 1,
+            'b' => [2.1, '3']
+        ];
+
+        self::assertEquals($expectedBody, $pactRequest->getBody()->getSample());
+    }
+
+    /**
+     * @depends test_it_returns_pact_request_with_headers
+     * @depends test_it_returns_pact_request_with_body_url_encoded
+     */
+    public function test_it_returns_pact_request_with_body_json_encoded()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('{"a":1,"0":[2,"3"]}');
+
+        $request = new Request('/', 'get', $stream, ['Content-Type' => 'application/json']);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        $expectedBody = [
+            'a' => 1,
+            0 => [2.0, '3']
+        ];
+
+        self::assertEquals($expectedBody, $pactRequest->getBody()->getSample());
+    }
+}
