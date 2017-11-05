@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
@@ -13,6 +31,9 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Response;
 
+/**
+ * @coversNothing
+ */
 class PactResponseTest extends TestCase
 {
     /**
@@ -153,7 +174,7 @@ class PactResponseTest extends TestCase
             'status_code' => [
                 '@rule' => get_class($mockStatusCode),
                 'value' => null,
-                'sample' => 200
+                'sample' => 200,
             ],
         ];
 
@@ -175,20 +196,20 @@ class PactResponseTest extends TestCase
             'status_code' => [
                 '@rule' => get_class($mockStatusCode),
                 'value' => null,
-                'sample' => 201
+                'sample' => 201,
             ],
             'headers' => [
                 'Y' => [
                     '@rule' => get_class($mockHeaderValue),
                     'value' => null,
-                    'sample' => 'X'
+                    'sample' => 'X',
                 ],
             ],
             'body' => [
                 '@rule' => get_class($mockBody),
                 'value' => null,
-                'sample' => 'Body'
-            ]
+                'sample' => 'Body',
+            ],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($response));
@@ -214,7 +235,7 @@ class PactResponseTest extends TestCase
             'headers' => [
                 'Y' => 'X',
             ],
-            'body' => 'Body'
+            'body' => 'Body',
         ];
 
         /** @var PactResponseInterface $response */
@@ -234,8 +255,8 @@ class PactResponseTest extends TestCase
                 'X' => ['Y', 'Z'],
             ],
             'body' => [
-                'a' => ['b', 'c']
-            ]
+                'a' => ['b', 'c'],
+            ],
         ];
 
         /** @var PactResponseInterface $response */

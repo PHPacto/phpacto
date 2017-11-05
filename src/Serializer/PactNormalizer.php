@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Pact;
@@ -27,12 +45,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_array($data) && $type == PactInterface::class && self::isFormatSupported($format);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return in_array($format, [null, 'json', 'yaml'], true);
+        return is_array($data) && PactInterface::class === $type && self::isFormatSupported($format);
     }
 
     /**
@@ -45,6 +58,23 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $this->normalizePactObject($object, $format, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        if (!(is_array($data) && PactInterface::class === $class)) {
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactInterface::class));
+        }
+
+        return $this->denormalizeArray($data, Pact::class, $format, $context);
+    }
+
+    private static function isFormatSupported(?string $format): bool
+    {
+        return in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizePactObject(PactInterface $object, $format = null, array $context = [])
@@ -75,18 +105,6 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($data, $class, $format = null, array $context = [])
-    {
-        if (!(is_array($data) && $class == PactInterface::class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactInterface::class));
-        }
-
-        return $this->denormalizeArray($data, Pact::class, $format, $context);
-    }
-
     private function denormalizeArray($data, $class, $format = null, array $context = []): PactInterface
     {
         if (!isset($context['cache_key'])) {
@@ -103,7 +121,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->denormalize($attribute);
             }
 
-            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
+            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
                 $extraAttributes[] = $attribute;
 
                 continue;

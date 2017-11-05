@@ -1,3 +1,3 @@
-## Contract Testing
+## PHPacto - Contract testing solution
 
 This is a work in progress ...
