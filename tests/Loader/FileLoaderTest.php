@@ -27,9 +27,6 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * @coversNothing
- */
 class FileLoaderTest extends TestCase
 {
     /**

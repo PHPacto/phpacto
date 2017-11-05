@@ -25,9 +25,6 @@ use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use Bigfoot\PHPacto\PactResponseInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class PactResponseNormalizerTest extends TestCase
 {
     public function normalizationFormatProvider()

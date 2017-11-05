@@ -22,9 +22,6 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-/**
- * @coversNothing
- */
 class AndRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()
@@ -138,6 +135,6 @@ class AndRuleTest extends RuleAbstractTest
             throw $e;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 }

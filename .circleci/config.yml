@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/php:7.1-browsers
+      - image: circleci/php:7.1-cli
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -29,9 +29,18 @@ jobs:
       - run: composer install -n --prefer-dist
 
       - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
 
-      # run tests!
-      - run: ./vendor/bin/phpunit
+      - run:
+          name: Enable xdebug
+          command: sudo docker-php-ext-enable xdebug
+
+      - run:
+          name: Run Unit tests
+          command: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - run:
+          name: Codecov
+          command: bash <(curl -s https://codecov.io/bash)

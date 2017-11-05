@@ -29,7 +29,6 @@ use Zend\Diactoros\Stream;
 
 /**
  * @group guzzle
- * @coversNothing
  */
 class ServerMock5Test extends TestCase
 {
@@ -78,7 +77,7 @@ class ServerMock5Test extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**

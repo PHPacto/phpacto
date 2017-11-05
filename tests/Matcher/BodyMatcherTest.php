@@ -25,9 +25,6 @@ use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Stream;
 
-/**
- * @coversNothing
- */
 class BodyMatcherTest extends TestCase
 {
     /** @var BodyMatcher */
@@ -130,7 +127,7 @@ class BodyMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**
@@ -159,7 +156,7 @@ class BodyMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**
@@ -186,7 +183,7 @@ class BodyMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**
@@ -215,7 +212,7 @@ class BodyMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**
@@ -244,6 +241,6 @@ class BodyMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 }

@@ -29,7 +29,6 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * @group guzzle
- * @coversNothing
  */
 class ServerMock6Test extends TestCase
 {

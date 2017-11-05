@@ -25,9 +25,6 @@ use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Stream;
 
-/**
- * @coversNothing
- */
 class PactRequestFactoryTest extends TestCase
 {
     public function test_it_returns_pact_request_minimal()

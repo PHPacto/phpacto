@@ -23,9 +23,6 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class PactTest extends TestCase
 {
     public function test_it_should_get_request_response()

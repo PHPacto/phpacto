@@ -30,9 +30,6 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @coversNothing
- */
 class BuilderValidateContractTest extends TestCase
 {
     /**

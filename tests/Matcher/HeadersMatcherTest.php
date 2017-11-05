@@ -24,9 +24,6 @@ use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 
-/**
- * @coversNothing
- */
 class HeadersMatcherTest extends TestCase
 {
     /** @var HeadersMatcher */
@@ -80,7 +77,7 @@ class HeadersMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     /**
@@ -104,6 +101,6 @@ class HeadersMatcherTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 }

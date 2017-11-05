@@ -20,9 +20,6 @@
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-/**
- * @coversNothing
- */
 class AbstractRuleTest extends RuleAbstractTest
 {
     public function test_it_has_a_value_and_a_sample()

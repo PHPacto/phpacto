@@ -25,9 +25,6 @@ use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
-/**
- * @coversNothing
- */
 class PactResponseFactoryTest extends TestCase
 {
     public function test_it_returns_pact_response_minimal()

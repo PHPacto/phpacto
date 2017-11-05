@@ -23,9 +23,6 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 final class RuleMockFactory extends TestCase
 {
     public function empty(): Rule

@@ -23,7 +23,6 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -31,9 +30,6 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Response;
 
-/**
- * @coversNothing
- */
 class PactResponseTest extends TestCase
 {
     /**
@@ -161,7 +157,7 @@ class PactResponseTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     public function test_it_is_normalizable_minimal()

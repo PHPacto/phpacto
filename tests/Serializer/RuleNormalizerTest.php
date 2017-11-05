@@ -27,9 +27,6 @@ use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class RuleNormalizerTest extends TestCase
 {
     public function normalizationFormatProvider()

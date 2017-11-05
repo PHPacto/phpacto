@@ -30,9 +30,6 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Request;
 
-/**
- * @coversNothing
- */
 class PactRequestTest extends TestCase
 {
     /**
@@ -172,7 +169,7 @@ class PactRequestTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     public function test_it_is_normalizable_minimal()

@@ -22,9 +22,6 @@ namespace Bigfoot\PHPacto\Matcher\Mismatches;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class ValueMismatchTest extends TestCase
 {
     public function test_has_message_string()

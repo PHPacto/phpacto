@@ -23,9 +23,6 @@ namespace Bigfoot\PHPacto\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * @coversNothing
- */
 class SerializerFactoryTest extends TestCase
 {
     public function test_it_returns_serializer()

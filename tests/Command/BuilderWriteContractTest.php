@@ -30,9 +30,6 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @coversNothing
- */
 class BuilderWriteContractTest extends TestCase
 {
     /**
@@ -83,7 +80,7 @@ class BuilderWriteContractTest extends TestCase
             return;
         }
 
-        self::assertFalse(true, 'This test should end in the catch');
+        self::fail('This test should end in the catch');
     }
 
     public function test_it_reads_directory_and_builds_writes_contracts()

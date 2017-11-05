@@ -27,9 +27,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * @coversNothing
- */
 class PactNormalizerTest extends TestCase
 {
     public function normalizationFormatProvider()

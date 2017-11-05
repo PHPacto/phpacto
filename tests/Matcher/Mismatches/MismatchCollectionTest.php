@@ -22,9 +22,6 @@ namespace Bigfoot\PHPacto\Matcher\Mismatches;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class MismatchCollectionTest extends TestCase
 {
     public function test_it_is_countable_and_iterable()

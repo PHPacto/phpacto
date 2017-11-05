@@ -25,9 +25,6 @@ use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\PactInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class PhpactoTestTraitTest extends TestCase
 {
     /**

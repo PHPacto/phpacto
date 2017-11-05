@@ -22,9 +22,6 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-/**
- * @coversNothing
- */
 class LowerOrEqualRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()

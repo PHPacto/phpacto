@@ -20,9 +20,6 @@
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-/**
- * @coversNothing
- */
 class AbstractStringRuleTest extends RuleAbstractTest
 {
     public function test_it_is_not_case_sensitive_by_default()
