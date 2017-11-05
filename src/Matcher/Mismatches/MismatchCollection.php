@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Matcher\Mismatches;
 
 class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -11,11 +29,11 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
 
     /**
      * @param Mismatch[] $mismatches
-     * @param string $message
+     * @param string     $message
      */
     public function __construct(array $mismatches, string $message = null)
     {
-        parent::__construct(str_replace('{{ count }}', count($mismatches),$message ?: '{{ count }} rules are failed'));
+        parent::__construct(str_replace('{{ count }}', count($mismatches), $message ?: '{{ count }} rules are failed'));
 
         $this->mismatches = $mismatches;
     }
@@ -28,7 +46,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         $result = [];
 
         foreach ($this->mismatches as $key => $value) {
-            if ($value instanceof MismatchCollection) {
+            if ($value instanceof self) {
                 $result[$key] = $value->toArray();
             } else {
                 $result[$key] = $value->getMessage();
@@ -39,24 +57,25 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
     }
 
     /**
-     * @param string $prefix
+     * @param string     $prefix
      * @param array|null $mismatches
+     *
      * @return array
      */
     public function toArrayFlat(string $prefix = null, array $mismatches = null): array
     {
         $result = [];
 
-        if ($prefix !== null) {
+        if (null !== $prefix) {
             $prefix .= '.';
         }
 
-        if ($mismatches === null) {
+        if (null === $mismatches) {
             $mismatches = $this->toArray();
         }
 
         foreach ($mismatches as $key => $mismatch) {
-            if (is_array($mismatch)){
+            if (is_array($mismatch)) {
                 $result = array_merge($result, $this->toArrayFlat($prefix.$key, $mismatch));
             } else {
                 $result[$prefix.$key] = $mismatch;
@@ -83,26 +102,37 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param mixed $offset
+     * @param mixed $value
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         throw new \Exception('This is cannot be accepted');
     }
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param mixed $offset
      */
-    public function offsetExists($offset): bool {
+    public function offsetExists($offset): bool
+    {
         return isset($this->mismatches[$offset]);
     }
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param mixed $offset
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         throw new \Exception('This is cannot be accepted');
     }
 
-    public function offsetGet($offset): Mismatch {
+    public function offsetGet($offset): Mismatch
+    {
         return $this->mismatches[$offset];
     }
 }

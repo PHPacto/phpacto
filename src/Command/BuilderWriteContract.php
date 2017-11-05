@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Command;
 
 use Bigfoot\PHPacto\Loader\FileLoader;
@@ -36,15 +54,15 @@ class BuilderWriteContract extends BaseCommand
             $finder = new Finder();
             $finder->files()->in($path)->name('*.php');
 
-            if ($finder->count() == 0) {
-                throw new \Exception('No contract builders found in '. $path);
+            if (0 === $finder->count()) {
+                throw new \Exception('No contract builders found in '.$path);
             }
 
             foreach ($finder->files() as $i => $file) {
                 $this->processFile($output, (string) $file, $format);
             }
         } else {
-            throw new \Exception('Path "'. $path .'" must be a readable file or directory');
+            throw new \Exception('Path "'.$path.'" must be a readable file or directory');
         }
     }
 
@@ -54,25 +72,25 @@ class BuilderWriteContract extends BaseCommand
 
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = rtrim($path, '.php') . '.' . $format;
+        $pactPath = rtrim($path, '.php').'.'.$format;
         $this->writeContractFile($pactPath, $pact, $format);
     }
 
     /**
      * @throws \Exception
      */
-    protected final function runPactBuilder(string $path): Pact
+    final protected function runPactBuilder(string $path): Pact
     {
         $pact = require $path;
 
         if (!$pact instanceof Pact) {
-            throw new \Exception('Must return an instance of ' . Pact::class);
+            throw new \Exception('Must return an instance of '.Pact::class);
         }
 
         return $pact;
     }
 
-    protected final function writeContractFile(string $path, PactInterface $pact, string $format): void
+    final protected function writeContractFile(string $path, PactInterface $pact, string $format): void
     {
         file_put_contents($path, $this->serializer->serialize($pact, $format));
     }

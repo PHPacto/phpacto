@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Command;
 
 use Bigfoot\PHPacto\Loader\FileLoader;
@@ -36,7 +54,7 @@ class ValidateContract extends BaseCommand
                 $this->validatePact($output, $pact, $filePath);
             }
         } else {
-            throw new \Exception('Path "'. $path .'" must be a readable file or directory');
+            throw new \Exception('Path "'.$path.'" must be a readable file or directory');
         }
 
         self::getTable($output)->render();
@@ -50,7 +68,6 @@ class ValidateContract extends BaseCommand
 
             self::getTable($output)
                 ->addRow([$filePath, '<fg=green>✔ Matching</>']);
-
         } catch (Mismatch $e) {
             self::getTable($output)
                 ->addRow([$filePath, '<fg=red>✖ Not matching</>']);
@@ -66,7 +83,7 @@ class ValidateContract extends BaseCommand
             $table->setStyle('borderless');
             $table->setHeaders([
                 'Contract',
-                'Status'
+                'Status',
             ]);
         }
 
