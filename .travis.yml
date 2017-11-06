@@ -26,11 +26,6 @@ script:
   - phpunit --coverage-clover=coverage.xml
   - bash <(curl -s https://codecov.io/bash)
 
-  # Lowest
-  - composer update --prefer-lowest
-  - phpunit --coverage-clover=coverage.xml
-  - bash <(curl -s https://codecov.io/bash)
-
 notifications:
   email:
     on_success: never
