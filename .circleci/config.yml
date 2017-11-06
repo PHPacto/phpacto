@@ -41,6 +41,6 @@ jobs:
           name: Run Unit tests
           command: vendor/bin/phpunit --coverage-clover=coverage.xml
 
-      - run:
-          name: Codecov
-          command: bash <(curl -s https://codecov.io/bash)
+#      - run:
+#          name: Codecov
+#          command: bash <(curl -s https://codecov.io/bash)
