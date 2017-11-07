@@ -85,6 +85,7 @@ abstract class SerializerFactory
             'strEnds' => Rules\StringEndsRule::class,
             'strEq' => Rules\StringEqualsRule::class,
             'strLength' => Rules\StringLengthRule::class,
+            'uuid' => Rules\UuidRule::class,
             'ver' => Rules\VersionRule::class,
         ];
     }
