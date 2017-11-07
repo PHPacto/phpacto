@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Command;
 
 use Bigfoot\PHPacto\Loader\FileLoader;
@@ -31,7 +49,7 @@ class BuilderValidateContract extends BuilderWriteContract
     {
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = rtrim($path, '.php') . '.' . $format;
+        $pactPath = rtrim($path, '.php').'.'.$format;
 
         if (!file_exists($pactPath)) {
             self::getTable($output)
@@ -41,7 +59,7 @@ class BuilderValidateContract extends BuilderWriteContract
         }
 
         try {
-            $matching = $this->normalizePact($pact, $format) == $this->decodeContractFile($pactPath, $format);
+            $matching = $this->normalizePact($pact, $format) === $this->decodeContractFile($pactPath, $format);
 
             self::getTable($output)->addRow([$pactPath, $matching ? '<fg=green>✔ Matching</>' : '<fg=red>✖ Not matching</>']);
         } catch (\Exception | \Error $e) {
@@ -49,12 +67,12 @@ class BuilderValidateContract extends BuilderWriteContract
         }
     }
 
-    protected final function decodeContractFile(string $path, string $format): array
+    final protected function decodeContractFile(string $path, string $format): array
     {
         return $this->serializer->decode(file_get_contents($path), $format);
     }
 
-    protected final function normalizePact(PactInterface $pact, string $format): array
+    final protected function normalizePact(PactInterface $pact, string $format): array
     {
         return $this->serializer->normalize($pact, $format);
     }
@@ -68,7 +86,7 @@ class BuilderValidateContract extends BuilderWriteContract
             $table->setStyle('borderless');
             $table->setHeaders([
                 'Contract builder',
-                'Status'
+                'Status',
             ]);
         }
 

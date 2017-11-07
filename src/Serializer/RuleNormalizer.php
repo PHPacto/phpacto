@@ -1,11 +1,28 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
@@ -43,19 +60,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return self::isRule($type) && self::isFormatSupported($format) && (is_null($data) || is_array($data) || is_scalar($data));
-    }
-
-    private static function isRule(string $class): bool
-    {
-        $class = rtrim($class, '[]');
-
-        return $class === Rule::class || is_subclass_of($class, Rule::class);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return in_array($format, [null, 'json', 'yaml'], true);
+        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || is_array($data) || is_scalar($data));
     }
 
     /**
@@ -78,6 +83,60 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         return $this->normalizeRuleObject($object, $format, $context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        if (Rule::class !== $class) {
+            throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
+        }
+
+        if (is_array($data)) {
+            if (array_key_exists('@rule', $data)) {
+                $class = $this->getClassNameFromAlias($data['@rule']);
+                unset($data['@rule']);
+
+                return $this->denormalizeRuleArray($data, $class, $format, $context);
+            }
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key));
+            }
+
+            return $data;
+        }
+
+        if (is_string($data) && '' !== $data) {
+            return new StringEqualsRule($data, true);
+        }
+
+        return new EqualsRule($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
+    {
+        if ('sample' === $attribute && ($classOrObject instanceof EqualsRule || EqualsRule::class === $classOrObject || $classOrObject instanceof StringEqualsRule || StringEqualsRule::class === $classOrObject)) {
+            return false;
+        }
+
+        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
+    }
+
+    private static function isRule(string $class): bool
+    {
+        $class = rtrim($class, '[]');
+
+        return Rule::class === $class || is_subclass_of($class, Rule::class);
+    }
+
+    private static function isFormatSupported(?string $format): bool
+    {
+        return in_array($format, [null, 'json', 'yaml'], true);
+    }
+
     private function normalizeRuleObject(Rule $object, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
@@ -85,7 +144,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         $data = [
-            '@rule' => $this->getAliasForRule($object)
+            '@rule' => $this->getAliasForRule($object),
         ];
 
         $attributes = $this->getAttributes($object, $format, $context);
@@ -104,42 +163,11 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             }
         }
 
-        if (array_key_exists('sample', $data) && $data['sample'] === null) {
+        if (array_key_exists('sample', $data) && null === $data['sample']) {
             unset($data['sample']);
         }
 
         return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($data, $class, $format = null, array $context = [])
-    {
-        if ($class != Rule::class) {
-            throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
-        }
-
-        if (is_array($data)) {
-            if (array_key_exists('@rule', $data)) {
-                $class = $this->getClassNameFromAlias($data['@rule']);
-                unset($data['@rule']);
-
-                return $this->denormalizeRuleArray($data, $class, $format, $context);
-            } else {
-                foreach ($data as $key => $value) {
-                    $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key));
-                }
-            }
-
-            return $data;
-        }
-
-        if (is_string($data) && $data != '') {
-            return new StringEqualsRule($data, true);
-        }
-
-        return new EqualsRule($data);
     }
 
     private function denormalizeRuleArray($data, $class, $format = null, array $context = []): Rule
@@ -162,7 +190,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->denormalize($attribute);
             }
 
-            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
+            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
                 $extraAttributes[] = $attribute;
 
                 continue;
@@ -198,18 +226,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $this->serializer->denormalize($data, $class, $format, $context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
-    {
-        if ($attribute == 'sample' && ($classOrObject instanceof EqualsRule || $classOrObject === EqualsRule::class || $classOrObject instanceof StringEqualsRule || $classOrObject === StringEqualsRule::class)) {
-            return false;
-        }
-
-        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
     }
 
     /**

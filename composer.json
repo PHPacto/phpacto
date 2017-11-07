@@ -1,8 +1,8 @@
 {
-    "type": "library",
-    "license": "proprietary",
     "name": "bigfoot90/phpacto",
     "description": "Php contract testing tool integrated with Guzzle and Phpunit",
+    "license": "GPL-3.0",
+    "type": "project",
     "authors": [
         {
             "name": "Damian Długosz",
@@ -51,6 +51,6 @@
     },
     "bin": ["bin/phpacto"],
     "archive": {
-        "exclude": ["!vendor/", "tests/", ".travis.yml"]
+        "exclude": ["tests/", "vendor/", "composer.lock", ".circleci/", ".travis.yml"]
     }
 }

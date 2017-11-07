@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Loader;
 
 use Bigfoot\PHPacto\PactInterface;
@@ -44,8 +62,10 @@ class FileLoader
 
     /**
      * @param string $path
-     * @return PactInterface[]
+     *
      * @throws \Exception
+     *
+     * @return PactInterface[]
      */
     public function loadFromDirectory(string $path): array
     {
@@ -55,7 +75,7 @@ class FileLoader
             $finder = new Finder();
             $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)));
 
-            if ($finder->count() == 0) {
+            if (0 === $finder->count()) {
                 throw new \Exception(sprintf('No contract builders found in `%s`', $path));
             }
 
@@ -70,16 +90,16 @@ class FileLoader
         return $pacts;
     }
 
-    public final static function getExtensionFromPath(string $path): string
+    final public static function getExtensionFromPath(string $path): string
     {
         $file = new \SplFileInfo($path);
 
         return $file->getExtension();
     }
 
-    public final static function getFormatFromFileExtension(string $extension): string
+    final public static function getFormatFromFileExtension(string $extension): string
     {
-        if ($extension == 'yml') {
+        if ('yml' === $extension) {
             return 'yaml';
         }
 
@@ -89,13 +109,13 @@ class FileLoader
     /**
      * @return string[]
      */
-    public final static function getSupportedFormats(): array
+    final public static function getSupportedFormats(): array
     {
         return self::CONFIG_FORMATS;
     }
 
-    public final static function isFormatSupported(string $format): bool
+    final public static function isFormatSupported(string $format): bool
     {
-        return in_array($format, self::CONFIG_FORMATS);
+        return in_array($format, self::CONFIG_FORMATS, true);
     }
 }

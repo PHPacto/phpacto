@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ * Copyright (C) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
@@ -28,12 +46,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $type == PactResponseInterface::class && is_array($data) && self::isFormatSupported($format);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return in_array($format, [null, 'json', 'yaml'], true);
+        return PactResponseInterface::class === $type && is_array($data) && self::isFormatSupported($format);
     }
 
     /**
@@ -46,6 +59,35 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         }
 
         return $this->normalizeObject($object, $format, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        if (!(is_array($data) && PactResponseInterface::class === $class)) {
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactResponseInterface::class));
+        }
+
+        return $this->denormalizeArray($data, PactResponse::class, $format, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
+    {
+        if ('sample' === $attribute) {
+            return false;
+        }
+
+        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
+    }
+
+    private static function isFormatSupported(?string $format): bool
+    {
+        return in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizeObject(PactResponseInterface $object, $format = null, array $context = [])
@@ -83,18 +125,6 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($data, $class, $format = null, array $context = [])
-    {
-        if (!(is_array($data) && $class == PactResponseInterface::class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactResponseInterface::class));
-        }
-
-        return $this->denormalizeArray($data, PactResponse::class, $format, $context);
-    }
-
     private function denormalizeArray($data, $class, $format = null, array $context = []): PactResponseInterface
     {
         if (!isset($context['cache_key'])) {
@@ -123,7 +153,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
                 $attribute = $this->nameConverter->denormalize($attribute);
             }
 
-            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
+            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
                 $extraAttributes[] = $attribute;
 
                 continue;
@@ -159,18 +189,6 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         }
 
         return $this->serializer->denormalize($data, $class, $format, $context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
-    {
-        if ($attribute == 'sample') {
-            return false;
-        }
-
-        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
     }
 
     /**
