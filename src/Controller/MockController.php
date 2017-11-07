@@ -74,6 +74,7 @@ class MockController
 
                 return $pact;
             } catch (Mismatch $e) {
+                // TODO: Implement errors displaying instead of a blank page
             }
         }
 
