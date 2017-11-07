@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
 
 class UuidRule extends AbstractRule
 {
-    private const PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+    private const PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
     public function __construct($sample = null)
     {

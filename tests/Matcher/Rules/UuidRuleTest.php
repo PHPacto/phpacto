@@ -8,12 +8,12 @@ class UuidRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()
     {
-        $rule = new UuidRule('550e8400-e29b-41d4-a716-446655440000');
+        $rule = new UuidRule('00000000-0000-0000-0000-000000000000');
 
         $expected = [
             '@rule' => UuidRule::class,
             'value' => null,
-            'sample' => '550e8400-e29b-41d4-a716-446655440000'
+            'sample' => '00000000-0000-0000-0000-000000000000'
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
