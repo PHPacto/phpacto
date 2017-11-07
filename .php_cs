@@ -37,7 +37,6 @@ return PhpCsFixer\Config::create()
         'ordered_class_elements' => true,
         'ordered_imports' => true,
         'php_unit_no_expectation_annotation' => true,
-        'php_unit_test_class_requires_covers' => true,
         'phpdoc_add_missing_param_annotation' => true,
         'phpdoc_order' => true,
         'semicolon_after_instruction' => true,
