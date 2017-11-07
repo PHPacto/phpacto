@@ -2,7 +2,8 @@
 
 /*
  * This file is part of PHPacto
- * Copyright (C) 2017  Damian Długosz
+ *
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,7 @@ class RegexpRuleTest extends RuleAbstractTest
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {
-            }],
+            [false, new class() {}],
             [false, new \stdClass()],
             [false, []],
         ];
@@ -87,8 +87,7 @@ class RegexpRuleTest extends RuleAbstractTest
 
         $rule->expects(self::once())
             ->method('assertMatch')
-            ->with('content')
-            ->willReturn(true);
+            ->with('content');
 
         $rule->__construct('pattern', 'content');
     }
@@ -135,6 +134,6 @@ class RegexpRuleTest extends RuleAbstractTest
 
         new RegexpRule($ruleValue, $testValue);
 
-        self::assertTrue(true, 'No exceptions should be thrown');
+        self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 }

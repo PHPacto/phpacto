@@ -2,7 +2,8 @@
 
 /*
  * This file is part of PHPacto
- * Copyright (C) 2017  Damian Długosz
+ *
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ class AndRuleTest extends RuleAbstractTest
         self::expectException(Mismatches\MismatchCollection::class);
         self::expectExceptionMessage('rules not matching the value');
 
-        new AndRule([$mockOk, $mockMismatch, $mockOk, $mockMismatch, $mockOk], 'A Mismatch should be thrown');
+        new AndRule([$mockOk, $mockMismatch, $mockOk, $mockMismatch, $mockOk], 'A Mismatch should be thrown if matching');
     }
 
     /**

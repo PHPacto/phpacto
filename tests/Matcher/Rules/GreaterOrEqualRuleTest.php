@@ -2,7 +2,8 @@
 
 /*
  * This file is part of PHPacto
- * Copyright (C) 2017  Damian Długosz
+ *
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +138,6 @@ class GreaterOrEqualRuleTest extends RuleAbstractTest
 
         new GreaterOrEqualRule($ruleValue, $testValue);
 
-        self::assertTrue(true, 'No exceptions should be thrown');
+        self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 }

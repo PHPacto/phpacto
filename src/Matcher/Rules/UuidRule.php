@@ -1,5 +1,24 @@
 <?php
 
+/*
+ * This file is part of PHPacto
+ *
+ * Copyright (c) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -9,20 +28,11 @@ class UuidRule extends AbstractRule
 {
     private const PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
-    public function __construct($sample = null)
+    public function __construct($sample = '00000000-0000-0000-0000-000000000000')
     {
-        if ($sample === null) {
-            $sample = Uuid::uuid4()->toString();
-        }
-
-        $this->assertSupport($sample);
+        $this->assertMatch($sample);
 
         parent::__construct(null, $sample);
-    }
-
-    protected function assertSupport($value): void
-    {
-        $this->assertMatch($value);
     }
 
     public function assertMatch($test): void
@@ -34,5 +44,10 @@ class UuidRule extends AbstractRule
         if (!preg_match(self::PATTERN, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not a valid UUID, expecting a string like {{ expected }}', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', $test);
         }
+    }
+
+    protected function assertSupport($value): void
+    {
+        // There is not value to support
     }
 }
