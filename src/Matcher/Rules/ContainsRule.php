@@ -41,17 +41,20 @@ class ContainsRule extends AbstractRule
             throw new Mismatches\TypeMismatch('array', gettype($test));
         }
 
-        foreach ($test as $item) {
+        $mismatches = [];
+
+        foreach ($test as $key => $item) {
             try {
                 $this->value->assertMatch($item);
 
                 // If at least one item match the value, its OK
                 return;
             } catch (Mismatches\Mismatch $e) {
+                $mismatches[$key] = $e;
             }
         }
 
-        throw new Mismatches\ValueMismatch('At least one item of array should match the rule', '', '');
+        throw new Mismatches\MismatchCollection($mismatches, 'At least one item of array should match the rule');
     }
 
     protected function assertSupport($value): void

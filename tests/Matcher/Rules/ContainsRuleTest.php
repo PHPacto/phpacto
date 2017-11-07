@@ -109,7 +109,7 @@ class ContainsRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
+            self::expectException(Mismatches\MismatchCollection::class);
             self::expectExceptionMessage('At least one item');
         }
 
