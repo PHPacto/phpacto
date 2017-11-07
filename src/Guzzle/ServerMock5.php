@@ -51,7 +51,7 @@ class ServerMock5 implements ServerMock
     }
 
     /**
-     * @return HandlerStack
+     * @return MockHandler
      */
     public function getHandler()
     {
