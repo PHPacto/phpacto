@@ -183,12 +183,10 @@ class PactRequestTest extends TestCase
         $expected = [
             'method' => [
                 '@rule' => get_class($mockMethod),
-                'value' => null,
                 'sample' => 'get',
             ],
             'uri' => [
                 '@rule' => get_class($mockUri),
-                'value' => null,
                 'sample' => '/',
             ],
         ];
@@ -211,24 +209,20 @@ class PactRequestTest extends TestCase
         $expected = [
             'method' => [
                 '@rule' => get_class($mockMethod),
-                'value' => null,
                 'sample' => 'put',
             ],
             'uri' => [
                 '@rule' => get_class($mockUri),
-                'value' => null,
                 'sample' => '/path',
             ],
             'headers' => [
                 'Y' => [
                     '@rule' => get_class($mockHeaderValue),
-                    'value' => null,
                     'sample' => 'X',
                 ],
             ],
             'body' => [
                 '@rule' => get_class($mockBody),
-                'value' => null,
                 'sample' => 'Body',
             ],
         ];

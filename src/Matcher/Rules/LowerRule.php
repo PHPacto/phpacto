@@ -25,15 +25,34 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class LowerRule extends AbstractRule
 {
+    /**
+     * @var string
+     */
+    protected $value;
+
+    /**
+     * @param $value
+     * @param $sample
+     */
     public function __construct($value, $sample = null)
     {
         $this->assertSupport($value);
 
-        parent::__construct($value, $sample);
+        parent::__construct($sample);
+
+        $this->value = $value;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    /**
+     * @return integer|float|string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function assertMatch($test): void

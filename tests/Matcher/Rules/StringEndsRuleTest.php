@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -37,46 +39,6 @@ class StringEndsRuleTest extends RuleAbstractTest
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function supportedValuesProvider()
-    {
-        return [
-            [false, 100],
-            [false, 1.0],
-            [true, 'string'],
-            [false, ''],
-            [false, true],
-            [false, false],
-            [false, null],
-            [false, []],
-            [false, new class() {
-            }],
-            [false, new \stdClass()],
-        ];
-    }
-
-    /**
-     * @dataProvider supportedValuesProvider
-     *
-     * @param mixed $value
-     */
-    public function testSupportedValues(bool $shouldBeSupported, $value)
-    {
-        $rule = self::getMockBuilder(StringEndsRule::class)
-            ->disableOriginalConstructor()
-            ->setMethodsExcept(['assertSupport'])
-            ->getMock();
-
-        if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
-        }
-
-        $method = new \ReflectionMethod(StringEndsRule::class, 'assertSupport');
-        $method->setAccessible(true);
-        $method->invoke($rule, $value);
-
-        self::assertTrue(true, 'No exceptions should be thrown');
     }
 
     public function matchesTrueProvider()
@@ -113,7 +75,7 @@ class StringEndsRuleTest extends RuleAbstractTest
         $rule = new StringEndsRule($ruleValue, null, $caseSensitive);
 
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
+            $this->expectException(Mismatches\ValueMismatch::class);
         }
 
         $rule->assertMatch($testValue);

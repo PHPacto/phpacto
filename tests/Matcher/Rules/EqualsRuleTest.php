@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -34,9 +36,19 @@ class EqualsRuleTest extends RuleAbstractTest
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
+    public function test_it_is_denormalizable()
+    {
+        $data = 5;
+
+        $expected = new EqualsRule(5);
+
+        $this->assertEquals($expected, $this->normalizer->denormalize($data, Rule::class));
+    }
+
     public function test_it_is_normalizable_recursive()
     {
         $childRule = $this->rule->empty();
+
         $rule = new EqualsRule([
             $childRule,
             'key' => $childRule,
@@ -46,10 +58,10 @@ class EqualsRuleTest extends RuleAbstractTest
         ]);
 
         $expected = [
-            ['@rule' => get_class($childRule), 'value' => null],
-            'key' => ['@rule' => get_class($childRule), 'value' => null],
+            ['@rule' => get_class($childRule)],
+            'key' => ['@rule' => get_class($childRule)],
             'nested' => [
-                'key' => ['@rule' => get_class($childRule), 'value' => null],
+                'key' => ['@rule' => get_class($childRule)],
             ],
         ];
 
@@ -90,7 +102,7 @@ class EqualsRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\TypeMismatch::class);
         }
 
         $method = new \ReflectionMethod(EqualsRule::class, 'assertSupport');
@@ -137,7 +149,7 @@ class EqualsRuleTest extends RuleAbstractTest
         $rule = new EqualsRule($ruleValue);
 
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
+            $this->expectException(Mismatches\ValueMismatch::class);
         }
 
         $rule->assertMatch($testValue);

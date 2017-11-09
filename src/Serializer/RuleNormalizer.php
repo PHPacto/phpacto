@@ -78,7 +78,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if ($object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive())) {
-            return $this->recursiveNormalization($object->getValue(), $format, $this->createChildContext($context, 'value'));
+            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'value'));
         }
 
         return $this->normalizeRuleObject($object, $format, $context);

@@ -25,25 +25,43 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class AndRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule[]
+     */
+    private $rules;
 
-        parent::__construct($value, $sample);
+    /**
+     * @param Rule[] $rules
+     * @param mixed $sample
+     */
+    public function __construct(array $rules, $sample)
+    {
+        $this->assertSupport($rules);
+
+        parent::__construct($sample);
+
+        $this->rules = $rules;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
     }
 
+    /**
+     * @return Rule[]
+     */
+    public function getRules(): array
+    {
+        return $this->rules;
+    }
+
     public function assertMatch($test): void
     {
         $mismatches = [];
 
-        /** @var Rule $item */
-        foreach ($this->value as $item) {
+        foreach ($this->rules as $rule) {
             try {
-                $item->assertMatch($test);
+                $rule->assertMatch($test);
             } catch (Mismatches\Mismatch $e) {
                 $mismatches[] = $e;
             }
@@ -54,15 +72,14 @@ class AndRule extends AbstractRule
         }
     }
 
-    protected function assertSupport($value): void
+    /**
+     * @param Rule[] $rules
+     */
+    protected function assertSupport(array $rules): void
     {
-        if (!is_array($value)) {
-            throw new Mismatches\TypeMismatch('array', gettype($value));
-        }
-
-        foreach ($value as $item) {
+        foreach ($rules as $item) {
             if (!$item instanceof Rule) {
-                throw new Mismatches\TypeMismatch('Rule', gettype($value), 'Each item should be an instance of {{ expected }}');
+                throw new Mismatches\TypeMismatch('Rule', gettype($item), 'Each item should be an instance of {{ expected }}');
             }
         }
     }

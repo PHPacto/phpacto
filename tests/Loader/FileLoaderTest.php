@@ -74,7 +74,7 @@ class FileLoaderTest extends TestCase
     {
         $loader = new FileLoader($this->serializer);
 
-        self::expectExceptionMessage('not exist');
+        $this->expectExceptionMessage('not exist');
 
         $loader->loadFromFile($this->fs->url().'/not-exist.json');
     }
@@ -83,7 +83,7 @@ class FileLoaderTest extends TestCase
     {
         $loader = new FileLoader($this->serializer);
 
-        self::expectExceptionMessage('do not contains a valid pact');
+        $this->expectExceptionMessage('do not contains a valid pact');
 
         $loader->loadFromFile($this->fs->url().'/empty.json');
     }

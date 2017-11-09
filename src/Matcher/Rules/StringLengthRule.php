@@ -25,15 +25,25 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class StringLengthRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule
+     */
+    private $rule;
 
-        parent::__construct($value, $sample);
+    public function __construct(Rule $rule, $sample = null)
+    {
+        parent::__construct($sample);
+
+        $this->rule = $rule;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 
     public function assertMatch($test): void
@@ -43,21 +53,14 @@ class StringLengthRule extends AbstractRule
         }
 
         try {
-            $this->value->assertMatch(strlen($test));
+            $this->rule->assertMatch(strlen($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
-                'The lenght of string {{ actual }} should match the rule:'."\n".
+                'The length of string {{ actual }} should match the rule:'."\n".
                 '    {{ expected }}',
                 $mismatch->getMessage(),
                 strlen($test)
             );
-        }
-    }
-
-    protected function assertSupport($value): void
-    {
-        if (!$value instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($value), '{{ actual }} must be an instance of {{ expected }}');
         }
     }
 }

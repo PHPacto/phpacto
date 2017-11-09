@@ -28,20 +28,31 @@ class VersionRule extends AbstractRule
     /**
      * @var string
      */
+    protected $value;
+
+    /**
+     * @var string
+     */
     protected $operator;
 
-    public function __construct($value, $operator = '=', $sample = null)
+    public function __construct(string $value, string $operator = '=', $sample = null)
     {
         $this->assertSupport($value);
         $this->assertSupportOperator($operator);
 
-        parent::__construct($value, $sample);
+        parent::__construct($sample);
 
+        $this->value = $value;
         $this->operator = $operator;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
     }
 
     /**

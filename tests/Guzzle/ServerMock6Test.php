@@ -74,7 +74,7 @@ class ServerMock6Test extends TestCase
 
         $this->server->handlePact($pact);
 
-        self::expectException(Mismatch::class);
+        $this->expectException(Mismatch::class);
 
         $this->client->request('GET', '/');
     }

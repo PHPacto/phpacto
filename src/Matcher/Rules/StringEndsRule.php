@@ -25,9 +25,33 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class StringEndsRule extends AbstractStringRule
 {
+    /**
+     * @var string
+     */
+    private $value;
+
+    public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
+    {
+        parent::__construct($sample, $caseSensitive);
+
+        $this->value = $caseSensitive ? $value : strtolower($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     public function assertMatch($test): void
     {
         parent::assertMatch($test);
+
+        if ('' === $test) {
+            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot search for an ampty string');
+        }
 
         $function = $this->caseSensitive ? 'strpos' : 'stripos';
 
@@ -38,8 +62,6 @@ class StringEndsRule extends AbstractStringRule
 
     protected function assertSupport($value): void
     {
-        parent::assertMatch($value);
-
         if ('' === $value) {
             throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
         }

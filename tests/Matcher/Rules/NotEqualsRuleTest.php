@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -27,12 +29,11 @@ class NotEqualsRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()
     {
-        $rule = new NotEqualsRule(5, 6);
+        $rule = new NotEqualsRule(6);
 
         $expected = [
             '@rule' => NotEqualsRule::class,
-            'value' => 5,
-            'sample' => 6,
+            'value' => 6,
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
@@ -49,8 +50,7 @@ class NotEqualsRuleTest extends RuleAbstractTest
             [true, null],
             [true, []],
             [true, [[1]]],
-            [false, new class() {
-            }],
+            [false, new class() {}],
             [false, new \stdClass()],
             [false, [[new \stdClass()]]],
         ];
@@ -69,7 +69,7 @@ class NotEqualsRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\TypeMismatch::class);
         }
 
         $method = new \ReflectionMethod(NotEqualsRule::class, 'assertSupport');
@@ -98,8 +98,8 @@ class NotEqualsRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
-        self::expectExceptionMessage('should be different');
+        $this->expectException(Mismatches\ValueMismatch::class);
+        $this->expectExceptionMessage('should be different');
 
         new NotEqualsRule(5, 5);
     }
@@ -141,7 +141,7 @@ class NotEqualsRuleTest extends RuleAbstractTest
         $this->markTestIncomplete('check later');
 
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
+            $this->expectException(Mismatches\ValueMismatch::class);
         }
 
         new NotEqualsRule($ruleValue, $testValue);

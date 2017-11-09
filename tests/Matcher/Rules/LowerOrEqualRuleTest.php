@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -67,7 +69,7 @@ class LowerOrEqualRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\TypeMismatch::class);
         }
 
         $method = new \ReflectionMethod(LowerOrEqualRule::class, 'assertSupport');
@@ -96,8 +98,8 @@ class LowerOrEqualRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
-        self::expectExceptionMessage('should be lower than or equal to');
+        $this->expectException(Mismatches\ValueMismatch::class);
+        $this->expectExceptionMessage('should be lower than or equal to');
 
         new LowerOrEqualRule(5, 6);
     }
@@ -131,8 +133,8 @@ class LowerOrEqualRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
-            self::expectExceptionMessage('should be lower than or equal to');
+            $this->expectException(Mismatches\ValueMismatch::class);
+            $this->expectExceptionMessage('should be lower than or equal to');
         }
 
         new LowerOrEqualRule($ruleValue, $testValue);

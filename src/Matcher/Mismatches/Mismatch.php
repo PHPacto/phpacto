@@ -21,6 +21,6 @@
 
 namespace Bigfoot\PHPacto\Matcher\Mismatches;
 
-abstract class Mismatch extends \RuntimeException implements \Throwable
+abstract class Mismatch extends \RuntimeException
 {
 }

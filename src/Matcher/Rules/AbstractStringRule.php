@@ -30,33 +30,24 @@ abstract class AbstractStringRule extends AbstractRule
      */
     protected $caseSensitive;
 
-    public function __construct($value, $sample = null, bool $caseSensitive = false)
+    public function __construct(string $sample = null, bool $caseSensitive = false)
     {
-        $this->assertSupport($value);
-
-        parent::__construct($value, $sample);
+        if (null !== $sample) {
+            parent::__construct($caseSensitive ? $sample : strtolower($sample));
+        }
 
         $this->caseSensitive = $caseSensitive;
-
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
     }
 
     public function assertMatch($test): void
     {
-        self::assertSupport($test);
+        if (!is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', gettype($test));
+        }
     }
 
     public function isCaseSensitive(): bool
     {
         return $this->caseSensitive;
-    }
-
-    protected function assertSupport($value): void
-    {
-        if (!is_string($value)) {
-            throw new Mismatches\TypeMismatch('string', gettype($value));
-        }
     }
 }

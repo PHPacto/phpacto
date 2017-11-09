@@ -26,13 +26,6 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 interface Rule
 {
     /**
-     * Get rule value.
-     *
-     * @return mixed
-     */
-    public function getValue();
-
-    /**
      * Get rule sample.
      *
      * @return mixed

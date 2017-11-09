@@ -35,7 +35,7 @@ class PactResponseFactoryTest extends TestCase
         $pactResponse = PactResponseFactory::createFromPSR7($response);
 
         self::assertInstanceOf(PactResponse::class, $pactResponse);
-        self::assertEquals(200, $pactResponse->getStatusCode()->getValue());
+        self::assertEquals(200, $pactResponse->getStatusCode()->getSample());
         self::assertCount(0, $pactResponse->getHeaders());
         self::assertNull($pactResponse->getBody());
     }
@@ -49,7 +49,7 @@ class PactResponseFactoryTest extends TestCase
 
         $pactResponse = PactResponseFactory::createFromPSR7($response);
 
-        self::assertContains('custom header', $pactResponse->getHeaders()['X-CUSTOM']->getValue());
+        self::assertContains('custom header', $pactResponse->getHeaders()['X-CUSTOM']->getSample());
     }
 
     /**
@@ -64,7 +64,7 @@ class PactResponseFactoryTest extends TestCase
 
         $pactResponse = PactResponseFactory::createFromPSR7($response);
 
-        self::assertEquals('some content', $pactResponse->getBody()->getValue());
+        self::assertEquals('some content', $pactResponse->getBody()->getSample());
     }
 
     /**

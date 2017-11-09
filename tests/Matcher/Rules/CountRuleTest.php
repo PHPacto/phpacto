@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -32,53 +34,11 @@ class CountRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => CountRule::class,
-            'value' => ['@rule' => get_class($childRule), 'value' => null],
+            'rule' => ['@rule' => get_class($childRule)],
             'sample' => [],
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function supportedValuesProvider()
-    {
-        $rule = self::getRuleMockFactory()->empty();
-
-        return [
-            [false, 5],
-            [false, 1.0],
-            [false, 'string'],
-            [false, true],
-            [false, false],
-            [false, null],
-            [false, new class() {
-            }],
-            [false, new \stdClass()],
-            [false, []],
-            [true, $rule],
-        ];
-    }
-
-    /**
-     * @dataProvider supportedValuesProvider
-     *
-     * @param mixed $value
-     */
-    public function testSupportedValues(bool $shouldBeSupported, $value)
-    {
-        $rule = self::getMockBuilder(CountRule::class)
-            ->disableOriginalConstructor()
-            ->setMethodsExcept(['assertSupport'])
-            ->getMock();
-
-        if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
-        }
-
-        $method = new \ReflectionMethod(CountRule::class, 'assertSupport');
-        $method->setAccessible(true);
-        $method->invoke($rule, $value);
-
-        self::assertTrue(true, 'No exceptions should be thrown');
     }
 
     public function matchesTrueProvider()
@@ -109,7 +69,7 @@ class CountRuleTest extends RuleAbstractTest
         $rule = new CountRule($ruleValue);
 
         if (!$shouldMatch) {
-            self::expectException(Mismatches\Mismatch::class);
+            $this->expectException(Mismatches\Mismatch::class);
         }
 
         $rule->assertMatch($testValue);

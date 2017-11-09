@@ -25,53 +25,77 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class OrRule extends AbstractRule
 {
-    public function __construct($value)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule[]
+     */
+    private $rules;
 
-        parent::__construct($value);
+    /**
+     * @param Rule[] $rules
+     * @param mixed $sample
+     */
+    public function __construct(array $rules, $sample = null)
+    {
+        $this->assertSupport($rules);
+
+        parent::__construct($sample);
+
+        $this->rules = $rules;
+
+        if (null !== $sample) {
+            $this->assertMatch($sample);
+        }
+    }
+
+    /**
+     * @return Rule[]
+     */
+    public function getRules(): array
+    {
+        return $this->rules;
     }
 
     public function assertMatch($test): void
     {
         $mismatches = [];
 
-        /** @var Rule $item */
-        foreach ($this->value as $item) {
+        foreach ($this->rules as $rule) {
             try {
-                $item->assertMatch($test);
+                $rule->assertMatch($test);
 
-                // If at least one item match the value, its OK
+                // If at least one Rule match the value, its OK
                 return;
             } catch (Mismatches\Mismatch $e) {
                 $mismatches[] = $e;
             }
         }
 
-        if (count($mismatches) === count($this->value)) {
+        if (count($mismatches) === count($this->rules)) {
             throw new Mismatches\MismatchCollection($mismatches, 'None of the {{ count }} rules is matching');
         }
     }
 
     public function getSample()
     {
-        if (count($this->value)) {
-            /** @var Rule $rule */
-            $rule = $this->value[array_rand($this->value)];
+        if (null !== $this->sample) {
+            return $this->sample;
+        }
+
+        if (count($this->rules)) {
+            $rule = $this->rules[array_rand($this->rules)];
 
             return $rule->getSample();
         }
     }
 
-    protected function assertSupport($value): void
+    /**
+     * @param Rule[] $rules
+     */
+    protected function assertSupport(array $rules): void
     {
-        if (!is_array($value)) {
-            throw new Mismatches\TypeMismatch('array', gettype($value));
-        }
-
-        foreach ($value as $item) {
+        foreach ($rules as $item) {
             if (!$item instanceof Rule) {
-                throw new Mismatches\TypeMismatch('Rule', gettype($value), 'Each item should be an instance of {{ expected }}');
+                throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Each item should be an instance of {{ expected }}');
             }
         }
     }

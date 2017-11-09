@@ -25,15 +25,25 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class ContainsRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule
+     */
+    private $rule;
 
-        parent::__construct($value, $sample);
+    public function __construct(Rule $rule, $sample = null)
+    {
+        parent::__construct($sample);
+
+        $this->rule = $rule;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 
     public function assertMatch($test): void
@@ -46,7 +56,7 @@ class ContainsRule extends AbstractRule
 
         foreach ($test as $key => $item) {
             try {
-                $this->value->assertMatch($item);
+                $this->rule->assertMatch($item);
 
                 // If at least one item match the value, its OK
                 return;
@@ -56,12 +66,5 @@ class ContainsRule extends AbstractRule
         }
 
         throw new Mismatches\MismatchCollection($mismatches, 'At least one item of array should match the rule');
-    }
-
-    protected function assertSupport($value): void
-    {
-        if (!$value instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($value), 'Value should be an instance of {{ expected }}');
-        }
     }
 }

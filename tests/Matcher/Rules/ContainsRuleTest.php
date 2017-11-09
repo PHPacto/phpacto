@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -32,53 +34,11 @@ class ContainsRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => ContainsRule::class,
-            'value' => ['@rule' => get_class($childRule), 'value' => null],
+            'rule' => ['@rule' => get_class($childRule)],
             'sample' => [1, 2, 3],
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function supportedValuesProvider()
-    {
-        $rule = self::getRuleMockFactory()->empty();
-
-        return [
-            [false, 5],
-            [false, 1.0],
-            [false, 'string'],
-            [false, true],
-            [false, false],
-            [false, null],
-            [false, new class() {
-            }],
-            [false, new \stdClass()],
-            [false, []],
-            [true, $rule],
-        ];
-    }
-
-    /**
-     * @dataProvider supportedValuesProvider
-     *
-     * @param mixed $value
-     */
-    public function testSupportedValues(bool $shouldBeSupported, $value)
-    {
-        $rule = self::getMockBuilder(ContainsRule::class)
-            ->disableOriginalConstructor()
-            ->setMethodsExcept(['assertSupport'])
-            ->getMock();
-
-        if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
-        }
-
-        $method = new \ReflectionMethod(ContainsRule::class, 'assertSupport');
-        $method->setAccessible(true);
-        $method->invoke($rule, $value);
-
-        self::assertTrue(true, 'No exceptions should be thrown');
     }
 
     public function matchesTrueProvider()
@@ -110,8 +70,8 @@ class ContainsRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\MismatchCollection::class);
-            self::expectExceptionMessage('At least one item');
+            $this->expectException(Mismatches\MismatchCollection::class);
+            $this->expectExceptionMessage('At least one item');
         }
 
         new ContainsRule($ruleValue, $testValue);

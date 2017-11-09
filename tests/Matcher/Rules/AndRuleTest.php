@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -32,7 +34,7 @@ class AndRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => AndRule::class,
-            'value' => [['@rule' => get_class($childRule), 'value' => null]],
+            'rules' => [['@rule' => get_class($childRule)]],
             'sample' => 'sample',
         ];
 
@@ -51,8 +53,7 @@ class AndRuleTest extends RuleAbstractTest
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {
-            }],
+            [false, new class() {}],
             [false, new \stdClass()],
             [false, $rule],
             [false, [[]]],
@@ -62,8 +63,7 @@ class AndRuleTest extends RuleAbstractTest
             [false, [true]],
             [false, [false]],
             [false, [null]],
-            [false, [new class() {
-            }]],
+            [false, [new class() {}]],
             [false, [new \stdClass()]],
             [true, [$rule]],
         ];
@@ -82,7 +82,7 @@ class AndRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(\Throwable::class);
         }
 
         $method = new \ReflectionMethod(AndRule::class, 'assertSupport');
@@ -117,8 +117,8 @@ class AndRuleTest extends RuleAbstractTest
             ->method('assertMatch')
             ->willThrowException(new Mismatches\ValueMismatch('A mismatch is expected', true, false));
 
-        self::expectException(Mismatches\MismatchCollection::class);
-        self::expectExceptionMessage('rules not matching the value');
+        $this->expectException(Mismatches\MismatchCollection::class);
+        $this->expectExceptionMessage('rules not matching the value');
 
         new AndRule([$mockOk, $mockMismatch, $mockOk, $mockMismatch, $mockOk], 'A Mismatch should be thrown if matching');
     }

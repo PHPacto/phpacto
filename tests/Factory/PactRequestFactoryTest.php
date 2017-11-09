@@ -35,8 +35,8 @@ class PactRequestFactoryTest extends TestCase
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
         self::assertInstanceOf(PactRequest::class, $pactRequest);
-        self::assertEquals('GET', $pactRequest->getMethod()->getValue());
-        self::assertEquals('/path', $pactRequest->getUri()->getValue());
+        self::assertEquals('GET', $pactRequest->getMethod()->getSample());
+        self::assertEquals('/path', $pactRequest->getUri()->getSample());
         self::assertCount(0, $pactRequest->getHeaders());
         self::assertNull($pactRequest->getBody());
     }
@@ -50,7 +50,7 @@ class PactRequestFactoryTest extends TestCase
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
-        self::assertContains('custom header', $pactRequest->getHeaders()['X-CUSTOM']->getValue());
+        self::assertContains('custom header', $pactRequest->getHeaders()['X-CUSTOM']->getSample());
     }
 
     /**
@@ -65,7 +65,7 @@ class PactRequestFactoryTest extends TestCase
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
-        self::assertEquals('some content', $pactRequest->getBody()->getValue());
+        self::assertEquals('some content', $pactRequest->getBody()->getSample());
     }
 
     /**

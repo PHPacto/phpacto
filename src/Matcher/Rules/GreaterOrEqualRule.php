@@ -26,18 +26,33 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class GreaterOrEqualRule extends AbstractRule
 {
     /**
-     * @param $value
-     * @param $sample
+     * @var integer|float|string
+     */
+    protected $value;
+
+    /**
+     * @param integer|float|string $value
+     * @param mixed $sample
      */
     public function __construct($value, $sample = null)
     {
         $this->assertSupport($value);
 
-        parent::__construct($value, $sample);
+        parent::__construct($sample);
+
+        $this->value = $value;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    /**
+     * @return integer|float|string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function assertMatch($test): void

@@ -25,15 +25,25 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class EachRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule
+     */
+    private $rule;
 
-        parent::__construct($value, $sample);
+    public function __construct(Rule $rule, $sample = null)
+    {
+        parent::__construct($sample);
+
+        $this->rule = $rule;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 
     public function assertMatch($test): void
@@ -46,7 +56,7 @@ class EachRule extends AbstractRule
 
         foreach ($test as $item) {
             try {
-                $this->value->assertMatch($item);
+                $this->rule->assertMatch($item);
             } catch (Mismatches\Mismatch $e) {
                 $mismatches[] = $e;
             }
@@ -54,13 +64,6 @@ class EachRule extends AbstractRule
 
         if ($mismatches) {
             throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} values not matching the rule');
-        }
-    }
-
-    protected function assertSupport($value): void
-    {
-        if (!$value instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($value), '{{ actual }} should be an instance of {{ expected }} to match against each item of array');
         }
     }
 }

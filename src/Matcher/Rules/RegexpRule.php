@@ -23,17 +23,35 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class RegexpRule extends AbstractRule
+class RegexpRule extends AbstractStringRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var string
+     */
+    private $pattern;
 
-        parent::__construct($value, $sample);
+    /**
+     * @var boolean
+     */
+    private $multiLine;
+
+    public function __construct(string $pattern, $sample = null, bool $caseSensitive = false, bool $multiLine = false)
+    {
+        $this->assertSupport($pattern);
+
+        parent::__construct($sample);
+
+        $this->pattern = $pattern;
+        $this->multiLine = $multiLine;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getPattern(): string
+    {
+        return $this->pattern;
     }
 
     public function assertMatch($test): void
@@ -42,16 +60,24 @@ class RegexpRule extends AbstractRule
             throw new Mismatches\TypeMismatch('string', gettype($test), 'Cannot match a Regex over a {{ actual }} type. A {{ expected }} is expected');
         }
 
-        if (!preg_match('/'.$this->value.'/', $test)) {
-            throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $this->value, $test);
+        $modifiers = '';
+
+        if (!$this->caseSensitive) {
+            $modifiers .= 'i';
+        }
+
+        if ($this->multiLine) {
+            $modifiers .= 'm';
+        }
+
+        if (!preg_match('/'.$this->pattern.'/'.$modifiers, $test)) {
+            throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $this->pattern, $test);
         }
     }
 
-    protected function assertSupport($value): void
+    protected function assertSupport(string $value): void
     {
-        if (!is_string($value)) {
-            throw new Mismatches\TypeMismatch('string', gettype($value));
-        } elseif (false === @preg_match('/'.$value.'/', null)) {
+        if (false === @preg_match('/'.$value.'/', null)) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');
         }
     }

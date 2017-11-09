@@ -25,15 +25,25 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class CountRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule
+     */
+    private $rule;
 
-        parent::__construct($value, $sample);
+    public function __construct(Rule $rule, $sample = null)
+    {
+        parent::__construct($sample);
+
+        $this->rule = $rule;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 
     public function assertMatch($test): void
@@ -43,7 +53,7 @@ class CountRule extends AbstractRule
         }
 
         try {
-            $this->value->assertMatch(count($test));
+            $this->rule->assertMatch(count($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
                 'The items count in array {{ actual }} should match the rule:'."\n".
@@ -51,13 +61,6 @@ class CountRule extends AbstractRule
                 $mismatch->getMessage(),
                 count($test)
             );
-        }
-    }
-
-    protected function assertSupport($value): void
-    {
-        if (!$value instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($value), '{{ actual }} must be an instance of {{ expected }}');
         }
     }
 }

@@ -19,31 +19,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 class AbstractRuleTest extends RuleAbstractTest
 {
-    public function test_it_has_a_value_and_a_sample()
+    public function test_it_has_a_sample()
     {
         // Don't use RuleMockFactory because I want to test constructor arguments
 
         /** @var Rule $rule */
         $rule = $this->getMockBuilder(AbstractRule::class)
-            ->setConstructorArgs(['value', 'sample'])
-            ->setMethodsExcept(['getValue', 'getSample'])
+            ->setConstructorArgs(['sample'])
+            ->setMethodsExcept(['getSample'])
             ->getMock();
 
-        self::assertEquals('value', $rule->getValue());
         self::assertEquals('sample', $rule->getSample());
     }
 
     public function test_it_is_normalizable()
     {
-        $rule = $this->rule->hasValueAndSample('value', 'sample');
+        $rule = $this->rule->hasSample('sample');
 
         $expected = [
             '@rule' => get_class($rule),
-            'value' => 'value',
             'sample' => 'sample',
         ];
 

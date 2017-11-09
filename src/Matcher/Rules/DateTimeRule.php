@@ -25,29 +25,36 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class DateTimeRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var string
+     */
+    private $format;
 
-        parent::__construct($value, $sample);
+    public function __construct(string $format, $sample = null)
+    {
+        $this->assertSupport($format);
+
+        parent::__construct($sample);
+
+        $this->format = $format;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
     }
 
-    public function assertMatch($test): void
+    public function getFormat(): string
     {
-        if (!$test instanceof \DateTimeInterface
-            && !\DateTimeImmutable::createFromFormat($this->value, $test) instanceof \DateTimeInterface
-        ) {
-            throw new Mismatches\ValueMismatch('Cannot convert value {{ actual }} into a valid DateTime using {{ expected }} format', $this->value, $test);
-        }
+        return $this->format;
     }
 
-    public function getSample()
+    public function assertMatch($test): void
     {
-        return \DateTimeImmutable::createFromFormat($this->value, $this->sample);
+        $datetime = \DateTimeImmutable::createFromFormat($this->format, $test);
+
+        if (!$datetime instanceof \DateTimeInterface) {
+            throw new Mismatches\ValueMismatch('Cannot convert value {{ actual }} into a valid DateTime using {{ expected }} format', $this->format, $test);
+        }
     }
 
     protected function assertSupport($value): void
@@ -57,7 +64,7 @@ class DateTimeRule extends AbstractRule
         }
 
         if ('' === $value) {
-            throw new Mismatches\TypeMismatch('string', 'empty');
+            throw new Mismatches\TypeMismatch('string', 'empty', 'Format cannot be an empty string');
         }
     }
 }

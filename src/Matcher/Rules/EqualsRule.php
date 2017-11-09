@@ -25,31 +25,31 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class EqualsRule extends AbstractRule
 {
-    public function __construct($value)
+    public function __construct($sample)
     {
-        $this->assertSupport($value);
+        $this->assertSupport($sample);
 
-        parent::__construct($value, $value);
+        parent::__construct($sample);
     }
 
     public function assertMatch($test): void
     {
         $types = [
-            gettype($this->value),
+            gettype($this->sample),
             gettype($test),
         ];
 
         if ($types[0] !== $types[1]) {
             if ($types === ['integer', 'double'] || $types === ['double', 'integer']) {
-                $this->value = (float) $this->value;
+                $this->sample = (float) $this->sample;
                 $test = (float) $test;
             } else {
                 throw new Mismatches\TypeMismatch($types[0], $types[1], 'Cannot compare different data types. A {{ expected }} was expected, but got {{ actual }} instead');
             }
         }
 
-        if ($this->value !== $test) {
-            throw new Mismatches\ValueMismatch('Value {{ actual }} should be same as {{ expected }}', $this->value, $test);
+        if ($this->sample !== $test) {
+            throw new Mismatches\ValueMismatch('Value {{ actual }} should be same as {{ expected }}', $this->sample, $test);
         }
     }
 

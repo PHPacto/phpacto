@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -31,27 +33,10 @@ class UuidRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => UuidRule::class,
-            'value' => null,
             'sample' => '00000000-0000-0000-0000-000000000000'
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function supportedValuesProvider()
-    {
-        // Uuid do not support values
-
-        return [
-        ];
-    }
-
-    /**
-     * @dataProvider supportedValuesProvider
-     */
-    public function testSupportedValues(bool $shouldBeSupported, $value)
-    {
-        throw new \Exception('Uuid do not support values');
     }
 
     public function testSampleIsMatchingRule()
@@ -72,7 +57,7 @@ class UuidRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
+        $this->expectException(Mismatches\ValueMismatch::class);
 
         new UuidRule('.');
     }
@@ -109,11 +94,13 @@ class UuidRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $testValue)
     {
+        $rule = new UuidRule();
+
         if (!$shouldMatch) {
-            self::expectException(Mismatches\Mismatch::class);
+            $this->expectException(Mismatches\ValueMismatch::class);
         }
 
-        new UuidRule($testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }

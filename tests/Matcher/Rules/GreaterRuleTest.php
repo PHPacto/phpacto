@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -67,7 +69,7 @@ class GreaterRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\TypeMismatch::class);
         }
 
         $method = new \ReflectionMethod(GreaterRule::class, 'assertSupport');
@@ -96,8 +98,8 @@ class GreaterRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
-        self::expectExceptionMessage('should be greater than');
+        $this->expectException(Mismatches\ValueMismatch::class);
+        $this->expectExceptionMessage('should be greater than');
 
         new GreaterRule(5, 5);
     }
@@ -131,8 +133,8 @@ class GreaterRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
-            self::expectExceptionMessage('should be greater than');
+            $this->expectException(Mismatches\ValueMismatch::class);
+            $this->expectExceptionMessage('should be greater than');
         }
 
         new GreaterRule($ruleValue, $testValue);

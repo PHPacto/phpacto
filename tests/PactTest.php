@@ -44,7 +44,7 @@ class PactTest extends TestCase
         $request = $this->createMock(PactRequest::class);
         $response = $this->createMock(PactResponse::class);
 
-        self::expectExceptionMessage('Unsupported Pact version');
+        $this->expectExceptionMessage('Unsupported Pact version');
         new Pact($request, $response, 'desc', '1');
     }
 
@@ -60,11 +60,11 @@ class PactTest extends TestCase
             'version' => 'ver',
             'description' => 'desc',
             'request' => [
-                'method' => ['@rule' => get_class($request->getMethod()), 'value' => null],
-                'uri' => ['@rule' => get_class($request->getUri()), 'value' => null],
+                'method' => ['@rule' => get_class($request->getMethod())],
+                'uri' => ['@rule' => get_class($request->getUri())],
             ],
             'response' => [
-                'status_code' => ['@rule' => get_class($response->getStatusCode()), 'value' => null],
+                'status_code' => ['@rule' => get_class($response->getStatusCode())],
             ],
         ];
 

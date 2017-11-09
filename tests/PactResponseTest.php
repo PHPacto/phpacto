@@ -170,7 +170,6 @@ class PactResponseTest extends TestCase
         $expected = [
             'status_code' => [
                 '@rule' => get_class($mockStatusCode),
-                'value' => null,
                 'sample' => 200,
             ],
         ];
@@ -192,19 +191,16 @@ class PactResponseTest extends TestCase
         $expected = [
             'status_code' => [
                 '@rule' => get_class($mockStatusCode),
-                'value' => null,
                 'sample' => 201,
             ],
             'headers' => [
                 'Y' => [
                     '@rule' => get_class($mockHeaderValue),
-                    'value' => null,
                     'sample' => 'X',
                 ],
             ],
             'body' => [
                 '@rule' => get_class($mockBody),
-                'value' => null,
                 'sample' => 'Body',
             ],
         ];

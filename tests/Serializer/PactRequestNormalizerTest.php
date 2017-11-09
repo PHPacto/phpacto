@@ -74,8 +74,8 @@ class PactRequestNormalizerTest extends TestCase
         $request = $this->createMock(PactRequestInterface::class);
 
         $expected = [
-            'method' => ['@rule' => get_class($request->getMethod()), 'value' => null],
-            'uri' => ['@rule' => get_class($request->getUri()), 'value' => null],
+            'method' => ['@rule' => get_class($request->getMethod())],
+            'uri' => ['@rule' => get_class($request->getUri())],
         ];
 
         self::assertEquals($expected, $serializer->normalize($request, 'json'));

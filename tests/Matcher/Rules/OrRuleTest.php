@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -32,7 +34,7 @@ class OrRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => OrRule::class,
-            'value' => [['@rule' => get_class($childRule), 'value' => null]],
+            'rules' => [['@rule' => get_class($childRule)]],
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
@@ -50,8 +52,7 @@ class OrRuleTest extends RuleAbstractTest
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {
-            }],
+            [false, new class() {}],
             [false, new \stdClass()],
             [false, $rule],
             [false, [[]]],
@@ -61,8 +62,7 @@ class OrRuleTest extends RuleAbstractTest
             [false, [true]],
             [false, [false]],
             [false, [null]],
-            [false, [new class() {
-            }]],
+            [false, [new class() {}]],
             [false, [new \stdClass()]],
             [true, [$rule]],
         ];
@@ -81,7 +81,7 @@ class OrRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(\Throwable::class);
         }
 
         $method = new \ReflectionMethod(OrRule::class, 'assertSupport');
@@ -120,7 +120,7 @@ class OrRuleTest extends RuleAbstractTest
 
         $rule = new OrRule([$mockMismatch, $mockMismatch]);
 
-        self::expectException(Mismatches\MismatchCollection::class);
+        $this->expectException(Mismatches\MismatchCollection::class);
 
         $rule->assertMatch('A Mismatch should be thrown');
     }

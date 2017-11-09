@@ -26,6 +26,11 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class LowerOrEqualRule extends AbstractRule
 {
     /**
+     * @var string
+     */
+    protected $value;
+
+    /**
      * @param $value
      * @param $sample
      */
@@ -33,11 +38,21 @@ class LowerOrEqualRule extends AbstractRule
     {
         $this->assertSupport($value);
 
-        parent::__construct($value, $sample);
+        parent::__construct($sample);
+
+        $this->value = $value;
 
         if (null !== $sample) {
             $this->assertMatch($sample);
         }
+    }
+
+    /**
+     * @return integer|float|string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function assertMatch($test): void

@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -27,13 +29,11 @@ class DateTimeRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()
     {
-        $this->markTestIncomplete();
-
         $rule = new DateTimeRule('*', '0');
 
         $expected = [
             '@rule' => DateTimeRule::class,
-            'value' => '*',
+            'format' => '*',
             'sample' => '0',
         ];
 
@@ -50,8 +50,7 @@ class DateTimeRuleTest extends RuleAbstractTest
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {
-            }],
+            [false, new class() {}],
             [false, new \stdClass()],
             [false, []],
         ];
@@ -70,7 +69,7 @@ class DateTimeRuleTest extends RuleAbstractTest
             ->getMock();
 
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\TypeMismatch::class);
         }
 
         $method = new \ReflectionMethod(DateTimeRule::class, 'assertSupport');
@@ -99,7 +98,7 @@ class DateTimeRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
+        $this->expectException(Mismatches\ValueMismatch::class);
 
         new DateTimeRule('d-m-Y', '1990');
     }
@@ -130,7 +129,7 @@ class DateTimeRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
+            $this->expectException(Mismatches\ValueMismatch::class);
         }
 
         new DateTimeRule($ruleValue, $testValue);

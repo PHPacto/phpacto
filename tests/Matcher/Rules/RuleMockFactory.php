@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
@@ -29,28 +31,6 @@ final class RuleMockFactory extends TestCase
     public function empty(): Rule
     {
         return $this->createMock(Rule::class);
-    }
-
-    public function hasValue($value): Rule
-    {
-        $rule = $this->empty();
-        $rule->method('getValue')
-            ->willReturn($value);
-
-        return $rule;
-    }
-
-    public function hasValueAndSample($value, $sample): Rule
-    {
-        $rule = $this->empty();
-
-        $rule->method('getValue')
-            ->willReturn($value);
-
-        $rule->method('getSample')
-            ->willReturn($sample);
-
-        return $rule;
     }
 
     public function hasSample($sample): Rule

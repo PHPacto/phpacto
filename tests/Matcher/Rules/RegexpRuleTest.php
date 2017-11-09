@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
@@ -31,8 +33,9 @@ class RegexpRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => RegexpRule::class,
-            'value' => '^$',
+            'pattern' => '^$',
             'sample' => '',
+            'caseSensitive' => false,
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
@@ -42,7 +45,7 @@ class RegexpRuleTest extends RuleAbstractTest
     {
         return [
             [false, 5],
-            [false, 1.0],
+            [false, 0.1],
             [true, 'string'],
             [true, '^(some|pattern)$'],
             [false, ')'],
@@ -50,8 +53,6 @@ class RegexpRuleTest extends RuleAbstractTest
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {}],
-            [false, new \stdClass()],
             [false, []],
         ];
     }
@@ -63,18 +64,11 @@ class RegexpRuleTest extends RuleAbstractTest
      */
     public function testSupportedValues(bool $shouldBeSupported, $value)
     {
-        $rule = self::getMockBuilder(RegexpRule::class)
-            ->disableOriginalConstructor()
-            ->setMethodsExcept(['assertSupport'])
-            ->getMock();
-
         if (!$shouldBeSupported) {
-            self::expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(\Throwable::class);
         }
 
-        $method = new \ReflectionMethod(RegexpRule::class, 'assertSupport');
-        $method->setAccessible(true);
-        $method->invoke($rule, $value);
+        new RegexpRule($value);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -97,7 +91,7 @@ class RegexpRuleTest extends RuleAbstractTest
      */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
-        self::expectException(Mismatches\ValueMismatch::class);
+        $this->expectException(Mismatches\ValueMismatch::class);
 
         new RegexpRule('.', '');
     }
@@ -128,8 +122,8 @@ class RegexpRuleTest extends RuleAbstractTest
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
         if (!$shouldMatch) {
-            self::expectException(Mismatches\ValueMismatch::class);
-            self::expectExceptionMessage('not matching the regex expression');
+            $this->expectException(Mismatches\ValueMismatch::class);
+            $this->expectExceptionMessage('not matching the regex expression');
         }
 
         new RegexpRule($ruleValue, $testValue);

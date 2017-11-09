@@ -30,9 +30,11 @@ class UuidRule extends AbstractRule
 
     public function __construct($sample = '00000000-0000-0000-0000-000000000000')
     {
-        $this->assertMatch($sample);
+        parent::__construct($sample);
 
-        parent::__construct(null, $sample);
+        if (null !== $sample) {
+            $this->assertMatch($sample);
+        }
     }
 
     public function assertMatch($test): void
@@ -44,10 +46,5 @@ class UuidRule extends AbstractRule
         if (!preg_match(self::PATTERN, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not a valid UUID, expecting a string like {{ expected }}', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', $test);
         }
-    }
-
-    protected function assertSupport($value): void
-    {
-        // There is not value to support
     }
 }
