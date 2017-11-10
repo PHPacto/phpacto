@@ -22,18 +22,8 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 class ExistsRule extends AbstractRule
 {
-    public function __construct($sample = null)
-    {
-        parent::__construct(null, $sample);
-    }
-
     public function assertMatch($test): void
     {
-        // Any value is matching
-    }
-
-    protected function assertSupport($value): void
-    {
-        // Any value is supported
+        // If you are here, the key exists, and any value is good
     }
 }

@@ -28,7 +28,7 @@ class StringEndsRule extends AbstractStringRule
     /**
      * @var string
      */
-    private $value;
+    protected $value;
 
     public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
     {

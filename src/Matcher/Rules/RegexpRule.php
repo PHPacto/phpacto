@@ -28,12 +28,12 @@ class RegexpRule extends AbstractStringRule
     /**
      * @var string
      */
-    private $pattern;
+    protected $pattern;
 
     /**
      * @var boolean
      */
-    private $multiLine;
+    protected $multiLine;
 
     public function __construct(string $pattern, $sample = null, bool $caseSensitive = false, bool $multiLine = false)
     {

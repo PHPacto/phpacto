@@ -22,20 +22,31 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 class OptionalRule extends AbstractRule
 {
-    public function __construct($value, $sample = null)
-    {
-        $this->assertSupport($value);
+    /**
+     * @var Rule
+     */
+    protected $rule;
 
-        parent::__construct($value, $sample);
+    public function __construct(Rule $rule, $sample = null)
+    {
+        parent::__construct($sample);
+
+        $this->rule = $rule;
+
+        if (null !== $sample) {
+            $this->assertMatch($sample);
+        }
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 
     public function assertMatch($test): void
     {
-        // Any value is matching
-    }
-
-    protected function assertSupport($value): void
-    {
-        // Any value is supported
+        // If you are here, the key exists
+        // If the key exists, the value must match the value
+        $this->rule->assertMatch($test);
     }
 }

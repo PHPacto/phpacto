@@ -28,7 +28,7 @@ class StringLengthRule extends AbstractRule
     /**
      * @var Rule
      */
-    private $rule;
+    protected $rule;
 
     public function __construct(Rule $rule, $sample = null)
     {

@@ -28,7 +28,7 @@ class OrRule extends AbstractRule
     /**
      * @var Rule[]
      */
-    private $rules;
+    protected $rules;
 
     /**
      * @param Rule[] $rules

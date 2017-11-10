@@ -28,7 +28,7 @@ class DateTimeRule extends AbstractRule
     /**
      * @var string
      */
-    private $format;
+    protected $format;
 
     public function __construct(string $format, $sample = null)
     {

@@ -28,7 +28,7 @@ class AndRule extends AbstractRule
     /**
      * @var Rule[]
      */
-    private $rules;
+    protected $rules;
 
     /**
      * @param Rule[] $rules
