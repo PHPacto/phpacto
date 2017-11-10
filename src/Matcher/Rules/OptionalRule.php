@@ -2,7 +2,7 @@
 
 /*
  * This file is part of PHPacto
- * Copyright (C) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,6 @@ class OptionalRule extends AbstractRule
     public function __construct(Rule $rule, $sample = null)
     {
         parent::__construct($sample);
-
-        $this->rule = $rule;
-
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
     }
 
     public function getRule(): Rule

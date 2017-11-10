@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ class StringRule extends AbstractRule
 
     public function __construct(string $sample = null, bool $caseSensitive = false)
     {
+        $this->caseSensitive = $caseSensitive;
+
         if (null !== $sample) {
             parent::__construct($caseSensitive ? $sample : strtolower($sample));
         }
-
-        $this->caseSensitive = $caseSensitive;
     }
 
     public function assertMatch($test): void

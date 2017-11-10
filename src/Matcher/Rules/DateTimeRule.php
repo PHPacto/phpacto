@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +32,9 @@ class DateTimeRule extends AbstractRule
 
     public function __construct(string $format, $sample = null)
     {
-        $this->assertSupport($format);
+        $this->assertSupport($this->format = $format);
 
         parent::__construct($sample);
-
-        $this->format = $format;
-
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
     }
 
     public function getFormat(): string

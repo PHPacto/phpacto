@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,9 @@ abstract class AbstractRule implements Rule
 
     public function __construct($sample = null)
     {
-        $this->sample = $sample;
+        if (null !== $sample) {
+            $this->assertMatch($this->sample = $sample);
+        }
     }
 
     public function getSample()

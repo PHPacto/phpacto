@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,11 @@ class VersionRule extends AbstractRule
 
     public function __construct(string $value, string $operator = '=', $sample = null)
     {
-        $this->assertSupport($value);
-        $this->assertSupportOperator($operator);
+        $this->assertSupport($this->value = $value);
+
+        $this->assertSupportOperator($this->operator = $operator);
 
         parent::__construct($sample);
-
-        $this->value = $value;
-        $this->operator = $operator;
-
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
     }
 
     public function getValue(): string

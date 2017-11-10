@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,9 @@ class LowerOrEqualRule extends AbstractRule
      */
     public function __construct($value, $sample = null)
     {
-        $this->assertSupport($value);
+        $this->assertSupport($this->value = $value);
 
         parent::__construct($sample);
-
-        $this->value = $value;
-
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
     }
 
     /**

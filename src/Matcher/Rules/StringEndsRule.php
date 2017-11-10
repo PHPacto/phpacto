@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ class StringEndsRule extends StringRule
 
     public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
     {
-        parent::__construct($sample, $caseSensitive);
+        $this->assertSupport($this->value = $caseSensitive ? $value : strtolower($value));
 
-        $this->value = $caseSensitive ? $value : strtolower($value);
+        parent::__construct($sample, $caseSensitive);
     }
 
     /**
@@ -60,7 +60,7 @@ class StringEndsRule extends StringRule
         }
     }
 
-    protected function assertSupport($value): void
+    protected function assertSupport(string $value): void
     {
         if ('' === $value) {
             throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');

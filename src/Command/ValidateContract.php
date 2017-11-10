@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class ValidateContract extends BaseCommand
                 throw new \Exception(sprintf('No contract builders found in `%s`', $path));
             }
 
-            foreach ($finder->files() as $i => $file) {
+            foreach ($finder->files() as $file) {
                 $this->loadPact($output, (string) $file, $path);
             }
         } else {

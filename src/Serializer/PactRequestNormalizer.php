@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if (!(is_array($data) && PactRequestInterface::class === $class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactRequestInterface::class));
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactRequestInterface::class));
         }
 
         return $this->denormalizeArray($data, PactRequest::class, $format, $context);
@@ -138,7 +138,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
 
         if (array_key_exists('headers', $data) && is_array($data['headers'])) {
             foreach ($data['headers'] as $headerKey => $headerValue) {
-                $data['headers'][$headerKey] = $this->recursiveDenormalization($data['headers'][$headerKey], Rule::class, $format, $this->createChildContext($context, 'headers.'.$headerKey));
+                $data['headers'][$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.'.$headerKey));
             }
         } else {
             $data['headers'] = [];

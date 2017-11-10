@@ -3,7 +3,7 @@
 /*
  * This file is part of PHPacto
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +37,10 @@ class RegexpRule extends StringRule
 
     public function __construct(string $pattern, $sample = null, bool $caseSensitive = false, bool $multiLine = false)
     {
-        $this->assertSupport($pattern);
-
-        parent::__construct($sample);
-
-        $this->pattern = $pattern;
+        $this->assertSupport($this->pattern = $pattern);
         $this->multiLine = $multiLine;
 
-        if (null !== $sample) {
-            $this->assertMatch($sample);
-        }
+        parent::__construct($sample);
     }
 
     public function getPattern(): string
