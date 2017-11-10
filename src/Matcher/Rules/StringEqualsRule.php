@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringEqualsRule extends AbstractStringRule
+class StringEqualsRule extends StringRule
 {
     public function assertMatch($test): void
     {

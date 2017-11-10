@@ -23,11 +23,11 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-class AbstractStringRuleTest extends RuleAbstractTest
+class StringRuleTest extends RuleAbstractTest
 {
     public function test_it_is_not_case_sensitive_by_default()
     {
-        $rule = $this->getMockBuilder(AbstractStringRule::class)
+        $rule = $this->getMockBuilder(StringRule::class)
             ->setConstructorArgs(['sample'])
             ->setMethodsExcept(['isCaseSensitive'])
             ->getMock();
@@ -37,7 +37,7 @@ class AbstractStringRuleTest extends RuleAbstractTest
 
     public function test_it_is_can_be_case_sensitive()
     {
-        $rule = $this->getMockBuilder(AbstractStringRule::class)
+        $rule = $this->getMockBuilder(StringRule::class)
             ->setConstructorArgs(['sample', true])
             ->setMethodsExcept(['isCaseSensitive'])
             ->getMock();
@@ -47,7 +47,7 @@ class AbstractStringRuleTest extends RuleAbstractTest
 
     public function test_sample_is_lower_cased_if_case_insensitive()
     {
-        $rule = $this->getMockBuilder(AbstractStringRule::class)
+        $rule = $this->getMockBuilder(StringRule::class)
             ->setConstructorArgs(['SAMPLE'])
             ->setMethodsExcept(['getSample'])
             ->getMock();
@@ -57,15 +57,15 @@ class AbstractStringRuleTest extends RuleAbstractTest
 
     public function test_it_is_normalizable()
     {
-        $rule = $this->getMockBuilder(AbstractStringRule::class)
+        $rule = $this->getMockBuilder(StringRule::class)
             ->setConstructorArgs(['sample', true])
             ->setMethods(null)
             ->getMock();
 
         $expected = [
             '@rule' => get_class($rule),
-            'sample' => 'sample',
             'caseSensitive' => true,
+            'sample' => 'sample',
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));

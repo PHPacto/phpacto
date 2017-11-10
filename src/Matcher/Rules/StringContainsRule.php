@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringContainsRule extends AbstractStringRule
+class StringContainsRule extends StringRule
 {
     /**
      * @var string

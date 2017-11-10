@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class RegexpRule extends AbstractStringRule
+class RegexpRule extends StringRule
 {
     /**
      * @var string
