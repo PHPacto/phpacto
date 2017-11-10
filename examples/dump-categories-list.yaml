@@ -1,0 +1,14 @@
+version: dev
+description: 'Created automatically - 2017-10-31 15:06:35'
+request:
+    method: GET
+    uri: /_cache/dump/holidayCategoriesList
+    headers:
+        user-agent: 'SpeedVacanze ApiClient'
+response:
+    status_code: 200
+    headers:
+        Content-Type: application/json
+    body:
+        message: 'Api cache for "holidayCategoriesList" list was successfully updated.'
+        status: 200

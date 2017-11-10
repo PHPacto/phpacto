@@ -86,7 +86,7 @@ class PactRequestNormalizerTest extends TestCase
         $serializer = SerializerFactory::getInstance();
 
         $data = [
-            'method' => 'GET',
+            'method' => 'get',
             'uri' => '/uri',
         ];
 

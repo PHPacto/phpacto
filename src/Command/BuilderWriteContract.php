@@ -63,7 +63,7 @@ class BuilderWriteContract extends BaseCommand
                 $this->processFile($output, (string) $file, $format);
             }
         } else {
-            throw new \Exception('Path "'.$path.'" must be a readable file or directory');
+            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
     }
 

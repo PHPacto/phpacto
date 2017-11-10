@@ -132,6 +132,10 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
+        if (isset($data['method']) && is_string($data['method'])) {
+            $data['method'] = strtoupper($data['method']);
+        }
+
         if (array_key_exists('headers', $data) && is_array($data['headers'])) {
             foreach ($data['headers'] as $headerKey => $headerValue) {
                 $data['headers'][$headerKey] = $this->recursiveDenormalization($data['headers'][$headerKey], Rule::class, $format, $this->createChildContext($context, 'headers.'.$headerKey));

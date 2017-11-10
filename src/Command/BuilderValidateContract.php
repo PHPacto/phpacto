@@ -53,8 +53,7 @@ class BuilderValidateContract extends BuilderWriteContract
         $pactPath = rtrim($path, '.php').'.'.$format;
 
         if (!file_exists($pactPath)) {
-            self::getTable($output)
-                ->addRow([$pactPath, '<fg=red>✖ Pact missing</>']);
+            self::outputResult($output, $pactPath, '<fg=red>✖ Pact missing</>');
 
             return;
         }
@@ -62,9 +61,9 @@ class BuilderValidateContract extends BuilderWriteContract
         try {
             $matching = $this->normalizePact($pact, $format) === $this->decodeContractFile($pactPath, $format);
 
-            self::getTable($output)->addRow([$pactPath, $matching ? '<fg=green>✔ Matching</>' : '<fg=red>✖ Not matching</>']);
+            self::outputResult($output, $pactPath, $matching ? '<fg=green>✔ Matching</>' : '<fg=red>✖ Not matching</>');
         } catch (\Exception | \Error $e) {
-            self::getTable($output)->addRow([$pactPath, '<fg=red>✖ Invalid</>']);
+            self::outputResult($output, $pactPath, '<fg=red>✖ Invalid</>');
         }
     }
 
@@ -92,5 +91,10 @@ class BuilderValidateContract extends BuilderWriteContract
         }
 
         return $table;
+    }
+
+    private static function outputResult(OutputInterface $output, string $filePath, string $status): void
+    {
+        self::getTable($output)->addRow([$filePath, $status]);
     }
 }

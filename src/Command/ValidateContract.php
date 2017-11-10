@@ -23,14 +23,27 @@ namespace Bigfoot\PHPacto\Command;
 
 use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Serializer\Serializer;
 
 class ValidateContract extends BaseCommand
 {
+    /**
+     * @var FileLoader
+     */
+    protected $loader;
+
+    public function __construct(Serializer $serializer, string $defaultContractsDir = null)
+    {
+        parent::__construct($serializer, $defaultContractsDir);
+
+        $this->loader = new FileLoader($serializer);
+    }
+
     protected function configure()
     {
         $this
@@ -43,35 +56,44 @@ class ValidateContract extends BaseCommand
     {
         $path = $input->getArgument('path');
 
-        $loader = new FileLoader($this->serializer);
-
         if (is_file($path) && is_readable($path)) {
-            $pact = $loader->loadFromFile($path);
-            $this->validatePact($output, $pact, $path);
+            $this->loadPact($output, $path, $this->defaultContractsDir);
         } elseif (is_dir($path)) {
-            $pacts = $loader->loadFromDirectory($path);
+            $finder = new Finder();
+            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', FileLoader::CONFIG_EXTS)));
 
-            foreach ($pacts as $filePath => $pact) {
-                $this->validatePact($output, $pact, $filePath);
+            if (0 === $finder->count()) {
+                throw new \Exception(sprintf('No contract builders found in `%s`', $path));
+            }
+
+            foreach ($finder->files() as $i => $file) {
+                $this->loadPact($output, (string) $file, $path);
             }
         } else {
-            throw new \Exception('Path "'.$path.'" must be a readable file or directory');
+            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
         self::getTable($output)->render();
     }
 
-    protected function validatePact(OutputInterface $output, PactInterface $pact, string $filePath): void
+    protected function loadPact(OutputInterface $output, string $filePath, string $rootDir = null): void
     {
-        try {
-            $pact->getRequest()->assertMatch($pact->getRequest()->getSample());
-            $pact->getResponse()->assertMatch($pact->getResponse()->getSample());
+        $shortPath = self::getShortPath($filePath, $rootDir);
 
-            self::getTable($output)
-                ->addRow([$filePath, '<fg=green>✔ Matching</>']);
-        } catch (Mismatch $e) {
-            self::getTable($output)
-                ->addRow([$filePath, '<fg=red>✖ Not matching</>']);
+        try {
+            $this->loader->loadFromFile($filePath);
+
+            self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>', $rootDir);
+        } catch (\Throwable $e) {
+            $e = $e->getPrevious();
+
+            if ($e instanceof Mismatch) {
+                self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>',  $rootDir);
+            } elseif ($e->getMessage() == 'Syntax error') {
+                self::outputResult($output, $shortPath, '<fg=red>✖ Not a JSON</>', $rootDir);
+            } else {
+                self::outputResult($output, $shortPath, '<fg=red>✖ Malformed</>', $rootDir);
+            }
         }
     }
 
@@ -89,5 +111,19 @@ class ValidateContract extends BaseCommand
         }
 
         return $table;
+    }
+
+    private static function getShortPath(string $filePath, string $rootDir = null): string
+    {
+        if ($rootDir) {
+            return str_replace($rootDir . '/', '', $filePath);
+        }
+
+        return $filePath;
+    }
+
+    private static function outputResult(OutputInterface $output, string $filePath, string $status): void
+    {
+        self::getTable($output)->addRow([$filePath, $status]);
     }
 }

@@ -27,9 +27,9 @@ use Symfony\Component\Serializer\Serializer;
 
 class FileLoader
 {
-    private const CONFIG_EXTS = ['json', 'yml', 'yaml'];
+    const CONFIG_EXTS = ['json', 'yml', 'yaml'];
 
-    private const CONFIG_FORMATS = ['json', 'yaml'];
+    const CONFIG_FORMATS = ['json', 'yaml'];
 
     /**
      * @var Serializer

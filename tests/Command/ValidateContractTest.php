@@ -21,11 +21,8 @@
 
 namespace Bigfoot\PHPacto\Factory;
 
-use Bigfoot\PHPacto\Command\BuilderValidateContract;
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Pact;
-use Bigfoot\PHPacto\PactRequest;
-use Bigfoot\PHPacto\PactResponse;
+use Bigfoot\PHPacto\Command\ValidateContract;
+use Bigfoot\PHPacto\Matcher\Rules;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
@@ -45,44 +42,102 @@ class ValidateContractTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete('Write tests');
-
         // Define my virtual file system
         $directory = [
             'contracts' => [
-                'missing.php' => sprintf(
-                    '<?php $matcher = new %s(0); return new %s(new %s($matcher, $matcher), new %s($matcher));',
-                    EqualsRule::class,
-                    Pact::class,
-                    PactRequest::class,
-                    PactResponse::class
-                ),
+                'not-a-json.json' => 'Not a JSON',
 
-                'not-matching.php' => sprintf(
-                    '<?php $matcher = new %s(0); return new %s(new %s($matcher, $matcher), new %s($matcher));',
-                    EqualsRule::class,
-                    Pact::class,
-                    PactRequest::class,
-                    PactResponse::class
-                ),
-                'not-matching.json' => json_encode(['Something different than expected']),
+                'malformed.json' => '[{}]',
 
-                'matching.php' => sprintf(
-                    '<?php $matcher = new %s(0); return new %s(new %s($matcher, $matcher), new %s($matcher));',
-                    EqualsRule::class,
-                    Pact::class,
-                    PactRequest::class,
-                    PactResponse::class
-                ),
+                'invalid.json' => json_encode([
+                    'version' => 'dev',
+                    'description' => '',
+                    'request' => [
+                        'method' => 5,
+                        'uri' => '/',
+                    ],
+                    'response' => [
+                        'status_code' => 200,
+                    ],
+                ]),
+
+                'valid.json' => json_encode([
+                    'version' => 'dev',
+                    'description' => '',
+                    'request' => [
+                        'method' => 'method',
+                        'uri' => '/',
+                    ],
+                    'response' => [
+                        'status_code' => 200,
+                    ],
+                ]),
+
                 'matching.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
-                        'method' => 0,
-                        'uri' => 0,
+//                        'method' => [
+//                            '@rule' => OrRule::class,
+//                            'rules' => [
+//                                'get',
+//                                'post',
+//                                'put',
+//                                'patch'
+//                            ],
+//                            'sample' => 'post'
+//                        ],
+                        'method' => [
+                            '@rule' => Rules\RegexpRule::class,
+                            'pattern' => '(get|post)',
+                            'sample' => 'get',
+                        ],
+                        'uri' => '/',
                     ],
                     'response' => [
-                        'status_code' => 0,
+//                        'status_code' => [
+//                            '@rule' => OrRule::class,
+//                            'rules' => [
+//                                200,
+//                                201,
+//                            ],
+//                            'sample' => 201
+//                        ],
+                        'status_code' => 202
+                    ],
+                ]),
+
+                'not-matching.json' => json_encode([
+                    'version' => 'dev',
+                    'description' => '',
+                    'request' => [
+//                        'method' => [
+//                            '@rule' => OrRule::class,
+//                            'rules' => [
+//                                'get',
+//                                'post',
+//                                'put',
+//                                'patch'
+//                            ],
+//                            'sample' => 'post'
+//                        ],
+                        'method' => [
+                            '@rule' => Rules\RegexpRule::class,
+                            'pattern' => '(get|post)',
+                            'sample' => 'put',
+                        ],
+                        'uri' => '/',
+                    ],
+                    'response' => [
+//                        'status_code' => [
+//                            '@rule' => OrRule::class,
+//                            'rules' => [
+//                                200,
+//                                201,
+//                            ],
+//                            'sample' => 201
+//                        ],
+                        'status_code' => 404
                     ],
                 ]),
             ],
@@ -91,21 +146,24 @@ class ValidateContractTest extends TestCase
         // Setup and cache the virtual file system
         $this->fs = vfsStream::setup('root', 444, $directory);
 
-        $command = new BuilderValidateContract(SerializerFactory::getInstance());
+        $command = new ValidateContract(SerializerFactory::getInstance());
 
         $this->commandTester = new CommandTester($command);
     }
 
-    public function test_it_reads_contract_builder_and_check_that_contracts_are_still_valid()
+    public function test_it_reads_contracts_and_check_that_contracts_are_still_valid()
     {
         $this->commandTester->execute([
-            'path' => $this->fs->url().'/contracts',
+            'path' => $this->fs->url() . '/contracts',
         ]);
 
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('missing.json        ✖ Pact missing', $output);
-        $this->assertContains('matching.json       ✔ Matching', $output);
-        $this->assertContains('not-matching.json   ✖ Not matching', $output);
+        $this->assertContains('not-a-json.json     ✖ Not a JSON', $output);
+        $this->assertContains('malformed.json      ✖ Malformed', $output);
+        $this->assertContains('invalid.json        ✖ Not valid', $output);
+        $this->assertContains('valid.json          ✔ Valid', $output);
+        $this->assertContains('matching.json       ✔ Valid', $output);
+        $this->assertContains('not-matching.json   ✖ Not valid', $output);
     }
 }
