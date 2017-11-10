@@ -153,19 +153,19 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         foreach ($attributes as $attribute) {
             $attributeValue = $this->getAttributeValue($object, $attribute, $format, $context);
 
+            if (null === $attributeValue) {
+                continue;
+            }
+
             if ($this->nameConverter) {
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
-            } else {
+            if (is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
+            } else {
+                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
             }
-        }
-
-        if (array_key_exists('sample', $data) && null === $data['sample']) {
-            unset($data['sample']);
         }
 
         return $data;
