@@ -22,12 +22,14 @@
 namespace Bigfoot\PHPacto\Factory;
 
 use Bigfoot\PHPacto\Matcher\Rules;
-use Bigfoot\PHPacto\Serializer\JsonEncoder;
 use Bigfoot\PHPacto\Serializer\PactNormalizer;
 use Bigfoot\PHPacto\Serializer\PactRequestNormalizer;
 use Bigfoot\PHPacto\Serializer\PactResponseNormalizer;
 use Bigfoot\PHPacto\Serializer\RuleNormalizer;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -73,12 +75,10 @@ abstract class SerializerFactory
      */
     protected static function getEncoders(): array
     {
-        $encoders = [
-            new JsonEncoder(null, null, ['json_encode_options' => JSON_PRETTY_PRINT, 'allow_extra_attributes' => false]),
+        return [
+            new JsonEncoder(new JsonEncode(JSON_PRETTY_PRINT), new JsonDecode(true)),
             new YamlEncoder(null, null, ['yaml_inline' => INF, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
         ];
-
-        return $encoders;
     }
 
     /**
