@@ -34,6 +34,7 @@ class StringEqualsRuleTest extends RuleAbstractTest
         $expected = [
             '@rule' => StringEqualsRule::class,
             'caseSensitive' => false,
+            'sample' => ''
         ];
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));

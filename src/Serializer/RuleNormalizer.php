@@ -114,18 +114,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         return new EqualsRule($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
-    {
-        if ('sample' === $attribute && ($classOrObject instanceof EqualsRule || EqualsRule::class === $classOrObject || $classOrObject instanceof StringEqualsRule || StringEqualsRule::class === $classOrObject)) {
-            return false;
-        }
-
-        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
-    }
-
     private static function isRule(string $class): bool
     {
         $class = rtrim($class, '[]');
