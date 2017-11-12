@@ -78,7 +78,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if ($object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive())) {
-            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'value'));
+            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
         return $this->normalizeRuleObject($object, $format, $context);
@@ -165,8 +165,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
-        if (array_key_exists('value', $data) && is_array($data['value'])) {
-            $data['value'] = $this->recursiveDenormalization($data['value'], Rule::class, $format, $this->createChildContext($context, 'value'));
+        if (array_key_exists('rules', $data) && is_array($data['rules'])) {
+            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class.'[]', $format, $this->createChildContext($context, 'rules'));
         }
 
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
