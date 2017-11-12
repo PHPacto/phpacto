@@ -40,6 +40,41 @@ class StringEqualsRuleTest extends RuleAbstractTest
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '@rule' => StringEqualsRule::class,
+            'caseSensitive' => false,
+            'sample' => ''
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        $this->assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertSame('', $rule->getSample());
+        self::assertFalse($rule->isCaseSensitive());
+    }
+
+    public function test_normalize_string_equals_case_sensitive()
+    {
+        $rule = new StringEqualsRule('S', true);
+
+        $data = $this->normalizer->normalize($rule);
+
+        self::assertSame('S', $data);
+    }
+
+    public function test_denormalize_string_equals_case_sensitive()
+    {
+        $data = 'S';
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertSame('S', $rule->getSample());
+        self::assertTrue($rule->isCaseSensitive());
+    }
+
     public function matchesTrueProvider()
     {
         return [

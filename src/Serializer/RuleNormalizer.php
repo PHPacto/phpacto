@@ -239,7 +239,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     {
         $class = get_class($rule);
 
-        return @array_flip($this->ruleAliases)[$class] ?: $class;
+        return array_flip($this->ruleAliases)[$class] ?? $class;
     }
 
     private function getClassNameFromAlias(string $alias): string
@@ -247,7 +247,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         $class = @$this->ruleAliases[$alias] ?: $alias;
 
         if (!is_subclass_of($class, Rule::class)) {
-            throw new InvalidArgumentException(sprintf('This "%s" is not a valid Rule or Rule\'s alias', $class, Rule::class));
+            throw new InvalidArgumentException(sprintf('This "%s" is not a valid Rule or Rule\'s alias', $class));
         }
 
         return $class;

@@ -70,4 +70,19 @@ class StringRuleTest extends RuleAbstractTest
 
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
     }
+
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '@rule' => StringRule::class,
+            'caseSensitive' => true,
+            'sample' => 'Sample',
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringRule::class, $rule);
+        self::assertSame('Sample', $rule->getSample());
+        self::assertTrue($rule->isCaseSensitive());
+    }
 }

@@ -69,58 +69,7 @@ class RuleNormalizerTest extends TestCase
         self::assertTrue($normalizer->supportsDenormalization([], Rule::class, $format));
     }
 
-//    public function test_normalize_equals()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $rule = new EqualsRule(0);
-//
-//        $data = $serializer->normalize($rule);
-//
-//        self::assertInstanceOf(0, $rule);
-//    }
-//
-//    public function test_denormalize_equals()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $rule = new EqualsRule(0);
-//
-//        $data = $serializer->normalize($rule);
-//
-//        $rule = $serializer->denormalize($data, Rule::class);
-//
-//        self::assertInstanceOf(EqualsRule::class, $rule);
-//    }
-//
-//    public function test_serialize_string_equals()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $rule = new StringEqualsRule('s');
-//
-//        $data = $serializer->normalize($rule);
-//
-//        $rule = $serializer->denormalize($data, Rule::class);
-//
-//        self::assertInstanceOf(StringEqualsRule::class, $rule);
-//    }
-//
-//    public function test_serialize_string_equals_case_sensitive()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $rule = new StringEqualsRule('s', true);
-//
-//        $data = $serializer->normalize($rule);
-//
-//        $rule = $serializer->denormalize($data, Rule::class);
-//
-//        self::assertInstanceOf(StringEqualsRule::class, $rule);
-//        self::assertTrue($rule->isCaseSensitive());
-//    }
-//
-//    public function test_serialize_recursive()
+//    public function test_normalize_recursive()
 //    {
 //        $serializer = SerializerFactory::getInstance();
 //
@@ -134,7 +83,7 @@ class RuleNormalizerTest extends TestCase
 //        self::assertInstanceOf(StringEqualsRule::class, $stringRule = $rule->getValue());
 //    }
 //
-//    public function test_serialize_array()
+//    public function test_normalize_array()
 //    {
 //        $serializer = SerializerFactory::getInstance();
 //
