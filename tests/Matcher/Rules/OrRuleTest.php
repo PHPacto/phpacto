@@ -40,6 +40,22 @@ class OrRuleTest extends RuleAbstractTest
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '@rule' => OrRule::class,
+            'rules' => [5],
+            'sample' => 5
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(OrRule::class, $rule);
+        self::assertSame(5, $rule->getSample());
+        self::assertCount(1, $rule->getRules());
+        self::assertInstanceOf(Rule::class, $rule->getRules()[0]);
+    }
+
     public function supportedValuesProvider()
     {
         $rule = self::getRuleMockFactory()->empty();

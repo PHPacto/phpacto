@@ -41,6 +41,26 @@ class AndRuleTest extends RuleAbstractTest
         $this->assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '@rule' => AndRule::class,
+            'rules' => [
+                ['@rule' => GreaterRule::class, 'value' => 4],
+                ['@rule' => LowerRule::class, 'value' => 6],
+            ],
+            'sample' => 5
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(AndRule::class, $rule);
+        self::assertSame(5, $rule->getSample());
+        self::assertCount(2, $rule->getRules());
+        self::assertInstanceOf(Rule::class, $rule->getRules()[0]);
+        self::assertInstanceOf(Rule::class, $rule->getRules()[1]);
+    }
+
     public function supportedValuesProvider()
     {
         $rule = self::getRuleMockFactory()->empty();
@@ -131,7 +151,7 @@ class AndRuleTest extends RuleAbstractTest
         try {
             $this->testMismatch();
         } catch (Mismatches\MismatchCollection $e) {
-            self::assertEquals(2, count($e));
+            self::assertCount(2, $e);
 
             throw $e;
         }

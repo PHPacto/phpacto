@@ -89,6 +89,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
+        $class = rtrim($class, '[]');
+
         if (Rule::class !== $class) {
             throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
         }
@@ -100,6 +102,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
                 return $this->denormalizeRuleArray($data, $class, $format, $context);
             }
+
             foreach ($data as $key => $value) {
                 $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key));
             }

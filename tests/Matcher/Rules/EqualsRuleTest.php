@@ -43,7 +43,7 @@ class EqualsRuleTest extends RuleAbstractTest
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
         self::assertInstanceOf(EqualsRule::class, $rule);
-        self::assertSame(0, $rule->getSample());
+        self::assertSame(5, $rule->getSample());
     }
 
     public function test_it_is_normalizable_recursive()

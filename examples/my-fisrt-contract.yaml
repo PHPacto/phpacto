@@ -1,5 +1,5 @@
 version: dev
-description: 'Created automatically - 2017-11-02 14:25:33'
+description: 'My first contract'
 request:
     method: GET
     uri: /users
