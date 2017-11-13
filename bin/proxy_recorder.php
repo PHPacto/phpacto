@@ -48,7 +48,7 @@ define('PROXY_TO', parse_url(getenv('RECORDER_PROXY_TO')));
 
 $httpClient = new Client();
 
-$requestHandler = function (RequestInterface $request, Client $httpClient) use ($logger): ResponseInterface {
+$requestHandler = function (RequestInterface $request) use ($logger, $httpClient): ResponseInterface {
     $uri = $request->getUri()
         ->withScheme(@PROXY_TO['scheme'] ?: 'http')
         ->withHost(@PROXY_TO['host'] ?: 'localhost')
