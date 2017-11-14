@@ -40,7 +40,7 @@ class BodyMatcher implements MessageMatcher
                 $this->matchBodyArray($rules, $body);
                 break;
             default:
-                throw new \Exception('Body should be a Rule or an array of Rules');
+                throw new \Exception('Body should be a string or array');
         }
     }
 
