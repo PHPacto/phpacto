@@ -24,6 +24,8 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use Psr\Http\Message\RequestInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 
 require __DIR__.'/autoload.php';
 
@@ -43,12 +45,21 @@ if (0 === count($pacts)) {
     throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
 }
 
-$controller = function (RequestInterface $request) use ($logger, $pacts) {
-    $controller = new MockController($logger, $pacts);
+$requestHandler = function (RequestInterface $request) use ($logger, $pacts) {
+    try {
+        $controller = new MockController($logger, $pacts);
 
-    return $controller->action($request);
+        return $controller->action($request);
+    } catch (\Throwable $e) {
+        $stream = new Stream('php://memory', 'rw');
+
+        $response = new Response($stream, 518, ['Content-type' => 'text/plain']);
+
+        $stream->write($e->getMessage());
+
+        return $response;
+    }
 };
 
-$server = Zend\Diactoros\Server::createServer($controller, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-
+$server = Zend\Diactoros\Server::createServer($requestHandler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $server->listen();
