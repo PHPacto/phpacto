@@ -44,12 +44,7 @@ class ServerMock6 implements ServerMock
         $this->mock->append(function (RequestInterface $request) use ($pact): ResponseInterface {
             $pact->getRequest()->assertMatch($request);
 
-            $response = $pact->getResponse()->getSample();
-
-            // Assert that response is matching rules
-            $pact->getResponse()->assertMatch($response);
-
-            return $response;
+            return $pact->getResponse()->getSample();
         });
     }
 

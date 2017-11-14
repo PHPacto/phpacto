@@ -44,9 +44,6 @@ class ServerMock5 implements ServerMock
 
             $response = $pact->getResponse()->getSample();
 
-            // Assert that response is matching rules
-            $pact->getResponse()->assertMatch($response);
-
             return self::responseToArray($response);
         });
     }
