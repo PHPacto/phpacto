@@ -45,21 +45,24 @@ if (0 === count($pacts)) {
     throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
 }
 
-$requestHandler = function (RequestInterface $request) use ($logger, $pacts) {
+$handler = function (RequestInterface $request) use ($logger, $pacts) {
     try {
         $controller = new MockController($logger, $pacts);
 
-        return $controller->action($request);
-    } catch (\Throwable $e) {
-        $stream = new Stream('php://memory', 'rw');
+        $response = $controller->action($request);
 
-        $response = new Response($stream, 518, ['Content-type' => 'text/plain']);
-
-        $stream->write($e->getMessage());
+        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         return $response;
+    } catch (\Throwable $e) {
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write($e->getMessage());
+
+        $logger->log($e->getMessage());
+
+        return new Response($stream, 418, ['Content-type' => 'text/plain']);
     }
 };
 
-$server = Zend\Diactoros\Server::createServer($requestHandler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+$server = Zend\Diactoros\Server::createServer($handler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $server->listen();

@@ -103,10 +103,6 @@ class ServerMock6Test extends TestCase
 
         $response
             ->expects(self::once())
-            ->method('assertMatch');
-
-        $response
-            ->expects(self::once())
             ->method('getSample')
             ->willReturn($psr7Response = $this->createMock(ResponseInterface::class));
 

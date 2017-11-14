@@ -24,6 +24,8 @@ use Bigfoot\PHPacto\Logger\StdoutLogger;
 use GuzzleHttp\Client;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 
 require __DIR__.'/autoload.php';
 
@@ -48,16 +50,30 @@ define('PROXY_TO', parse_url(getenv('RECORDER_PROXY_TO')));
 
 $httpClient = new Client();
 
-$requestHandler = function (RequestInterface $request) use ($logger, $httpClient): ResponseInterface {
-    $uri = $request->getUri()
-        ->withScheme(@PROXY_TO['scheme'] ?: 'http')
-        ->withHost(@PROXY_TO['host'] ?: 'localhost')
-        ->withPort(@PROXY_TO['port'] ?: 'https' === @PROXY_TO['scheme'] ? 443 : 80);
+$handler = function (RequestInterface $request) use ($logger, $httpClient): ResponseInterface {
+    try {
+        $uri = $request->getUri()
+            ->withScheme(@PROXY_TO['scheme'] ?: 'http')
+            ->withHost(@PROXY_TO['host'] ?: 'localhost')
+            ->withPort(@PROXY_TO['port'] ?: 'https' === @PROXY_TO['scheme'] ? 443 : 80);
 
-    $controller = new ProxyController($httpClient, $logger, $uri, CONTRACTS_DIR);
+        $controller = new ProxyController($httpClient, $logger, $uri, CONTRACTS_DIR);
 
-    return $controller->action($request);
+        $response = $controller->action($request);
+
+        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+
+        return $response;
+
+    } catch (\Throwable $e) {
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write($e->getMessage());
+
+        $logger->log($e->getMessage());
+
+        return new Response($stream, 418, ['Content-type' => 'text/plain']);
+    }
 };
 
-$server = Zend\Diactoros\Server::createServer($requestHandler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+$server = Zend\Diactoros\Server::createServer($handler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $server->listen();

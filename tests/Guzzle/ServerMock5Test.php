@@ -103,10 +103,6 @@ class ServerMock5Test extends TestCase
             ->expects(self::once())
             ->method('assertMatch');
 
-        $response
-            ->expects(self::once())
-            ->method('assertMatch');
-
         $responseBody = new Stream('php://memory', 'w');
         $responseBody->write('mock');
 

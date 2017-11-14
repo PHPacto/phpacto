@@ -36,7 +36,7 @@ class MockController
     private $logger;
 
     /**
-     * @var array
+     * @var PactInterface[]
      */
     private $pacts;
 
@@ -61,7 +61,11 @@ class MockController
 
         $request = $request->withUri($uri);
 
-        /** @var PactInterface $pact */
+        return $this->findMatchingPact($request);
+    }
+
+    private function findMatchingPact(RequestInterface $request): PactInterface
+    {
         foreach ($this->pacts as $filepath => $pact) {
             try {
                 $pact->getRequest()->assertMatch($request);
@@ -70,10 +74,10 @@ class MockController
 
                 return $pact;
             } catch (Mismatch $e) {
-                // TODO: Implement errors displaying instead of a blank page
+                // This Pact isn't matching, try next.
             }
         }
 
-        throw new \Exception('No pact was found matching your request');
+        throw new \Exception('No pact matching your request was found');
     }
 }

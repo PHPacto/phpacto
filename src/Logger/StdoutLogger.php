@@ -23,8 +23,37 @@ namespace Bigfoot\PHPacto\Logger;
 
 class StdoutLogger implements Logger
 {
+    /**
+     * @var string[]
+     */
+    private $messages;
+
+    /**
+     * @param string[] $messages
+     */
+    public function __construct(array $messages = [])
+    {
+        $this->messages = $messages;
+    }
+
+    public function __destruct() {
+        $this->flush();
+    }
+
     public function log(string $message): void
     {
-        file_put_contents('php://stdout', $message."\n");
+        $this->messages[] = $message;
+    }
+
+    public function clear(): void
+    {
+        $this->messages = [];
+    }
+
+    public function flush(): void
+    {
+        foreach ($this->messages as $message) {
+            file_put_contents('php://stdout', $message . "\n");
+        }
     }
 }

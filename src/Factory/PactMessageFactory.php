@@ -37,9 +37,13 @@ abstract class PactMessageFactory
 
     protected static function getUriRule(RequestInterface $request): Rule
     {
-        $uri = parse_url((string) $request->getUri());
+        $uri = $request->getUri()->getPath();
 
-        return new EqualsRule((@$uri['path'] ?: '/').(@$uri['query'] ? '?'.$uri['query'] : ''));
+        if ($request->getUri()->getQuery()) {
+            $uri .= $request->getUri()->getQuery();
+        }
+
+        return new EqualsRule($uri);
     }
 
     protected static function getStatusCodeRule(ResponseInterface $response): Rule
