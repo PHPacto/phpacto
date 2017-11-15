@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class OrRule extends AbstractRule
 
     /**
      * @param Rule[] $rules
-     * @param mixed $sample
+     * @param mixed  $sample
      */
     public function __construct(array $rules, $sample = null)
     {

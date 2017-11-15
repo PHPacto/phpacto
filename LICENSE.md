@@ -594,7 +594,8 @@ of warranty; and each file should have at least the *copyright* line and a
 pointer to where the full notice is found.
 
 	PHPacto - Contract testing solution
-	Copyright (C) 2017  Damian Dlugosz
+	
+	Copyright (C) 2017  Damian Długosz <bigfootdd@gmail.com>
 	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -607,17 +608,20 @@ pointer to where the full notice is found.
 	GNU General Public License for more details.
 	
 	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 Also add information on how to contact you by electronic and paper mail.
 
 If the program does terminal interaction, make it output a short notice like
 this when it starts in an interactive mode:
 
-	PHPacto  Copyright (C) 2017  Damian Dlugosz
-	This program comes with ABSOLUTELY NO WARRANTY; for details type `help'.
+	PHPacto CLI
+	
+	Copyright (C) 2017  Damian Długosz <bigfootdd@gmail.com>
+	
+	This program comes with ABSOLUTELY NO WARRANTY.
 	This is free software, and you are welcome to redistribute it
-	under certain conditions; type `show c' for details.
+	under certain conditions.
 
 The hypothetical commands `show w` and `show c` should show the appropriate
 parts of the General Public License. Of course, your program's commands might

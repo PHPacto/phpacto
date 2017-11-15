@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class GreaterOrEqualRule extends AbstractRule
 {
     /**
-     * @var integer|float|string
+     * @var int|float|string
      */
     protected $value;
 
     /**
-     * @param integer|float|string $value
-     * @param mixed $sample
+     * @param int|float|string $value
+     * @param mixed            $sample
      */
     public function __construct($value, $sample = null)
     {
@@ -42,7 +42,7 @@ class GreaterOrEqualRule extends AbstractRule
     }
 
     /**
-     * @return integer|float|string
+     * @return int|float|string
      */
     public function getValue()
     {

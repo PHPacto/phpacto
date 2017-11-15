@@ -1,10 +1,7 @@
 <?php
 
-$header = <<<'EOT'
-This file is part of PHPacto
-
-Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
-
+$header = file_get_contents(__DIR__.'/BANNER.txt').PHP_EOL;
+$header .= <<<'EOT'
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or

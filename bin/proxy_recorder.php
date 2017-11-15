@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ if (!is_dir(CONTRACTS_DIR)) {
     mkdir(CONTRACTS_DIR, 0777, true);
 }
 
-if (!isset($_ENV['RECORDER_PROXY_TO'])) {
+if (!getenv('RECORDER_PROXY_TO')) {
     throw new \Exception(sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
 }
 
@@ -64,7 +64,6 @@ $handler = function (RequestInterface $request) use ($logger, $httpClient): Resp
         $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         return $response;
-
     } catch (\Throwable $e) {
         $stream = new Stream('php://memory', 'rw');
         $stream->write($e->getMessage());

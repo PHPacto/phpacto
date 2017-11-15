@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ class ValidateContractTest extends TestCase
 //                            ],
 //                            'sample' => 201
 //                        ],
-                        'status_code' => 202
+                        'status_code' => 202,
                     ],
                 ]),
 
@@ -137,7 +137,7 @@ class ValidateContractTest extends TestCase
 //                            ],
 //                            'sample' => 201
 //                        ],
-                        'status_code' => 404
+                        'status_code' => 404,
                     ],
                 ]),
             ],
@@ -154,7 +154,7 @@ class ValidateContractTest extends TestCase
     public function test_it_reads_contracts_and_check_that_contracts_are_still_valid()
     {
         $this->commandTester->execute([
-            'path' => $this->fs->url() . '/contracts',
+            'path' => $this->fs->url().'/contracts',
         ]);
 
         $output = $this->commandTester->getDisplay();

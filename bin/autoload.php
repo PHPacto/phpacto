@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+function print_banner()
+{
+    $banner = file_get_contents(__DIR__.'/../BANNER.txt');
+
+    echo str_replace("\n\n", PHP_EOL, $banner).PHP_EOL;
+}
 
 foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {

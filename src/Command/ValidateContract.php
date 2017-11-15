@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ class ValidateContract extends BaseCommand
             $e = $e->getPrevious();
 
             if ($e instanceof Mismatch) {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>',  $rootDir);
-            } elseif ($e->getMessage() == 'Syntax error') {
+                self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $rootDir);
+            } elseif ('Syntax error' === $e->getMessage()) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Not a JSON</>', $rootDir);
             } else {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Malformed</>', $rootDir);
@@ -116,7 +116,7 @@ class ValidateContract extends BaseCommand
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
-            return str_replace($rootDir . '/', '', $filePath);
+            return str_replace($rootDir.'/', '', $filePath);
         }
 
         return $filePath;

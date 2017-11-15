@@ -1,5 +1,24 @@
 <?php
 
+/*
+ * PHPacto - Contract testing solution
+ *
+ * Copyright (c) 2017  Damian Długosz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace Bigfoot\PHPacto\Test\PHPUnit\Constraint;
 
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
@@ -51,6 +70,14 @@ class PactMatchesResponse extends PHPUnitConstraint
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function toString()
+    {
+        return sprintf('Pact `%s` match response', $this->pact->getDescription());
+    }
+
     protected function failPactMatching(ResponseInterface $response, Mismatch $mismatch, string $description = null)
     {
         $failureDescription = \sprintf(
@@ -61,11 +88,11 @@ class PactMatchesResponse extends PHPUnitConstraint
         $additionalFailureDescription = $this->additionalFailureDescription($response);
 
         if ($additionalFailureDescription) {
-            $failureDescription .= "\n" . $additionalFailureDescription;
+            $failureDescription .= "\n".$additionalFailureDescription;
         }
 
         if (!empty($description)) {
-            $failureDescription = $description . "\n" . $failureDescription;
+            $failureDescription = $description."\n".$failureDescription;
         }
 
         throw new AssertionFailedError(trim($failureDescription));
@@ -87,14 +114,6 @@ class PactMatchesResponse extends PHPUnitConstraint
             );
         }
 
-        return $this->toString(). ' ' . $mismatch->getMessage();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toString()
-    {
-        return sprintf('Pact `%s` match response', $this->pact->getDescription());
+        return $this->toString().' '.$mismatch->getMessage();
     }
 }

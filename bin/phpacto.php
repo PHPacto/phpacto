@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ require __DIR__.'/autoload.php';
 use Bigfoot\PHPacto\Command;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Symfony\Component\Console\Application;
+
+print_banner();
 
 $application = new Application('PHPacto Cli');
 

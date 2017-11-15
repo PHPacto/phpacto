@@ -1,0 +1,3 @@
+PHPacto - Contract testing solution
+
+Copyright (c) 2017  Damian Długosz

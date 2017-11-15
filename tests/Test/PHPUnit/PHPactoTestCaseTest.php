@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of PHPacto
+ * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
+ * Copyright (c) 2017  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(RequestInterface::class));
 
-        $testCase = new class extends PHPactoTestCase {};
+        $testCase = new class() extends PHPactoTestCase {
+        };
 
         $testCase->assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
     }
@@ -68,7 +69,8 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(ResponseInterface::class));
 
-        $testCase = new class extends PHPactoTestCase {};
+        $testCase = new class() extends PHPactoTestCase {
+        };
 
         $testCase->assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
     }
@@ -86,7 +88,8 @@ class PHPactoTestCaseTest extends TestCase
             ->with(self::isInstanceOf(RequestInterface::class))
             ->willThrowException(new MismatchCollection([]));
 
-        $testCase = new class extends PHPactoTestCase {};
+        $testCase = new class() extends PHPactoTestCase {
+        };
 
         $this->expectException(AssertionFailedError::class);
 
@@ -106,7 +109,8 @@ class PHPactoTestCaseTest extends TestCase
             ->with(self::isInstanceOf(ResponseInterface::class))
             ->willThrowException(new MismatchCollection([]));
 
-        $testCase = new class extends PHPactoTestCase {};
+        $testCase = new class() extends PHPactoTestCase {
+        };
 
         $this->expectException(AssertionFailedError::class);
 
