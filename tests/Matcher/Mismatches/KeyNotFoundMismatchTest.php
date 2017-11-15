@@ -36,6 +36,6 @@ class KeyNotFoundMismatchTest extends TestCase
     {
         $miss = new KeyNotFoundMismatch('key');
 
-        self::assertEquals('key', $miss->getExpected());
+        self::assertEquals('key', $miss->getKeyName());
     }
 }

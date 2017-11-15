@@ -23,24 +23,20 @@ namespace Bigfoot\PHPacto\Matcher\Mismatches;
 
 class KeyNotFoundMismatch extends Mismatch
 {
-    private $key;
+    private $keyName;
 
-    /**
-     * @param string $message
-     * @param mixed  $expected
-     * @param mixed  $actual
-     */
-    public function __construct(string $key)
+    public function __construct(string $keyName)
     {
-        $this->message = sprintf('Key `%s` was not found', $key);
-        $this->key = $key;
+        parent::__construct(sprintf('Key `%s` was not found', $keyName));
+
+        $this->keyName = $keyName;
     }
 
     /**
      * @return mixed
      */
-    public function getExpected()
+    public function getKeyName()
     {
-        return $this->key;
+        return $this->keyName;
     }
 }

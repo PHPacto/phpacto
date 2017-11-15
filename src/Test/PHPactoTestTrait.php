@@ -26,7 +26,7 @@ use Bigfoot\PHPacto\Guzzle;
 use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\PactInterface;
 
-trait PhpactoTestTrait
+trait PHPactoTestTrait
 {
     protected function createServerMock(): Guzzle\ServerMock
     {

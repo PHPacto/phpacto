@@ -26,10 +26,10 @@ use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\PactInterface;
 use PHPUnit\Framework\TestCase;
 
-class PhpactoTestTraitTest extends TestCase
+class PHPactoTestTraitTest extends TestCase
 {
     /**
-     * @var PhpactoTestTrait
+     * @var PHPactoTestTrait
      */
     private $trait;
 
@@ -43,13 +43,15 @@ class PhpactoTestTraitTest extends TestCase
         $loader = $this->loader = $this->createMock(FileLoader::class);
 
         $this->trait = new class($loader) {
-            use PhpactoTestTrait;
+            use PHPactoTestTrait;
 
             public function __construct(FileLoader $loader)
             {
                 $this->loader = $loader;
             }
 
+            // Mock getLoader() protected method
+            // Return mocked FileLoader
             protected function getLoader(): FileLoader
             {
                 return $this->loader;
