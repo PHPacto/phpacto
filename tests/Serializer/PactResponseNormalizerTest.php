@@ -67,7 +67,7 @@ class PactResponseNormalizerTest extends TestCase
         self::assertTrue($normalizer->supportsDenormalization([], PactResponseInterface::class, $format));
     }
 
-    public function test_serialize()
+    public function test_normalize()
     {
         $serializer = SerializerFactory::getInstance();
 
@@ -83,10 +83,10 @@ class PactResponseNormalizerTest extends TestCase
             'status_code' => ['@rule' => get_class($response->getStatusCode()), 'sample' => 200],
         ];
 
-        self::assertEquals($expected, $serializer->normalize($response, 'json'));
+        self::assertEquals($expected, $serializer->normalize($response));
     }
 
-    public function test_deserialize()
+    public function test_denormalize()
     {
         $serializer = SerializerFactory::getInstance();
 
@@ -94,9 +94,10 @@ class PactResponseNormalizerTest extends TestCase
             'status_code' => 200,
         ];
 
-        /** @var PactResponseInterface $pact */
-        $pact = $serializer->denormalize($data, PactResponseInterface::class, 'json');
+        /** @var PactResponseInterface $response */
+        $response = $serializer->denormalize($data, PactResponseInterface::class);
 
-        self::assertInstanceOf(PactResponseInterface::class, $pact);
+        self::assertInstanceOf(PactResponseInterface::class, $response);
+        self::assertSame(200, $response->getStatusCode()->getSample());
     }
 }

@@ -53,7 +53,7 @@ class StringLengthRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => StringLengthRule::class,
-            'rule' => ['@rule' => get_class($childRule)],
+            'length' => ['@rule' => get_class($childRule)],
             'sample' => 'sample',
         ];
 

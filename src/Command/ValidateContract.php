@@ -90,7 +90,7 @@ class ValidateContract extends BaseCommand
             if ($e instanceof Mismatch) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $rootDir);
             } elseif ('Syntax error' === $e->getMessage()) {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Not a JSON</>', $rootDir);
+                self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>', $rootDir);
             } else {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Malformed</>', $rootDir);
             }

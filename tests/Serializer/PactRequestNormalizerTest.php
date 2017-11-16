@@ -67,7 +67,7 @@ class PactRequestNormalizerTest extends TestCase
         self::assertTrue($normalizer->supportsDenormalization([], PactRequestInterface::class, $format));
     }
 
-    public function test_serialize()
+    public function test_normalize()
     {
         $serializer = SerializerFactory::getInstance();
 
@@ -78,10 +78,10 @@ class PactRequestNormalizerTest extends TestCase
             'uri' => ['@rule' => get_class($request->getUri())],
         ];
 
-        self::assertEquals($expected, $serializer->normalize($request, 'json'));
+        self::assertEquals($expected, $serializer->normalize($request));
     }
 
-    public function test_deserialize()
+    public function test_denormalize()
     {
         $serializer = SerializerFactory::getInstance();
 
@@ -91,7 +91,7 @@ class PactRequestNormalizerTest extends TestCase
         ];
 
         /** @var PactRequestInterface $pact */
-        $pact = $serializer->denormalize($data, PactRequestInterface::class, 'json');
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
 
         self::assertInstanceOf(PactRequestInterface::class, $pact);
         self::assertEquals('GET', $pact->getMethod()->getSample());

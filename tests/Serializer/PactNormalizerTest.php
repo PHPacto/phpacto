@@ -69,7 +69,7 @@ class PactNormalizerTest extends TestCase
         self::assertTrue($normalizer->supportsDenormalization([], PactInterface::class, $format));
     }
 
-    public function test_serialize()
+    public function test_normalize()
     {
         $requestNormalizer = $this->getMockBuilder(PactRequestNormalizer::class)
             ->disableOriginalConstructor()
@@ -100,24 +100,21 @@ class PactNormalizerTest extends TestCase
 
         $pact = $this->createMock(PactInterface::class);
 
-        $json = $serializer->serialize($pact, 'json');
+        $data = $serializer->normalize($pact);
 
-        $expected = json_encode([
+        $expected = [
             'version' => '',
             'description' => '',
             'request' => ['Request'],
             'response' => ['Response'],
-        ]);
+        ];
 
-        self::assertJsonStringEqualsJsonString($expected, $json);
+        self::assertEquals($expected, $data);
 
-        return $json;
+        return $data;
     }
 
-    /**
-     * @depends test_serialize
-     */
-    public function test_deserialize(string $json)
+    public function test_denormalize()
     {
         $requestNormalizer = $this->getMockBuilder(PactRequestNormalizer::class)
             ->disableOriginalConstructor()
@@ -146,7 +143,14 @@ class PactNormalizerTest extends TestCase
             [new JsonEncoder()]
         );
 
-        $pact = $serializer->deserialize($json, PactInterface::class, 'json');
+        $data = [
+            'version' => '',
+            'description' => '',
+            'request' => ['Request'],
+            'response' => ['Response'],
+        ];
+
+        $pact = $serializer->denormalize($data, PactInterface::class);
 
         self::assertInstanceOf(PactInterface::class, $pact);
     }

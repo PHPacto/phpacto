@@ -24,7 +24,9 @@ namespace Bigfoot\PHPacto\Serializer;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Matcher\Rules\EachRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use PHPUnit\Framework\TestCase;
 
@@ -67,6 +69,92 @@ class RuleNormalizerTest extends TestCase
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], Rule::class, $format));
+    }
+
+    public function test_normalize()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $factory = new RuleMockFactory();
+
+        $rule = $factory->hasSample(5);
+
+        $expected = ['@rule' => get_class($rule), 'sample' => 5];
+
+        self::assertEquals($expected, $serializer->normalize($rule));
+    }
+
+    public function test_normalize_equals()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $rule = new EqualsRule(5);
+
+        $expected = 5;
+
+        self::assertEquals($expected, $serializer->normalize($rule));
+    }
+
+    public function test_normalize_string_equals()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $rule = new StringEqualsRule('string');
+
+        $expected = ['@rule' => 'strEq', 'sample' => 'string', 'case_sensitive' => false];
+
+        self::assertEquals($expected, $serializer->normalize($rule));
+    }
+
+    public function test_normalize_with_alias()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $rule = new GreaterRule(5, 6);
+
+        $expected = ['@rule' => 'gt', 'value' => 5, 'sample' => 6];
+
+        self::assertEquals($expected, $serializer->normalize($rule));
+    }
+
+    public function test_denormalize_equals()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = 5;
+
+        /** @var Rule $rule */
+        $rule = $serializer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(EqualsRule::class, $rule);
+        self::assertEquals(5, $rule->getSample());
+    }
+
+    public function test_denormalize_string_equals()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = 'string';
+
+        /** @var Rule $rule */
+        $rule = $serializer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertEquals('string', $rule->getSample());
+    }
+
+    public function test_denormalize_with_alias()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = ['@rule' => 'gt', 'value' => 5, 'sample' => 6];
+
+        /** @var Rule $rule */
+        $rule = $serializer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(GreaterRule::class, $rule);
+        self::assertEquals(5, $rule->getValue());
+        self::assertEquals(6, $rule->getSample());
     }
 
 //    public function test_normalize_recursive()

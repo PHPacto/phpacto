@@ -28,18 +28,18 @@ class StringLengthRule extends AbstractRule
     /**
      * @var Rule
      */
-    protected $rule;
+    protected $length;
 
-    public function __construct(Rule $rule, $sample = null)
+    public function __construct(Rule $length, $sample = null)
     {
-        $this->rule = $rule;
+        $this->length = $length;
 
         parent::__construct($sample);
     }
 
-    public function getRule(): Rule
+    public function getLength(): Rule
     {
-        return $this->rule;
+        return $this->length;
     }
 
     public function assertMatch($test): void
@@ -49,13 +49,13 @@ class StringLengthRule extends AbstractRule
         }
 
         try {
-            $this->rule->assertMatch(strlen($test));
+            $this->length->assertMatch(strlen($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
                 'The length of string {{ actual }} should match the rule:'."\n".
                 '    {{ expected }}',
                 $mismatch->getMessage(),
-                strlen($test)
+                $test
             );
         }
     }
