@@ -1,6 +1,8 @@
 # PHPacto
 Contract testing solution for your applications
 
+If you want to know more about Contract Testing please read more [here](https://martinfowler.com/bliki/IntegrationContractTest.html) and [here](http://www.testautomationguru.com/best-practices-microservices-contract-testing).
+
 [![License](https://img.shields.io/packagist/l/bigfoot90/phpacto.svg)](https://packagist.org/packages/bigfoot90/phpacto)
 [![Build Status](https://img.shields.io/travis/bigfoot90/phpacto.svg)](https://travis-ci.org/bigfoot90/phpacto)
 [![CodeCov](https://img.shields.io/codecov/c/github/bigfoot90/phpacto.svg)](https://codecov.io/github/bigfoot90/phpacto)

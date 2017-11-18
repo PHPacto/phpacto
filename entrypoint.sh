@@ -11,7 +11,7 @@ fi
 if [ "$1" = 'phpacto' ]; then
     case $2 in
         server_mock)
-            cat BANNER.txt
+            cat BANNER
             echo
 
             php -S 0.0.0.0:8000 bin/server_mock.php
@@ -19,7 +19,7 @@ if [ "$1" = 'phpacto' ]; then
             ;;
 
         proxy_recorder)
-            cat BANNER.txt
+            cat BANNER
             echo
 
             php -S 0.0.0.0:8000 bin/proxy_recorder.php

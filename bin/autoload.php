@@ -21,14 +21,14 @@
 
 function print_banner()
 {
-    $banner = file_get_contents(__DIR__.'/../BANNER.txt');
+    $banner = file_get_contents(__DIR__.'/../BANNER');
 
     echo str_replace("\n\n", PHP_EOL, $banner).PHP_EOL;
 }
 
-foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $file) {
-    if (file_exists($file)) {
-        require $file;
+foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $autoloader) {
+    if (file_exists($autoloader)) {
+        require $autoloader;
 
         break;
     }
