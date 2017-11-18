@@ -50,6 +50,6 @@
     },
     "bin": ["bin/phpacto"],
     "archive": {
-        "exclude": ["tests/", "vendor/", "composer.lock", ".circleci/", ".travis.yml"]
+        "exclude": ["docs/", "tests/", "vendor/", "composer.lock", ".circleci/", ".travis.yml"]
     }
 }
