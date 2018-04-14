@@ -73,7 +73,7 @@ trait PHPactoTestTrait
      * @param RequestInterface $request
      * @param string|null $message
      */
-    public function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = null)
+    public static function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = '')
     {
         $constraint = new PactMatchesRequest($pact);
 
@@ -87,7 +87,7 @@ trait PHPactoTestTrait
      * @param ResponseInterface $response
      * @param string|null $message
      */
-    public function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = null)
+    public static function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = '')
     {
         $constraint = new PactMatchesResponse($pact);
 
