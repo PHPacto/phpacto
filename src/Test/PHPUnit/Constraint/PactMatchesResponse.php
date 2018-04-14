@@ -73,7 +73,7 @@ class PactMatchesResponse extends PHPUnitConstraint
     /**
      * {@inheritdoc}
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('Pact `%s` match response', $this->pact->getDescription());
     }
@@ -101,7 +101,7 @@ class PactMatchesResponse extends PHPUnitConstraint
     /**
      * {@inheritdoc}
      */
-    protected function failureDescription($other, Mismatch $mismatch = null)
+    protected function failureDescription($other, Mismatch $mismatch = null): string
     {
         if ($mismatch instanceof MismatchCollection) {
             $mimatchesArray = $mismatch->toArrayFlat();
