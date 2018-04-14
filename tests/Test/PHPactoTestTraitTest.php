@@ -74,7 +74,7 @@ class PHPactoTestTraitTest extends TestCase
             ->expects(self::once())
             ->method('loadFromFile');
 
-        $method = new \ReflectionMethod($this->trait, 'loadPact');
+        $method = new \ReflectionMethod($this->trait, 'loadContract');
         $method->setAccessible(true);
         $pact = $method->invoke($this->trait, '/file.json');
 

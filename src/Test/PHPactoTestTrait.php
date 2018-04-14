@@ -25,6 +25,10 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Guzzle;
 use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesRequest;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesResponse;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 trait PHPactoTestTrait
 {
@@ -36,16 +40,57 @@ trait PHPactoTestTrait
             return new Guzzle\ServerMock5();
         }
 
-        return new Guzzle\ServerMock6();
+        elseif (version_compare($guzzleVersion, 7, '<')) {
+            return new Guzzle\ServerMock6();
+        }
+
+        throw new \Exception('No valid Guzzle version is found. Please install Guzzle version 6 or 5.');
     }
 
-    protected function loadPact($path): PactInterface
+    /**
+     * @return FileLoader
+     */
+    private function getLoader(): FileLoader
+    {
+        return new FileLoader(SerializerFactory::getInstance());
+    }
+
+    /**
+     * Load a contract and returns a Pact
+     *
+     * @param string $path
+     * @return PactInterface
+     */
+    protected function loadContract(string $path): PactInterface
     {
         return $this->getLoader()->loadFromFile($path);
     }
 
-    private function getLoader(): FileLoader
+    /**
+     * Matches a Request against a Pact.
+     *
+     * @param PactInterface $pact
+     * @param RequestInterface $request
+     * @param string|null $message
+     */
+    public function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = null)
     {
-        return new FileLoader(SerializerFactory::getInstance());
+        $constraint = new PactMatchesRequest($pact);
+
+        static::assertThat($request, $constraint, $message);
+    }
+
+    /**
+     * Matches a Response against a Pact.
+     *
+     * @param PactInterface $pact
+     * @param ResponseInterface $response
+     * @param string|null $message
+     */
+    public function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = null)
+    {
+        $constraint = new PactMatchesResponse($pact);
+
+        static::assertThat($response, $constraint, $message);
     }
 }

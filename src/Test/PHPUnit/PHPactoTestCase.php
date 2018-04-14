@@ -21,14 +21,9 @@
 
 namespace Bigfoot\PHPacto\Test\PHPUnit;
 
-use Bigfoot\PHPacto\PactInterface;
 use Bigfoot\PHPacto\Test\PHPactoTestTrait;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesRequest;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesResponse;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Util\Blacklist;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 abstract class PHPactoTestCase extends TestCase
 {
@@ -39,19 +34,5 @@ abstract class PHPactoTestCase extends TestCase
         parent::__construct($name, $data, $dataName);
 
         Blacklist::$blacklistedClassNames[__CLASS__] = 1;
-    }
-
-    public function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = null)
-    {
-        $constraint = new PactMatchesRequest($pact);
-
-        static::assertThat($request, $constraint, $message);
-    }
-
-    public function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = null)
-    {
-        $constraint = new PactMatchesResponse($pact);
-
-        static::assertThat($response, $constraint, $message);
     }
 }

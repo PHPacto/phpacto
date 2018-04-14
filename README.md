@@ -1,4 +1,6 @@
-# PHPacto
+PHPacto
+=======
+
 Contract testing solution for your applications
 
 If you want to know more about Contract Testing please read more [here](https://martinfowler.com/bliki/IntegrationContractTest.html) and [here](http://www.testautomationguru.com/best-practices-microservices-contract-testing).
@@ -19,3 +21,29 @@ If you want to know more about Contract Testing please read more [here](https://
 This is a work in progress ...
 
 Documentaion is coming ...
+
+Usage CLI
+---------
+
+# Validate
+
+# Server Mock
+
+# Mock Proxy Recorder
+
+Usage CLI with Docker
+---------------------
+
+# Validate
+
+# Server Mock
+
+# Mock Proxy Recorder
+
+Integration with PHPUnit
+------------------------
+
+If your test ends with so much verbose tracelog maybe your TestCase is not extending from `Bigfoot\PHPacto\Test\PHPUnit\PHPactoTestCase`, so add this line in your `setUp` method:
+```php
+PHPUnit\Util\Blacklist\Blacklist::$blacklistedClassNames[__CLASS__] = 1;
+```
