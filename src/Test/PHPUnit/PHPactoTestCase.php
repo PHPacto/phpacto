@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Test\PHPUnit;
 
+use Bigfoot\PHPacto\PHPacto;
 use Bigfoot\PHPacto\Test\PHPactoTestTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Util\Blacklist;
@@ -29,10 +30,19 @@ abstract class PHPactoTestCase extends TestCase
 {
     use PHPactoTestTrait;
 
+    /**
+     * @var PHPacto
+     */
+    protected $phpacto;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
 
         Blacklist::$blacklistedClassNames[__CLASS__] = 1;
+    }
+
+    public function setUp() {
+        $this->phpacto = new PHPacto();
     }
 }

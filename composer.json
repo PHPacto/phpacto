@@ -30,7 +30,8 @@
         "phpunit/phpunit": "<6.0"
     },
     "suggest": {
-        "guzzlehttp/guzzle": "Required if you need to test your http requests and/or have mocked responses"
+        "guzzlehttp/guzzle": "Required if you need to test your http requests and/or have mocked responses",
+        "phpunit/phpunit": "Works with PHPUnit testing framework"
     },
     "config": {
         "preferred-install": "dist",

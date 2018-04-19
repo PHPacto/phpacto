@@ -32,40 +32,6 @@ use Psr\Http\Message\ResponseInterface;
 
 trait PHPactoTestTrait
 {
-    protected function createServerMock(): Guzzle\ServerMock
-    {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
-
-        if (version_compare($guzzleVersion, 6, '<')) {
-            return new Guzzle\ServerMock5();
-        }
-
-        elseif (version_compare($guzzleVersion, 7, '<')) {
-            return new Guzzle\ServerMock6();
-        }
-
-        throw new \Exception('No valid Guzzle version is found. Please install Guzzle version 6 or 5.');
-    }
-
-    /**
-     * @return FileLoader
-     */
-    private function getLoader(): FileLoader
-    {
-        return new FileLoader(SerializerFactory::getInstance());
-    }
-
-    /**
-     * Load a contract and returns a Pact
-     *
-     * @param string $path
-     * @return PactInterface
-     */
-    protected function loadContract(string $path): PactInterface
-    {
-        return $this->getLoader()->loadFromFile($path);
-    }
-
     /**
      * Matches a Request against a Pact.
      *
