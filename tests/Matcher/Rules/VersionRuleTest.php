@@ -56,7 +56,7 @@ class VersionRuleTest extends RuleAbstractTest
             'operator' => '=',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

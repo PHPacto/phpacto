@@ -57,7 +57,7 @@ class AndRuleTest extends RuleAbstractTest
             'sample' => 'sample',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()

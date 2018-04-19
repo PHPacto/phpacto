@@ -25,27 +25,38 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Guzzle;
 use Bigfoot\PHPacto\Loader\FileLoader;
 use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesRequest;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesResponse;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 trait PHPactoTestTrait
 {
-    protected function createServerMock(): Guzzle\ServerMock
+    /**
+     * Matches a Request against a Pact.
+     *
+     * @param PactInterface $pact
+     * @param RequestInterface $request
+     * @param string|null $message
+     */
+    public static function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = '')
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        $constraint = new PactMatchesRequest($pact);
 
-        if (version_compare($guzzleVersion, 6, '<')) {
-            return new Guzzle\ServerMock5();
-        }
-
-        return new Guzzle\ServerMock6();
+        static::assertThat($request, $constraint, $message);
     }
 
-    protected function loadPact($path): PactInterface
+    /**
+     * Matches a Response against a Pact.
+     *
+     * @param PactInterface $pact
+     * @param ResponseInterface $response
+     * @param string|null $message
+     */
+    public static function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = '')
     {
-        return $this->getLoader()->loadFromFile($path);
-    }
+        $constraint = new PactMatchesResponse($pact);
 
-    private function getLoader(): FileLoader
-    {
-        return new FileLoader(SerializerFactory::getInstance());
+        static::assertThat($response, $constraint, $message);
     }
 }

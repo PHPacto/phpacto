@@ -56,7 +56,7 @@ class GreaterRuleTest extends RuleAbstractTest
             'sample' => 6,
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

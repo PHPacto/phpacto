@@ -52,7 +52,7 @@ class EqualsRuleTest extends RuleAbstractTest
 
         $expected = 5;
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()
@@ -85,7 +85,7 @@ class EqualsRuleTest extends RuleAbstractTest
             ],
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

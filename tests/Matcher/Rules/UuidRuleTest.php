@@ -55,7 +55,7 @@ class UuidRuleTest extends RuleAbstractTest
             'sample' => '00000000-0000-0000-0000-000000000000',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function testSampleIsMatchingRule()

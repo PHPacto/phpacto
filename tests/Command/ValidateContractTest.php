@@ -159,11 +159,11 @@ class ValidateContractTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('not-a-json.json     ✖ Syntax error', $output);
-        $this->assertContains('malformed.json      ✖ Malformed', $output);
-        $this->assertContains('invalid.json        ✖ Not valid', $output);
-        $this->assertContains('valid.json          ✔ Valid', $output);
-        $this->assertContains('matching.json       ✔ Valid', $output);
-        $this->assertContains('not-matching.json   ✖ Not valid', $output);
+        self::assertContains('not-a-json.json     ✖ Syntax error', $output);
+        self::assertContains('malformed.json      ✖ Malformed', $output);
+        self::assertContains('invalid.json        ✖ Not valid', $output);
+        self::assertContains('valid.json          ✔ Valid', $output);
+        self::assertContains('matching.json       ✔ Valid', $output);
+        self::assertContains('not-matching.json   ✖ Not valid', $output);
     }
 }

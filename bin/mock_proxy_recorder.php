@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Bigfoot\PHPacto\Controller\ProxyController;
+use Bigfoot\PHPacto\Controller\MockProxyController;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use GuzzleHttp\Client;
 use Psr\Http\Message\RequestInterface;
@@ -27,7 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
-require __DIR__.'/autoload.php';
+require __DIR__.'/bootstrap.php';
 
 $logger = new StdoutLogger();
 
@@ -57,7 +57,7 @@ $handler = function (RequestInterface $request) use ($logger, $httpClient): Resp
             ->withHost(@PROXY_TO['host'] ?: 'localhost')
             ->withPort(@PROXY_TO['port'] ?: 'https' === @PROXY_TO['scheme'] ? 443 : 80);
 
-        $controller = new ProxyController($httpClient, $logger, $uri, CONTRACTS_DIR);
+        $controller = new MockProxyController($httpClient, $logger, $uri, CONTRACTS_DIR);
 
         $response = $controller->action($request);
 

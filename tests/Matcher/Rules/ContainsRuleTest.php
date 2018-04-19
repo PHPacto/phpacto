@@ -57,7 +57,7 @@ class ContainsRuleTest extends RuleAbstractTest
             'sample' => [1, 2, 3],
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function matchesTrueProvider()

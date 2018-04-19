@@ -76,7 +76,7 @@ class BuilderWriteContractTest extends TestCase
             ]);
         } catch (\Exception $e) {
             $output = $this->commandTester->getDisplay();
-            $this->assertContains('empty.php', $output, 'Command should print what file is reading');
+            self::assertContains('empty.php', $output, 'Command should print what file is reading');
 
             return;
         }

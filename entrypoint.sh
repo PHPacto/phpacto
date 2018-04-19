@@ -18,11 +18,11 @@ if [ "$1" = 'phpacto' ]; then
             exit
             ;;
 
-        proxy_recorder)
+        mock_proxy_recorder)
             cat BANNER
             echo
 
-            php -S 0.0.0.0:8000 bin/proxy_recorder.php
+            php -S 0.0.0.0:8000 bin/mock_proxy_recorder.php
             exit
             ;;
 
@@ -31,7 +31,7 @@ if [ "$1" = 'phpacto' ]; then
             ;;
 
         *)
-            echo $"Commands: (server_mock|proxy_recorder|validate)"
+            echo $"Commands: (validate|server_mock|mock_proxy_recorder)"
             exit 1
     esac
 fi

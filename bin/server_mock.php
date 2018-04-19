@@ -27,7 +27,7 @@ use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
-require __DIR__.'/autoload.php';
+require __DIR__.'/bootstrap.php';
 
 $logger = new StdoutLogger();
 

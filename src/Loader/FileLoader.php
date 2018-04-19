@@ -46,7 +46,7 @@ class FileLoader
         if (!(file_exists($path) && is_readable($path))) {
             throw new \Exception(sprintf('File `%s` does not exist or is not readable', $path));
         }
-
+//        PHP >= 7.2
 //        $format = self::getExtensionFromPath($path)
 //            |> self::getFormatFromFileExtension($$);
         $format = self::getFormatFromFileExtension(self::getExtensionFromPath($path));

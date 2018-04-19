@@ -1,4 +1,1 @@
-#!/usr/bin/env php
-<?php
-
-require 'phpacto.php';
+phpacto.php

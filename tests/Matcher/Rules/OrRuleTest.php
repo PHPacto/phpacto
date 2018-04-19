@@ -56,7 +56,7 @@ class OrRuleTest extends RuleAbstractTest
             'rules' => [['@rule' => get_class($childRule)]],
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()

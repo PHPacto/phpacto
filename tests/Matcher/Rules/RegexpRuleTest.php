@@ -57,7 +57,7 @@ class RegexpRuleTest extends RuleAbstractTest
             'caseSensitive' => false,
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

@@ -56,7 +56,7 @@ class DateTimeRuleTest extends RuleAbstractTest
             'sample' => '0',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

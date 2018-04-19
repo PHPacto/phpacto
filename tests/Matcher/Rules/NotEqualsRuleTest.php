@@ -55,7 +55,7 @@ class NotEqualsRuleTest extends RuleAbstractTest
             'value' => 6,
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function supportedValuesProvider()

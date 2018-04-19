@@ -33,10 +33,10 @@ class PactTest extends TestCase
 
         $c = new Pact($request, $response, 'desc', 'ver');
 
-        $this->assertSame($request, $c->getRequest());
-        $this->assertSame($response, $c->getResponse());
-        $this->assertEquals('desc', $c->getDescription());
-        $this->assertEquals('ver', $c->getVersion());
+        self::assertSame($request, $c->getRequest());
+        self::assertSame($response, $c->getResponse());
+        self::assertEquals('desc', $c->getDescription());
+        self::assertEquals('ver', $c->getVersion());
     }
 
     public function test_it_throws_exception_if_version_is_unsupported()
@@ -69,6 +69,6 @@ class PactTest extends TestCase
         ];
 
         $normalizer = SerializerFactory::getInstance();
-        $this->assertSame($expected, $normalizer->normalize($pact));
+        self::assertSame($expected, $normalizer->normalize($pact));
     }
 }

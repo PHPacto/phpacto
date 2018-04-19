@@ -94,9 +94,9 @@ class BuilderValidateContractTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
 
-        $this->assertContains('missing.json        ✖ Pact missing', $output);
-        $this->assertContains('invalid.json        ✖ Invalid', $output);
-        $this->assertContains('matching.json       ✔ Matching', $output);
-        $this->assertContains('not-matching.json   ✖ Not matching', $output);
+        self::assertContains('missing.json        ✖ Pact missing', $output);
+        self::assertContains('invalid.json        ✖ Invalid', $output);
+        self::assertContains('matching.json       ✔ Matching', $output);
+        self::assertContains('not-matching.json   ✖ Not matching', $output);
     }
 }

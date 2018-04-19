@@ -57,7 +57,7 @@ class StringLengthRuleTest extends RuleAbstractTest
             'sample' => 'sample',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function matchesTrueProvider()

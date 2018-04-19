@@ -33,7 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class PHPactoTestCaseTest extends TestCase
 {
-    public function test_use_pacto_test_trait()
+    public function test_testcase_use_phpacto_trait()
     {
         $refl = new \ReflectionClass(PHPactoTestCase::class);
         self::assertArrayHasKey(PHPactoTestTrait::class, $refl->getTraits());
@@ -51,10 +51,7 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(RequestInterface::class));
 
-        $testCase = new class() extends PHPactoTestCase {
-        };
-
-        $testCase->assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
+        PHPactoTestCase::assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
     }
 
     public function test_it_asserts_that_pact_matches_response()
@@ -69,10 +66,7 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(ResponseInterface::class));
 
-        $testCase = new class() extends PHPactoTestCase {
-        };
-
-        $testCase->assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
+        PHPactoTestCase::assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
     }
 
     public function test_it_throws_assertion_error_if_request_not_match()
@@ -88,12 +82,9 @@ class PHPactoTestCaseTest extends TestCase
             ->with(self::isInstanceOf(RequestInterface::class))
             ->willThrowException(new MismatchCollection([]));
 
-        $testCase = new class() extends PHPactoTestCase {
-        };
-
         $this->expectException(AssertionFailedError::class);
 
-        $testCase->assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
+        PHPactoTestCase::assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
     }
 
     public function test_it_throws_assertion_error_if_response_not_match()
@@ -109,11 +100,8 @@ class PHPactoTestCaseTest extends TestCase
             ->with(self::isInstanceOf(ResponseInterface::class))
             ->willThrowException(new MismatchCollection([]));
 
-        $testCase = new class() extends PHPactoTestCase {
-        };
-
         $this->expectException(AssertionFailedError::class);
 
-        $testCase->assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
+        PHPactoTestCase::assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
     }
 }

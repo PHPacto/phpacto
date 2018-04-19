@@ -19,34 +19,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Test;
+namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Guzzle\ServerMock;
 use Bigfoot\PHPacto\Loader\FileLoader;
-use Bigfoot\PHPacto\PactInterface;
 use PHPUnit\Framework\TestCase;
 
-class PHPactoTestTraitTest extends TestCase
+class PHPactoTest extends TestCase
 {
-    /**
-     * @var PHPactoTestTrait
-     */
-    private $trait;
-
-    /**
-     * @var FileLoader
-     */
-    private $loader;
-
-    protected function setUp()
+    public function test_it_returns_server_mock()
     {
-        $loader = $this->loader = $this->createMock(FileLoader::class);
+        $phpacto = new PHPacto();
 
-        $this->trait = new class($loader) {
-            use PHPactoTestTrait;
+        self::assertInstanceOf(ServerMock::class, $phpacto->createServerMock());
+    }
 
-            public function __construct(FileLoader $loader)
+    public function test_it_calls_file_loader()
+    {
+        $base_path = 'base_path/';
+
+        $loader = $this->createMock(FileLoader::class);
+
+        // Create PHPacto mock
+        $phpacto = new class($base_path, $loader) extends PHPacto {
+            public function __construct(string $contractsBasePath = null, FileLoader $loader)
             {
+                parent::__construct($contractsBasePath);
+
                 $this->loader = $loader;
             }
 
@@ -57,26 +56,13 @@ class PHPactoTestTraitTest extends TestCase
                 return $this->loader;
             }
         };
-    }
 
-    public function test_it_returns_server_mock()
-    {
-        $method = new \ReflectionMethod($this->trait, 'createServerMock');
-        $method->setAccessible(true);
-        $server = $method->invoke($this->trait);
-
-        self::assertInstanceOf(ServerMock::class, $server);
-    }
-
-    public function test_it_calls_file_loader()
-    {
-        $this->loader
+        $loader
             ->expects(self::once())
-            ->method('loadFromFile');
+            ->method('loadFromFile')
+            ->with('base_path/file.json');
 
-        $method = new \ReflectionMethod($this->trait, 'loadPact');
-        $method->setAccessible(true);
-        $pact = $method->invoke($this->trait, '/file.json');
+        $pact = $phpacto->getPact('file.json');
 
         self::assertInstanceOf(PactInterface::class, $pact);
     }

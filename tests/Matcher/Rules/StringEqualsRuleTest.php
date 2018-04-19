@@ -56,7 +56,7 @@ class StringEqualsRuleTest extends RuleAbstractTest
             'sample' => '',
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()
@@ -69,7 +69,7 @@ class StringEqualsRuleTest extends RuleAbstractTest
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        $this->assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
         self::assertSame('', $rule->getSample());
         self::assertFalse($rule->isCaseSensitive());
     }

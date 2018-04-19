@@ -57,7 +57,7 @@ class EachRuleTest extends RuleAbstractTest
             'sample' => [],
         ];
 
-        $this->assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function matchesTrueProvider()

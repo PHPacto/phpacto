@@ -33,7 +33,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-class ProxyController
+class MockProxyController
 {
     /**
      * @var Client
