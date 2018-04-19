@@ -13,10 +13,10 @@
     "require": {
         "php": "^7.1",
         "psr/http-message": "^1",
-        "symfony/console": "^2.8|^3",
-        "symfony/finder": "^2.3|^3",
-        "symfony/serializer": "^3.3",
-        "symfony/yaml": "^2|^3",
+        "symfony/console": "^2.8|^3|^4",
+        "symfony/finder": "^2.3|^3|^4",
+        "symfony/serializer": "^3.3|^4",
+        "symfony/yaml": "^2|^3|^4",
         "vlucas/phpdotenv": "^2.4",
         "zendframework/zend-diactoros": "^1.3"
     },
