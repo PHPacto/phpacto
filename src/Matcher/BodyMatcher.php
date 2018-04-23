@@ -22,6 +22,7 @@
 namespace Bigfoot\PHPacto\Matcher;
 
 use Bigfoot\PHPacto\BodyEncoder;
+use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
 
@@ -52,7 +53,11 @@ class BodyMatcher implements MessageMatcher
             $mismatches = [];
 
             /** @var Rule $rule */
-            foreach ($rules as $rule) {
+            foreach ($rules as $i => $rule) {
+                if (!is_numeric($i)) {
+                    throw new TypeMismatch('array', 'string');
+                }
+
                 try {
                     $rule->assertMatch($body);
                 } catch (Mismatches\Mismatch $mismatch) {

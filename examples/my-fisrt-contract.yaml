@@ -10,5 +10,5 @@ response:
     body:
         status: OK
         messages:
-          - This is your first API contract
-          - Read more on https://github.com/bigfoot90/phpacto
+            - This is your first API contract
+            - Read more on https://github.com/bigfoot90/phpacto

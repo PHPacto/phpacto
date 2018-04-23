@@ -103,6 +103,14 @@ class PactMatchesResponse extends PHPUnitConstraint
      */
     protected function failureDescription($other, Mismatch $mismatch = null): string
     {
+        function array_map_assoc(callable $f, array $a) {
+            return array_column(array_map($f, array_keys($a), $a), 1, 0);
+        }
+
+        $func = function ($k, $v) {
+            return [$k, strtoupper($k). ":\n" .$v];
+        };
+
         if ($mismatch instanceof MismatchCollection) {
             $mimatchesArray = $mismatch->toArrayFlat();
 
@@ -110,7 +118,7 @@ class PactMatchesResponse extends PHPUnitConstraint
                 "%s (%d rules failed)\n%s",
                 $this->toString(),
                 count($mimatchesArray),
-                implode("\n", $mimatchesArray)
+                implode("\n", array_map_assoc($func, $mimatchesArray))
             );
         }
 

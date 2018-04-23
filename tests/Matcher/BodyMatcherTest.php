@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Matcher;
 
+use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
@@ -238,6 +239,34 @@ class BodyMatcherTest extends TestCase
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches['a']);
+
+            return;
+        }
+
+        self::fail('This test should end in the catch');
+    }
+
+    /**
+     * @depends test_it_match_if_rules_are_satisfied_with_body_json_encoded
+     * @depends test_it_throws_mismatch_if_key_is_missing_with_body_json_encoded
+     */
+    public function test_it_throws_mismatch_if_expected_array_but_got_string()
+    {
+        $rules = [
+            'a' => $this->rule->isMatching(),
+        ];
+
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('a string');
+
+        $message = (new Request())
+            ->withHeader('Content-Type', 'text/html')
+            ->withBody($stream);
+
+        try {
+            $this->matcher->assertMatch($rules, $message);
+        } catch (TypeMismatch $mismatch) {
+            self::assertInstanceOf(Mismatches\TypeMismatch::class, $mismatch);
 
             return;
         }
