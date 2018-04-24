@@ -148,13 +148,13 @@ class PactRequest implements PactRequestInterface
         try {
             $this->method->assertMatch($request->getMethod());
         } catch (Mismatch $mismatch) {
-            $mismatches['Method'] = $mismatch;
+            $mismatches['METHOD'] = $mismatch;
         }
 
         try {
             $this->uri->assertMatch((string) $request->getUri());
         } catch (Mismatch $mismatch) {
-            $mismatches['Uri'] = $mismatch;
+            $mismatches['URI'] = $mismatch;
         }
 
         if ($this->headers) {
@@ -162,7 +162,7 @@ class PactRequest implements PactRequestInterface
                 $matcher = new HeadersMatcher();
                 $matcher->assertMatch($this->headers, $request);
             } catch (Mismatch $mismatch) {
-                $mismatches['Headers'] = $mismatch;
+                $mismatches['HEADERS'] = $mismatch;
             }
         }
 
@@ -171,7 +171,7 @@ class PactRequest implements PactRequestInterface
                 $matcher = new BodyMatcher();
                 $matcher->assertMatch($this->body, $request);
             } catch (Mismatch $mismatch) {
-                $mismatches['Body'] = $mismatch;
+                $mismatches['BODY'] = $mismatch;
             }
         }
 

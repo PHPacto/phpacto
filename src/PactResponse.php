@@ -131,7 +131,7 @@ class PactResponse implements PactResponseInterface
         try {
             $this->statusCode->assertMatch($request->getStatusCode());
         } catch (Mismatch $mismatch) {
-            $mismatches['Status code'] = $mismatch;
+            $mismatches['STATUS CODE'] = $mismatch;
         }
 
         if ($this->headers) {
@@ -139,7 +139,7 @@ class PactResponse implements PactResponseInterface
                 $matcher = new HeadersMatcher();
                 $matcher->assertMatch($this->headers, $request);
             } catch (Mismatch $mismatch) {
-                $mismatches['Headers'] = $mismatch;
+                $mismatches['HEADERS'] = $mismatch;
             }
         }
 
@@ -148,7 +148,7 @@ class PactResponse implements PactResponseInterface
                 $matcher = new BodyMatcher();
                 $matcher->assertMatch($this->body, $request);
             } catch (Mismatch $mismatch) {
-                $mismatches['Body'] = $mismatch;
+                $mismatches['BODY'] = $mismatch;
             }
         }
 

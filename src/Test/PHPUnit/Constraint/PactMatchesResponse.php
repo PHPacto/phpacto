@@ -108,17 +108,17 @@ class PactMatchesResponse extends PHPUnitConstraint
         }
 
         $func = function ($k, $v) {
-            return [$k, strtoupper($k). ":\n" .$v];
+            return [$k, $k. ":\n" .$v];
         };
 
         if ($mismatch instanceof MismatchCollection) {
-            $mimatchesArray = $mismatch->toArrayFlat();
+            $mismatchesArray = $mismatch->toArrayFlat();
 
             return sprintf(
                 "%s (%d rules failed)\n%s",
                 $this->toString(),
-                count($mimatchesArray),
-                implode("\n", array_map_assoc($func, $mimatchesArray))
+                count($mismatchesArray),
+                implode("\n", array_map_assoc($func, $mismatchesArray))
             );
         }
 
