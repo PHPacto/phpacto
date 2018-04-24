@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Loader;
 
+use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
@@ -56,6 +57,8 @@ class FileLoader
             $pact = $this->serializer->deserialize(file_get_contents($path), PactInterface::class, $format);
 
             return $pact;
+        } catch (Mismatch $mismatch) {
+            throw $mismatch;
         } catch (\Exception | \Error $e) {
             throw new \Exception(sprintf('File `%s` do not contains a valid pact', $path), 0, $e);
         }

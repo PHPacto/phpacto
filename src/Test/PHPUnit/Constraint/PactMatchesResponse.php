@@ -103,9 +103,9 @@ class PactMatchesResponse extends PHPUnitConstraint
      */
     protected function failureDescription($other, Mismatch $mismatch = null): string
     {
-        function array_map_assoc(callable $f, array $a) {
+        $array_map_assoc = function (callable $f, array $a) {
             return array_column(array_map($f, array_keys($a), $a), 1, 0);
-        }
+        };
 
         $func = function ($k, $v) {
             return [$k, $k. ":\n" .$v];
@@ -118,7 +118,7 @@ class PactMatchesResponse extends PHPUnitConstraint
                 "%s (%d rules failed)\n%s",
                 $this->toString(),
                 count($mismatchesArray),
-                implode("\n", array_map_assoc($func, $mismatchesArray))
+                implode("\n", $array_map_assoc($func, $mismatchesArray))
             );
         }
 

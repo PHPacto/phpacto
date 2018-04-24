@@ -27,7 +27,9 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Request;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 
 class PactRequest implements PactRequestInterface
@@ -100,7 +102,7 @@ class PactRequest implements PactRequestInterface
         return $this->body;
     }
 
-    public function getSample(): RequestInterface
+    public function getSample(): ServerRequestInterface
     {
         $method = strtoupper($this->method->getSample());
         $uri = $this->uri->getSample();
@@ -136,7 +138,7 @@ class PactRequest implements PactRequestInterface
         $stream = new Stream('php://memory', 'w');
         $stream->write(BodyEncoder::encode($body, $contentType));
 
-        $response = new Request($uri, $method, $stream, $headers);
+        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], is_array($body) ? $body : []);
 
         return $response;
     }
@@ -152,7 +154,8 @@ class PactRequest implements PactRequestInterface
         }
 
         try {
-            $this->uri->assertMatch((string) $request->getUri());
+            $uri = urldecode((string) $request->getUri());
+            $this->uri->assertMatch($uri);
         } catch (Mismatch $mismatch) {
             $mismatches['URI'] = $mismatch;
         }

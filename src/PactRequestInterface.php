@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface PactRequestInterface
 {
@@ -49,7 +50,7 @@ interface PactRequestInterface
     /**
      * Get PSR7 Request sample.
      */
-    public function getSample(): RequestInterface;
+    public function getSample(): ServerRequestInterface;
 
     /**
      * Match against a PSR7 Request.

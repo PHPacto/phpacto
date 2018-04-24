@@ -53,7 +53,7 @@ class ContainsRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => ContainsRule::class,
-            'rule' => ['@rule' => get_class($childRule)],
+            'rules' => ['@rule' => get_class($childRule)],
             'sample' => [1, 2, 3],
         ];
 

@@ -49,6 +49,15 @@ class LowerRule extends AbstractRule
         return $this->value;
     }
 
+    public function getSample()
+    {
+        if (null !== $this->sample) {
+            return $this->sample;
+        }
+
+        return $this->value - 1;
+    }
+
     public function assertMatch($test): void
     {
         if (is_string($this->value) && !is_string($test)) {

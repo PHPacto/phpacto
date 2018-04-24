@@ -91,7 +91,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     {
         $class = rtrim($class, '[]');
 
-        if (Rule::class !== $class) {
+        if ($class !== Rule::class) {
             throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
         }
 

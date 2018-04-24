@@ -35,7 +35,7 @@ class RegexpRule extends StringRule
      */
     protected $multiLine;
 
-    public function __construct(string $pattern, $sample = null, bool $caseSensitive = false, bool $multiLine = false)
+    public function __construct(string $pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
     {
         $this->assertSupport($this->pattern = $pattern);
         $this->multiLine = $multiLine;

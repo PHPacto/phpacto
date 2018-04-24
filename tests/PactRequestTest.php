@@ -24,9 +24,11 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Request;
@@ -76,7 +78,7 @@ class PactRequestTest extends TestCase
         $request
             ->expects(self::once())
             ->method('getSample')
-            ->willReturn($this->createMock(RequestInterface::class));
+            ->willReturn($this->createMock(ServerRequestInterface::class));
 
         $request
             ->expects(self::once())
@@ -129,6 +131,20 @@ class PactRequestTest extends TestCase
         );
 
         $request->assertMatch(new Request('/', 'Get', 'php://memory', ['x' => 'any']));
+
+        self::assertTrue(true, 'No exceptions should be thrown');
+    }
+
+    public function test_it_match_with_request_query_url_encoded()
+    {
+        $request = new PactRequest(
+            $this->rule->hasSample('get'),
+            new EqualsRule('/url-encoded?param[key]=value'),
+            [],
+            $this->rule->hasSample('body')
+        );
+
+        $request->assertMatch(new Request('/url-encoded?param%5Bkey%5D=value', 'Get', 'php://memory'));
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }

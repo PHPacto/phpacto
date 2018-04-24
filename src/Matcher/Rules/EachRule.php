@@ -26,20 +26,27 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class EachRule extends AbstractRule
 {
     /**
-     * @var Rule
+     * @var Rule[]
      */
-    protected $rule;
+    protected $rules;
 
-    public function __construct(Rule $rule, $sample = null)
+    /**
+     * @param Rule|Rule[] $rules
+     * @param mixed  $sample
+     */
+    public function __construct($rules, $sample = null)
     {
-        $this->rule = $rule;
+        $this->assertSupport($this->rules = $rules);
 
         parent::__construct($sample);
     }
 
-    public function getRule(): Rule
+    /**
+     * @return Rule|Rule[]
+     */
+    public function getRules()
     {
-        return $this->rule;
+        return $this->rules;
     }
 
     public function assertMatch($test): void
@@ -50,16 +57,73 @@ class EachRule extends AbstractRule
 
         $mismatches = [];
 
-        foreach ($test as $item) {
+        foreach ($test as $key => $item) {
             try {
-                $this->rule->assertMatch($item);
+                if ($this->rules instanceof Rule) {
+                    $this->rules->assertMatch($item);
+                } elseif (is_array($this->rules)) {
+                    if (!is_array($item)) {
+                        throw new Mismatches\TypeMismatch('array', gettype($item));
+                    }
+
+                    $itemMismatches = [];
+                    foreach ($this->rules as $rKey => $rule) {
+                        if (!array_key_exists($rKey, $item)) {
+                            throw new Mismatches\KeyNotFoundMismatch($rKey);
+                        }
+
+                        try {
+                            $rule->assertMatch($item[$rKey]);
+                        } catch (Mismatches\Mismatch $e) {
+                            $itemMismatches[$rKey] = $e;
+                        }
+                    }
+
+                    if ($itemMismatches) {
+                        throw new Mismatches\MismatchCollection($itemMismatches, 'One or more of the {{ count }} values are not matching the rule');
+                    }
+                }
             } catch (Mismatches\Mismatch $e) {
-                $mismatches[] = $e;
+                $mismatches[$key] = $e;
             }
         }
 
         if ($mismatches) {
             throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} values not matching the rule');
+        }
+    }
+
+    public function getSample()
+    {
+        if (null !== $this->sample) {
+            return $this->sample;
+        }
+
+        if ($this->rules instanceof Rule) {
+            return $this->rules->getSample();
+        }
+
+        $sample = [];
+        foreach ($this->rules as $key => $rule) {
+            $sample[$key] = $rule->getSample();
+        }
+
+        return [$sample];
+    }
+
+    /**
+     * @param Rule|Rule[] $rules
+     */
+    protected function assertSupport($rules): void
+    {
+        if (is_array($rules)) {
+            foreach ($rules as $rule) {
+                if (!$rule instanceof Rule) {
+                    throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Each item should be an instance of {{ expected }}');
+                }
+            }
+        } elseif (!$rules instanceof Rule) {
+            throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Should be an instance of {{ expected }}');
         }
     }
 }

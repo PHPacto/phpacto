@@ -85,11 +85,9 @@ class ValidateContract extends BaseCommand
 
             self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>', $rootDir);
         } catch (\Throwable $e) {
-            $e = $e->getPrevious();
-
             if ($e instanceof Mismatch) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $rootDir);
-            } elseif ('Syntax error' === $e->getMessage()) {
+            } elseif ('Syntax error' === $e->getPrevious()->getMessage()) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>', $rootDir);
             } else {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Malformed</>', $rootDir);

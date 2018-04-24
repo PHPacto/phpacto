@@ -100,6 +100,7 @@ abstract class SerializerFactory
             'not' => Rules\NotEqualsRule::class,
             'or' => Rules\OrRule::class,
             'regex' => Rules\RegexpRule::class,
+            'str' => Rules\StringRule::class,
             'strBegins' => Rules\StringBeginsRule::class,
             'strContains' => Rules\StringContainsRule::class,
             'strEnds' => Rules\StringEndsRule::class,

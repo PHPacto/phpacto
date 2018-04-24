@@ -59,4 +59,13 @@ class CountRule extends AbstractRule
             );
         }
     }
+
+    public function getSample()
+    {
+        if (null === $this->sample) {
+            throw new \Exception('Count rule does not have a sample');
+        }
+
+        return $this->sample;
+    }
 }

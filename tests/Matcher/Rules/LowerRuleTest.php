@@ -48,12 +48,12 @@ class LowerRuleTest extends RuleAbstractTest
 {
     public function test_it_is_normalizable()
     {
-        $rule = new LowerOrEqualRule(5, 5);
+        $rule = new LowerRule(5, 4);
 
         $expected = [
-            '@rule' => LowerOrEqualRule::class,
+            '@rule' => LowerRule::class,
             'value' => 5,
-            'sample' => 5,
+            'sample' => 4,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

@@ -53,7 +53,7 @@ class EachRuleTest extends RuleAbstractTest
 
         $expected = [
             '@rule' => EachRule::class,
-            'rule' => ['@rule' => get_class($childRule)],
+            'rules' => ['@rule' => get_class($childRule)],
             'sample' => [],
         ];
 
