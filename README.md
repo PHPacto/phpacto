@@ -94,7 +94,7 @@ PHPUnit\Util\Blacklist\Blacklist::$blacklistedClassNames[__CLASS__] = 1;
 
 # Testing your project with PHPUnit and PHPacto
 
-PHPacto is compatible with `PHP ^7.1|^7.2`, `PHPUnit ^6|^7`, `Guzzle ^5.3.1|^6`.
+PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^6|^7`, `Guzzle ^5.3.1|^6`.
 
 If your project satisfies this requirements, then you can add `bigfoot90/phpacto` into your composer dev requirements and test 
 your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any application.
