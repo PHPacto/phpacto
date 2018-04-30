@@ -105,14 +105,13 @@ class RegexpRuleTest extends RuleAbstractTest
         $rule->__construct('pattern', 'content');
     }
 
-    /**
-     * @depends testSampleIsMatchingRule
-     */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
+        $rule = new RegexpRule('.');
+
         $this->expectException(Mismatches\ValueMismatch::class);
 
-        new RegexpRule('.', '');
+        $rule->assertMatch('');
     }
 
     public function matchesTrueProvider()
@@ -131,7 +130,6 @@ class RegexpRuleTest extends RuleAbstractTest
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *
@@ -140,12 +138,14 @@ class RegexpRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
+        $rule = new RegexpRule($ruleValue);
+
         if (!$shouldMatch) {
             $this->expectException(Mismatches\ValueMismatch::class);
             $this->expectExceptionMessage('not matching the regex expression');
         }
 
-        new RegexpRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }

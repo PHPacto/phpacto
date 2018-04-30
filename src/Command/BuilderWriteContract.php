@@ -21,7 +21,7 @@
 
 namespace Bigfoot\PHPacto\Command;
 
-use Bigfoot\PHPacto\Loader\FileLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,7 +36,7 @@ class BuilderWriteContract extends BaseCommand
         $this
             ->setName('builder:write')
             ->setDescription('Run contract builders and write or update all contracts')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>('.implode('|', FileLoader::getSupportedFormats()).')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>('.implode('|', PactLoader::getSupportedFormats()).')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
@@ -45,7 +45,7 @@ class BuilderWriteContract extends BaseCommand
         $format = $input->getOption('format');
         $path = $input->getArgument('path');
 
-        if (!FileLoader::isFormatSupported($format)) {
+        if (!PactLoader::isFormatSupported($format)) {
             throw new \Exception('Unsupported file format');
         }
 

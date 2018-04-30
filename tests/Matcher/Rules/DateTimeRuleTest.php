@@ -113,14 +113,13 @@ class DateTimeRuleTest extends RuleAbstractTest
         $rule->__construct('d-m-Y', '23-03-1990');
     }
 
-    /**
-     * @depends testSampleIsMatchingRule
-     */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
+        $rule = new DateTimeRule('d-m-Y');
+
         $this->expectException(Mismatches\ValueMismatch::class);
 
-        new DateTimeRule('d-m-Y', '1990');
+        $rule->assertMatch('1990');
     }
 
     public function matchesTrueProvider()
@@ -139,7 +138,6 @@ class DateTimeRuleTest extends RuleAbstractTest
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *
@@ -148,11 +146,13 @@ class DateTimeRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
+        $rule = new DateTimeRule($ruleValue);
+
         if (!$shouldMatch) {
             $this->expectException(Mismatches\ValueMismatch::class);
         }
 
-        new DateTimeRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if thrown if matching');
     }

@@ -48,29 +48,24 @@ class MockController
 
     public function action(RequestInterface $request): ResponseInterface
     {
-        $pact = $this->getPactMatchingRequest($request);
-
-        return $pact->getResponse()->getSample();
-    }
-
-    protected function getPactMatchingRequest(RequestInterface $request): PactInterface
-    {
         $uri = (new Uri())
             ->withPath($request->getUri()->getPath())
             ->withQuery($request->getUri()->getQuery());
 
         $request = $request->withUri($uri);
 
-        return $this->findMatchingPact($request);
+        $pact = $this->findMatchingPact($request);
+
+        return $pact->getResponse()->getSample();
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
     {
-        foreach ($this->pacts as $filepath => $pact) {
+        foreach ($this->pacts as $contractLocation => $pact) {
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(sprintf('Using contract from file %s', $filepath));
+                $this->logger->log(sprintf('Using contract from file %s', $contractLocation));
 
                 return $pact;
             } catch (Mismatch $e) {

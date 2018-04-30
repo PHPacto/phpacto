@@ -113,43 +113,45 @@ class NotEqualsRuleTest extends RuleAbstractTest
         $rule->__construct(5, 6);
     }
 
-    /**
-     * @depends testSampleIsMatchingRule
-     */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
+        $rule = new NotEqualsRule(5);
+
         $this->expectException(Mismatches\ValueMismatch::class);
         $this->expectExceptionMessage('should be different');
 
-        new NotEqualsRule(5, 5);
+        $rule->assertMatch(5);
     }
 
     public function matchesFalseProvider()
     {
         return [
             [false, 5, 5],
+            [false, 5.0, '5'],
+            [false, 1.0, 1.0],
             [false, 1, 1.0],
             [false, 'a', 'a'],
             [false, '', ''],
             [false, true, true],
             [false, false, false],
             [false, null, null],
+            [false, '', 0],
+            [false, 1, true],
+            [false, 0, false],
+            [false, null, -1],
         ];
     }
 
     public function matchesTrueProvider()
     {
         return [
-            [true, 5, '5'],
-            [true, '', 0],
-            [true, 1, true],
-            [true, 0, false],
-            [true, null, -1],
+            [true, 5, 6],
+            [true, 'a', 'b'],
+            [true, false, true],
         ];
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *
@@ -158,13 +160,13 @@ class NotEqualsRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
-        $this->markTestIncomplete('check later');
+        $rule = new NotEqualsRule($ruleValue);
 
         if (!$shouldMatch) {
-            $this->expectException(Mismatches\ValueMismatch::class);
+            $this->expectExceptionMessageRegExp('/(was expected|should be different)/');
         }
 
-        new NotEqualsRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }

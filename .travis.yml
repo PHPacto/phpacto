@@ -25,7 +25,7 @@ before_script:
   - if [ "$dependencies" = "highest" ]; then composer update --prefer-stable -n; fi;
 
 script:
-  - phpunit --coverage-clover=coverage.xml
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

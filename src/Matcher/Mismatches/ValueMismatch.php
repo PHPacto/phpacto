@@ -35,7 +35,7 @@ class ValueMismatch extends Mismatch
     {
         $this->message = str_replace(
             ['{{ expected }}', '{{ actual }}'],
-            [self::strJoin((array) $expected), self::wrap((string) $actual)],
+            [self::strJoin((array) $expected), self::wrap($actual)],
             $message
         );
         $this->expected = $expected;
@@ -74,12 +74,30 @@ class ValueMismatch extends Mismatch
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      *
      * @return string
      */
-    protected static function wrap(string $value): string
+    protected static function wrap($value): string
     {
-        return sprintf('`%s`', $value);
+        if ($value === null) return 'NULL';
+        if ($value === false) return 'FALSE';
+        if ($value === true) return 'TRUE';
+        if (is_float($value)) return sprintf('%G', $value);
+        if (is_int($value)) return $value;
+
+        switch ($value) {
+            case 'array':
+            case 'double':
+            case 'boolean':
+            case 'float':
+            case 'number':
+            case 'object':
+            case 'integer':
+            case 'string':
+                return sprintf('`%s`', $value);
+        }
+
+        return sprintf('"%s"', (string) $value);
     }
 }

@@ -74,7 +74,7 @@ class UuidRuleTest extends RuleAbstractTest
     /**
      * @depends testSampleIsMatchingRule
      */
-    public function testExceptionIsTrhownIfSampleIsNotMatching()
+    public function testExceptionIsTrhownIfSampleIsNotUUID()
     {
         $this->expectException(Mismatches\ValueMismatch::class);
 
@@ -98,6 +98,7 @@ class UuidRuleTest extends RuleAbstractTest
             [false, 0],
             [false, 0.1],
             [false, ''],
+            [false, 'n0t-4n-uu1d'],
             [false, null],
             [false, false],
             [false, true],
@@ -105,7 +106,6 @@ class UuidRuleTest extends RuleAbstractTest
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *

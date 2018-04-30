@@ -55,6 +55,10 @@ class NotEqualsRule extends AbstractRule
             }
         }
 
+        if ($types === ['integer', 'double'] && $this->value == $test) {
+            throw new Mismatches\ValueMismatch('Value {{ actual }} should be different than {{ expected }}', $this->value, $test);
+        }
+
         if ($this->value === $test) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} should be different than {{ expected }}', $this->value, $test);
         }

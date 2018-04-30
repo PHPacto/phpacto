@@ -21,7 +21,7 @@
 
 use Bigfoot\PHPacto\Controller\MockController;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\FileLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Response;
@@ -38,7 +38,7 @@ $logger->log(sprintf(
     $_SERVER['REQUEST_URI']
 ));
 
-$pacts = (new FileLoader(SerializerFactory::getInstance()))
+$pacts = (new PactLoader(SerializerFactory::getInstance()))
     ->loadFromDirectory(CONTRACTS_DIR);
 
 if (0 === count($pacts)) {

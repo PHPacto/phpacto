@@ -26,7 +26,7 @@ use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
 
-class FileLoader
+class PactLoader
 {
     const CONFIG_EXTS = ['json', 'yml', 'yaml'];
 
@@ -80,7 +80,7 @@ class FileLoader
             $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(sprintf('No contract builders found in `%s`', $path));
+                throw new \Exception(sprintf('No contracts found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {

@@ -112,15 +112,14 @@ class GreaterRuleTest extends RuleAbstractTest
         $rule->__construct(5, 6);
     }
 
-    /**
-     * @depends testSampleIsMatchingRule
-     */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
+        $rule = new GreaterRule(5);
+
         $this->expectException(Mismatches\ValueMismatch::class);
         $this->expectExceptionMessage('should be greater than');
 
-        new GreaterRule(5, 5);
+        $rule->assertMatch(5);
     }
 
     public function matchesTrueProvider()
@@ -142,7 +141,6 @@ class GreaterRuleTest extends RuleAbstractTest
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *
@@ -151,12 +149,14 @@ class GreaterRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
+        $rule = new GreaterRule($ruleValue);
+
         if (!$shouldMatch) {
             $this->expectException(Mismatches\ValueMismatch::class);
             $this->expectExceptionMessage('should be greater than');
         }
 
-        new GreaterRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }

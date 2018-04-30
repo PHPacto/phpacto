@@ -27,16 +27,17 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Logger\Logger;
 use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactInterface;
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Zend\Diactoros\Uri;
 
 class MockProxyController
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -46,32 +47,30 @@ class MockProxyController
     private $logger;
 
     /**
-     * @var UriInterface
+     * @var array
      */
-    private $uri;
+    private $proxyTo;
 
     /**
      * @var string
      */
     private $contractsDir;
 
-    public function __construct(Client $client, Logger $logger, UriInterface $uri, string $contractsDir)
+    public function __construct(ClientInterface $client, Logger $logger, string $proxyTo, string $contractsDir)
     {
         $this->client = $client;
         $this->logger = $logger;
-        $this->uri = $uri;
+        $this->proxyTo = parse_url($proxyTo);
         $this->contractsDir = $contractsDir;
     }
 
     public function action(RequestInterface $request): ResponseInterface
     {
-        $pactRequest = PactRequestFactory::createFromPSR7($request);
-
-        $request = $pactRequest->getSample();
-
         $response = $this->makeProxyCall($request);
 
         $pactResponse = PactResponseFactory::createFromPSR7($response);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
 
         $dateStr = date('Y-m-d H:i:s');
 
@@ -82,15 +81,16 @@ class MockProxyController
         return $pactResponse->getSample();
     }
 
-    public function makeProxyCall(RequestInterface $request): ResponseInterface
+    private function makeProxyCall(RequestInterface $request): ResponseInterface
     {
+        $uri = $this->getProxiedUri($request->getUri());
         $method = $request->getMethod();
         $headers = $request->getHeaders();
         $body = (string) $request->getBody();
 
         try {
             // Proxy the HTTP request
-            return $this->client->request($method, $this->uri, [
+            return $this->client->request($method, $uri, [
                 'headers' => $headers,
                 'body' => $body ?: null,
                 'allow_redirects' => false,
@@ -104,7 +104,7 @@ class MockProxyController
         }
     }
 
-    protected function createContractFile(PactInterface $pact, string $dateStr): void
+    private function createContractFile(PactInterface $pact, string $dateStr): void
     {
         $filename = sprintf('%s/%s %s.yaml', $this->contractsDir, $dateStr, (float) (microtime()) * 1000000);
 
@@ -112,5 +112,16 @@ class MockProxyController
         file_put_contents($filename, $serializer->serialize($pact, 'yaml'));
 
         $this->logger->log('Contract wrote to '.realpath($filename));
+    }
+
+    private function getProxiedUri(UriInterface $uri): UriInterface
+    {
+        return (new Uri())
+            ->withScheme($this->proxyTo['scheme'] ?? 'http')
+            ->withHost($this->proxyTo['host'] ?? 'localhost')
+            ->withPort($this->proxyTo['port'] ?? (@$this->proxyTo['scheme'] === 'https' ? 443 : 80))
+            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/') . $uri->getPath())
+            ->withQuery($uri->getQuery())
+            ->withFragment($uri->getFragment());
     }
 }

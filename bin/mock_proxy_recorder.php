@@ -46,19 +46,11 @@ if (!getenv('RECORDER_PROXY_TO')) {
     throw new \Exception(sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
 }
 
-define('PROXY_TO', parse_url(getenv('RECORDER_PROXY_TO')));
-
 $httpClient = new Client();
+$controller = new MockProxyController($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
-$handler = function (RequestInterface $request) use ($logger, $httpClient): ResponseInterface {
+$handler = function (RequestInterface $request) use ($logger, $controller): ResponseInterface {
     try {
-        $uri = $request->getUri()
-            ->withScheme(@PROXY_TO['scheme'] ?: 'http')
-            ->withHost(@PROXY_TO['host'] ?: 'localhost')
-            ->withPort(@PROXY_TO['port'] ?: 'https' === @PROXY_TO['scheme'] ? 443 : 80);
-
-        $controller = new MockProxyController($httpClient, $logger, $uri, CONTRACTS_DIR);
-
         $response = $controller->action($request);
 
         $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));

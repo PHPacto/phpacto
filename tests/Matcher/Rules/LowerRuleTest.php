@@ -112,15 +112,14 @@ class LowerRuleTest extends RuleAbstractTest
         $rule->__construct(5, 4);
     }
 
-    /**
-     * @depends testSampleIsMatchingRule
-     */
     public function testExceptionIsTrhownIfSampleIsNotMatching()
     {
+        $rule = new LowerRule(5);
+
         $this->expectException(Mismatches\ValueMismatch::class);
         $this->expectExceptionMessage('should be lower than');
 
-        new LowerRule(5, 5);
+        $rule->assertMatch(5);
     }
 
     public function matchesTrueProvider()
@@ -142,7 +141,6 @@ class LowerRuleTest extends RuleAbstractTest
     }
 
     /**
-     * @depends testSampleIsMatchingRule
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
      *
@@ -151,12 +149,14 @@ class LowerRuleTest extends RuleAbstractTest
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
+        $rule = new LowerRule($ruleValue);
+
         if (!$shouldMatch) {
             $this->expectException(Mismatches\ValueMismatch::class);
             $this->expectExceptionMessage('should be lower than');
         }
 
-        new LowerRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }

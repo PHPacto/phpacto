@@ -23,8 +23,8 @@
     "require-dev": {
         "guzzlehttp/guzzle": "^5.3.1|^6",
         "mikey179/vfsStream": "^1.6",
-        "phpunit/php-code-coverage": "^5|^6",
-        "phpunit/phpunit": "^6|^7"
+        "phpunit/php-code-coverage": "^6",
+        "phpunit/phpunit": "^7"
     },
     "conflict": {
         "phpunit/phpunit": "<6.0"

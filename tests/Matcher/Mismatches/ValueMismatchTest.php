@@ -29,7 +29,7 @@ class ValueMismatchTest extends TestCase
     {
         $miss = new ValueMismatch('Was expected {{ expected }}, instead got {{ actual }}', 'expected', 'actual');
 
-        self::assertEquals('Was expected `expected`, instead got `actual`', $miss->getMessage());
+        self::assertEquals('Was expected "expected", instead got "actual"', $miss->getMessage());
     }
 
     public function test_is_has_actual_and_expected_values()

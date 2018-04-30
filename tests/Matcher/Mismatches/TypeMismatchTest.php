@@ -29,7 +29,7 @@ class TypeMismatchTest extends TestCase
     {
         $miss = new TypeMismatch('expected', 'actual', 'Type {{ expected }} was expected, but got {{ actual }} instead');
 
-        self::assertEquals('Type `expected` was expected, but got `actual` instead', $miss->getMessage());
+        self::assertEquals('Type "expected" was expected, but got "actual" instead', $miss->getMessage());
     }
 
     public function test_is_has_actual_and_expected_values()

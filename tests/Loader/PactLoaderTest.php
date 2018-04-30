@@ -28,7 +28,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
-class FileLoaderTest extends TestCase
+class PactLoaderTest extends TestCase
 {
     /**
      * @var vfsStreamDirectory
@@ -47,6 +47,7 @@ class FileLoaderTest extends TestCase
         // Define my virtual file system
         $directory = [
             'empty.json' => '',
+            'empty-directory' => [],
             'contracts' => [
                 'pact.json' => json_encode([
                     'version' => 'dev',
@@ -72,7 +73,7 @@ class FileLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_file_not_found()
     {
-        $loader = new FileLoader($this->serializer);
+        $loader = new PactLoader($this->serializer);
 
         $this->expectExceptionMessage('not exist');
 
@@ -81,7 +82,7 @@ class FileLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_is_not_a_valid_contract()
     {
-        $loader = new FileLoader($this->serializer);
+        $loader = new PactLoader($this->serializer);
 
         $this->expectExceptionMessage('do not contains a valid pact');
 
@@ -90,7 +91,7 @@ class FileLoaderTest extends TestCase
 
     public function test_it_reads_file_and_returns_a_pact()
     {
-        $loader = new FileLoader($this->serializer);
+        $loader = new PactLoader($this->serializer);
 
         $pact = $loader->loadFromFile($this->fs->url().'/contracts/pact.json');
 
@@ -99,7 +100,7 @@ class FileLoaderTest extends TestCase
 
     public function test_it_returns_pact_array_from_directory()
     {
-        $loader = $this->getMockBuilder(FileLoader::class)
+        $loader = $this->getMockBuilder(PactLoader::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
@@ -113,5 +114,32 @@ class FileLoaderTest extends TestCase
 
         self::assertCount(1, $pacts);
         self::assertInstanceOf(PactInterface::class, current($pacts));
+    }
+
+    public function test_it_throws_exception_if_directory_does_not_exists()
+    {
+        $loader = $this->getMockBuilder(PactLoader::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['loadFromDirectory'])
+            ->getMock();
+
+        $this->expectExceptionMessageRegExp('/^Directory .* does not exist$/');
+
+        $pacts = $loader->loadFromDirectory($this->fs->url().'/not-a-directory');
+
+        self::assertCount(1, $pacts);
+        self::assertInstanceOf(PactInterface::class, current($pacts));
+    }
+
+    public function test_it_throws_exception_if_any_pact_was_fount_in_directory()
+    {
+        $loader = $this->getMockBuilder(PactLoader::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['loadFromDirectory'])
+            ->getMock();
+
+        $this->expectExceptionMessage('No contracts found');
+
+        $pacts = $loader->loadFromDirectory($this->fs->url().'/empty-directory');
     }
 }

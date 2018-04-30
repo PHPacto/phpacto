@@ -77,7 +77,7 @@ abstract class SerializerFactory
     {
         return [
             new JsonEncoder(new JsonEncode(JSON_PRETTY_PRINT), new JsonDecode(true)),
-            new YamlEncoder(null, null, ['yaml_inline' => INF, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
+            new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
         ];
     }
 

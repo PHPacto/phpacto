@@ -22,7 +22,7 @@
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\FileLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 
 class PHPacto
 {
@@ -47,7 +47,7 @@ class PHPacto
             return new Guzzle\ServerMock5();
         }
 
-        elseif (version_compare($guzzleVersion, 7, '<')) {
+        if (version_compare($guzzleVersion, 7, '<')) {
             return new Guzzle\ServerMock6();
         }
 
@@ -66,10 +66,10 @@ class PHPacto
     }
 
     /**
-     * @return FileLoader
+     * @return PactLoader
      */
-    protected function getLoader(): FileLoader
+    protected function getLoader(): PactLoader
     {
-        return new FileLoader(SerializerFactory::getInstance());
+        return new PactLoader(SerializerFactory::getInstance());
     }
 }
