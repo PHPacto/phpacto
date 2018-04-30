@@ -35,10 +35,14 @@ foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] a
 }
 
 // Load environment
-define('ROOT', getenv('PWD'));
+$_root = getenv('PWD');
 
-if (file_exists(ROOT.'/.env')) {
-    (new Dotenv\Dotenv(ROOT))->load();
+if (class_exists('Dotenv\Dotenv') && file_exists($_root.'/.env')) {
+    (new Dotenv\Dotenv($_root))->load();
 }
 
-define('CONTRACTS_DIR', ROOT.'/'.getenv('CONTRACTS_DIR'));
+$_contracts_dir = getenv('CONTRACTS_DIR');
+if (!is_dir($_contracts_dir)) {
+    $_contracts_dir = $_root . DIRECTORY_SEPARATOR . $_contracts_dir;
+}
+define('CONTRACTS_DIR', $_contracts_dir);

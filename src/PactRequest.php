@@ -28,7 +28,6 @@ use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 
