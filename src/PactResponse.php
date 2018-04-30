@@ -89,19 +89,6 @@ class PactResponse implements PactResponseInterface
     {
         $statusCode = $this->statusCode->getSample();
 
-//        $headers = [];
-//        foreach ($this->headers as $key => $rule) {
-//            $sample = $rule->getSample();
-//
-//            if (is_array($sample)) {
-//                foreach ($sample as $i => $val) {
-//                    $sample[$i] = (string) $val;
-//                }
-//            } else {
-//                $headers[$key] = (string) $sample;
-//            }
-//        }
-
         if ($this->headers) {
             $headers = $this->getSampleRec($this->headers);
         } else {
