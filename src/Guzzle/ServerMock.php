@@ -25,5 +25,5 @@ use Bigfoot\PHPacto\PactInterface;
 
 interface ServerMock
 {
-    public function handlePact(PactInterface $pact): void;
+    function handlePact(PactInterface $pact): void;
 }

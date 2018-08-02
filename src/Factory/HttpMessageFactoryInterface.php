@@ -27,7 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface HttpMessageFactoryInterface
 {
-    protected static function createRequest(): ServerRequestInterface;
+    static function createRequest(): ServerRequestInterface;
 
-    protected static function createResponse(RequestInterface $request): ResponseInterface;
+    static function createResponse(RequestInterface $request): ResponseInterface;
 }

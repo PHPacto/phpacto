@@ -27,12 +27,12 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class HttpMessageFactory implements HttpMessageFactoryInterface
 {
-    protected static function createRequest(): ServerRequestInterface
+    public static function createRequest(): ServerRequestInterface
     {
         // TODO: Implement createRequest() method.
     }
 
-    protected static function createResponse(RequestInterface $request): ResponseInterface
+    public static function createResponse(RequestInterface $request): ResponseInterface
     {
         // TODO: Implement createResponse() method.
     }
