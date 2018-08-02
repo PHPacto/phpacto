@@ -22,7 +22,7 @@
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\PactLoader;
+use Bigfoot\PHPacto\Loader\ContractLoader;
 
 class PHPacto
 {
@@ -66,10 +66,10 @@ class PHPacto
     }
 
     /**
-     * @return PactLoader
+     * @return ContractLoader
      */
-    protected function getLoader(): PactLoader
+    protected function getLoader(): ContractLoader
     {
-        return new PactLoader(SerializerFactory::getInstance());
+        return new ContractLoader(SerializerFactory::getInstance());
     }
 }

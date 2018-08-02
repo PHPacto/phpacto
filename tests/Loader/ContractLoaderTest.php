@@ -28,7 +28,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
-class PactLoaderTest extends TestCase
+class ContractLoaderTest extends TestCase
 {
     /**
      * @var vfsStreamDirectory
@@ -73,7 +73,7 @@ class PactLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_file_not_found()
     {
-        $loader = new PactLoader($this->serializer);
+        $loader = new ContractLoader($this->serializer);
 
         $this->expectExceptionMessage('not exist');
 
@@ -82,16 +82,16 @@ class PactLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_is_not_a_valid_contract()
     {
-        $loader = new PactLoader($this->serializer);
+        $loader = new ContractLoader($this->serializer);
 
-        $this->expectExceptionMessage('do not contains a valid pact');
+        $this->expectExceptionMessage('does not contain a valid pact');
 
         $loader->loadFromFile($this->fs->url().'/empty.json');
     }
 
     public function test_it_reads_file_and_returns_a_pact()
     {
-        $loader = new PactLoader($this->serializer);
+        $loader = new ContractLoader($this->serializer);
 
         $pact = $loader->loadFromFile($this->fs->url().'/contracts/pact.json');
 
@@ -100,7 +100,7 @@ class PactLoaderTest extends TestCase
 
     public function test_it_returns_pact_array_from_directory()
     {
-        $loader = $this->getMockBuilder(PactLoader::class)
+        $loader = $this->getMockBuilder(ContractLoader::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
@@ -118,7 +118,7 @@ class PactLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_directory_does_not_exists()
     {
-        $loader = $this->getMockBuilder(PactLoader::class)
+        $loader = $this->getMockBuilder(ContractLoader::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
@@ -133,7 +133,7 @@ class PactLoaderTest extends TestCase
 
     public function test_it_throws_exception_if_any_pact_was_fount_in_directory()
     {
-        $loader = $this->getMockBuilder(PactLoader::class)
+        $loader = $this->getMockBuilder(ContractLoader::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();

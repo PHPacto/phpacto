@@ -89,17 +89,8 @@ class PactResponse implements PactResponseInterface
     {
         $statusCode = $this->statusCode->getSample();
 
-        if ($this->headers) {
-            $headers = $this->getSampleRec($this->headers);
-        } else {
-            $headers = [];
-        }
-
-        if ($this->body) {
-            $body = $this->getSampleRec($this->body);
-        } else {
-            $body = '';
-        }
+        $headers = $this->getSampleRec($this->headers);
+        $body = $this->getSampleRec($this->body);
 
         $contentType = @array_change_key_case($headers, CASE_LOWER)['content-type'] ?: '';
 
@@ -159,5 +150,49 @@ class PactResponse implements PactResponseInterface
         }
 
         return $data;
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getHeadersSample(): array
+    {
+        $headers = [];
+
+        foreach ($this->headers as $key => $rule) {
+            $sample = $rule->getSample();
+
+            if (is_array($sample)) {
+                foreach ($sample as $i => $val) {
+                    $sample[$i] = (string) $val;
+                }
+            } else {
+                $headers[$key] = (string) $sample;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getBodySample()
+    {
+        if (empty($this->body)) {
+            return '';
+        }
+
+        if (is_array($this->body)) {
+            $body = [];
+
+            foreach ($this->body as $key => $rule) {
+                $body[$key] = $rule instanceof Rule ? $rule->getSample() : $rule;
+            }
+
+            return $body;
+        }
+
+        return $this->body->getSample();
     }
 }

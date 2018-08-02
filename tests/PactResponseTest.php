@@ -227,6 +227,7 @@ class PactResponseTest extends TestCase
             'status_code' => 200,
             'headers' => [
                 'Y' => 'X',
+                'X' => ['Y', 'Z'],
             ],
             'body' => 'Body',
         ];
@@ -234,8 +235,10 @@ class PactResponseTest extends TestCase
         /** @var PactResponseInterface $response */
         $response = $this->normalizer->denormalize($data, PactResponseInterface::class);
 
-        self::assertCount(1, $response->getHeaders());
+        self::assertCount(2, $response->getHeaders());
         self::assertEquals('X', $response->getHeaders()['Y']->getSample());
+        self::assertEquals('Y', $response->getHeaders()['X'][0]->getSample());
+        self::assertEquals('Z', $response->getHeaders()['X'][1]->getSample());
         self::assertEquals('Body', $response->getBody()->getSample());
     }
 

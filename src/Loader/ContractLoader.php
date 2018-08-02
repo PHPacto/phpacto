@@ -26,7 +26,7 @@ use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
 
-class PactLoader
+class ContractLoader
 {
     const CONFIG_EXTS = ['json', 'yml', 'yaml'];
 
@@ -59,8 +59,8 @@ class PactLoader
             return $pact;
         } catch (Mismatch $mismatch) {
             throw $mismatch;
-        } catch (\Exception | \Error $e) {
-            throw new \Exception(sprintf('File `%s` do not contains a valid pact', $path), 0, $e);
+        } catch (\Throwable $e) {
+            throw new ContractLoadingException(sprintf('File `%s` does not contain a valid pact', $path), 0, $e);
         }
     }
 

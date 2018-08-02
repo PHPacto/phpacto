@@ -106,31 +106,8 @@ class PactRequest implements PactRequestInterface
         $method = strtoupper($this->method->getSample());
         $uri = $this->uri->getSample();
 
-        $headers = [];
-        foreach ($this->headers as $key => $rule) {
-            $sample = $rule->getSample();
-
-            if (is_array($sample)) {
-                foreach ($sample as $i => $val) {
-                    $sample[$i] = (string) $val;
-                }
-            } else {
-                $headers[$key] = (string) $sample;
-            }
-        }
-
-        if ($this->body) {
-            if (is_array($this->body)) {
-                $body = [];
-                foreach ($this->body as $key => $rule) {
-                    $body[$key] = $rule instanceof Rule ? $rule->getSample() : $rule;
-                }
-            } else {
-                $body = $this->body->getSample();
-            }
-        } else {
-            $body = '';
-        }
+        $headers = $this->getSampleRec($this->headers);
+        $body = $this->getSampleRec($this->body);
 
         $contentType = @array_change_key_case($headers, CASE_LOWER)['content-type'] ?: '';
 
@@ -180,5 +157,66 @@ class PactRequest implements PactRequestInterface
         if ($mismatches) {
             throw new MismatchCollection($mismatches, 'Request does not match');
         }
+    }
+
+    private function getSampleRec($data)
+    {
+        if ($data instanceof Rule) {
+            return $data->getSample();
+        } elseif (is_array($data)) {
+            $result = [];
+
+            foreach ($data as $key => $value) {
+                $result[$key] = $this->getSampleRec($value);
+            }
+
+            return $result;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getHeadersSample(): array
+    {
+        $headers = [];
+
+        foreach ($this->headers as $key => $rule) {
+            $sample = $rule->getSample();
+
+            if (is_array($sample)) {
+                foreach ($sample as $i => $val) {
+                    $sample[$i] = (string) $val;
+                }
+            } else {
+                $headers[$key] = (string) $sample;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getBodySample()
+    {
+        if (empty($this->body)) {
+            return '';
+        }
+
+        if (is_array($this->body)) {
+            $body = [];
+
+            foreach ($this->body as $key => $rule) {
+                $body[$key] = $rule instanceof Rule ? $rule->getSample() : $rule;
+            }
+
+            return $body;
+        }
+
+        return $this->body->getSample();
     }
 }

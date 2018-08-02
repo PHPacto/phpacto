@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Test;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Guzzle;
-use Bigfoot\PHPacto\Loader\PactLoader;
+use Bigfoot\PHPacto\Loader\ContractLoader;
 use Bigfoot\PHPacto\PactInterface;
 use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesRequest;
 use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesResponse;
