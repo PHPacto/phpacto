@@ -21,42 +21,16 @@
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-use Bigfoot\PHPacto\Matcher\Mismatches;
-
-class StringRule extends AbstractRule
+class AnyRule extends AbstractRule
 {
-    /**
-     * @var bool
-     */
-    protected $caseSensitive;
-
-    public function __construct(string $sample = null, bool $caseSensitive = false)
+    public function __construct()
     {
-        $this->caseSensitive = $caseSensitive;
-
-        if (null !== $sample) {
-            parent::__construct($caseSensitive ? $sample : strtolower($sample));
-        }
+        // This rule hasn't a sample
     }
 
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
-        }
-    }
-
-    public function isCaseSensitive(): bool
-    {
-        return $this->caseSensitive;
-    }
-
-    public function getSample()
-    {
-        if (null !== $this->sample) {
-            return $this->sample;
-        }
-
-        return '';
+        // This ever match the test value
+        // It's used to validate that an array has a key
     }
 }

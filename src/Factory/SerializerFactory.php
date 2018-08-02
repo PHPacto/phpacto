@@ -88,6 +88,7 @@ abstract class SerializerFactory
     {
         return [
             'and' => Rules\AndRule::class,
+            'any' => Rules\AnyRule::class,
             'contains' => Rules\ContainsRule::class,
             'count' => Rules\CountRule::class,
             'datetime' => Rules\DateTimeRule::class,
@@ -95,9 +96,11 @@ abstract class SerializerFactory
             'eq' => Rules\EqualsRule::class,
             'gte' => Rules\GreaterOrEqualRule::class,
             'gt' => Rules\GreaterRule::class,
+            'int' => Rules\IntegerRule::class,
             'lte' => Rules\LowerOrEqualRule::class,
             'lt' => Rules\LowerRule::class,
             'not' => Rules\NotEqualsRule::class,
+            'number' => Rules\NumericRule::class,
             'or' => Rules\OrRule::class,
             'regex' => Rules\RegexpRule::class,
             'str' => Rules\StringRule::class,

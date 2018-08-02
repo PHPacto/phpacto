@@ -42,58 +42,27 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-class StringRuleTest extends RuleAbstractTest
+class IntegerRuleTest extends RuleAbstractTest
 {
-    public function test_it_is_not_case_sensitive_by_default()
-    {
-        $rule = $this->getMockBuilder(StringRule::class)
-            ->setConstructorArgs(['sample'])
-            ->setMethodsExcept(['isCaseSensitive'])
-            ->getMock();
-
-        self::assertFalse($rule->isCaseSensitive());
-    }
-
-    public function test_it_is_can_be_case_sensitive()
-    {
-        $rule = $this->getMockBuilder(StringRule::class)
-            ->setConstructorArgs(['sample', true])
-            ->setMethodsExcept(['isCaseSensitive'])
-            ->getMock();
-
-        self::assertTrue($rule->isCaseSensitive());
-    }
-
-    public function test_sample_is_lower_cased_if_case_insensitive()
-    {
-        $rule = $this->getMockBuilder(StringRule::class)
-            ->setConstructorArgs(['SAMPLE'])
-            ->setMethodsExcept(['getSample'])
-            ->getMock();
-
-        self::assertEquals('sample', $rule->getSample());
-    }
-
     public function test_it_has_a_default_sample()
     {
-        $rule = $this->getMockBuilder(StringRule::class)
+        $rule = $this->getMockBuilder(IntegerRule::class)
             ->setMethodsExcept(['getSample'])
             ->getMock();
 
-        self::assertEquals('', $rule->getSample());
+        self::assertEquals(0, $rule->getSample());
     }
 
     public function test_it_is_normalizable()
     {
-        $rule = $this->getMockBuilder(StringRule::class)
-            ->setConstructorArgs(['sample', true])
+        $rule = $this->getMockBuilder(IntegerRule::class)
+            ->setConstructorArgs([5])
             ->setMethods(null)
             ->getMock();
 
         $expected = [
             '@rule' => get_class($rule),
-            'caseSensitive' => true,
-            'sample' => 'sample',
+            'sample' => 5,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -102,15 +71,13 @@ class StringRuleTest extends RuleAbstractTest
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => StringRule::class,
-            'caseSensitive' => true,
-            'sample' => 'Sample',
+            '@rule' => IntegerRule::class,
+            'sample' => 5,
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(StringRule::class, $rule);
-        self::assertSame('Sample', $rule->getSample());
-        self::assertTrue($rule->isCaseSensitive());
+        self::assertInstanceOf(IntegerRule::class, $rule);
+        self::assertSame(5, $rule->getSample());
     }
 }

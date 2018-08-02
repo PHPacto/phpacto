@@ -23,32 +23,13 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringRule extends AbstractRule
+class NumericRule extends AbstractRule
 {
-    /**
-     * @var bool
-     */
-    protected $caseSensitive;
-
-    public function __construct(string $sample = null, bool $caseSensitive = false)
-    {
-        $this->caseSensitive = $caseSensitive;
-
-        if (null !== $sample) {
-            parent::__construct($caseSensitive ? $sample : strtolower($sample));
-        }
-    }
-
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
+        if (!is_numeric($test)) {
+            throw new Mismatches\TypeMismatch('number', gettype($test));
         }
-    }
-
-    public function isCaseSensitive(): bool
-    {
-        return $this->caseSensitive;
     }
 
     public function getSample()
@@ -57,6 +38,6 @@ class StringRule extends AbstractRule
             return $this->sample;
         }
 
-        return '';
+        return 0.0;
     }
 }

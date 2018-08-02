@@ -115,6 +115,9 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
 
         $reflectionClass = new \ReflectionClass($class);
+//        if ($data['request'] == 'Lista filtrata di Hotel') {
+//            var_dump($data['request']['uri']);
+//        }
         $object = $this->instantiateObject($data, $class, $context, $reflectionClass, $allowedAttributes, $format);
 
         foreach ($data as $attribute => $value) {
