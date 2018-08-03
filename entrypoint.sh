@@ -27,11 +27,15 @@ if [ "$1" = 'phpacto' ]; then
             ;;
 
         validate)
-            # validate has its own banner
+            # has its own banner
+            ;;
+
+        curl)
+            # has its own banner
             ;;
 
         *)
-            echo $"Commands: (validate|server_mock|mock_proxy_recorder)"
+            echo $"Commands: (curl|validate|server_mock|mock_proxy_recorder)"
             exit 1
     esac
 fi
