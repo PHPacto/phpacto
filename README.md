@@ -24,11 +24,19 @@ You can find some contract examples in `examples` directory.
 
 # Usage standalone CLI
 
-First of all install vendors with composer `composer install` 
+First of all clone this repository `git clone git@github.com:bigfoot90/phpacto.git`
+and install vendors with composer `composer install` 
 
 Validate
 --------
-Validate your contract files with
+Validate your contracts with
+```bash
+bin/phpacto validate path-to/directory-or-single-file
+```
+
+cURL command generator
+--------
+Generate cURL commands from contracts with
 ```bash
 bin/phpacto validate path-to/directory-or-single-file
 ```
@@ -45,7 +53,7 @@ Mock Proxy Recorder
 ---------------------
 You can create new contract file from an already working client-server application.
 ```bash
-export CONTRACTS_DIR='where-are/your-contracts/stored'
+export CONTRACTS_DIR='where/new-contracts/will-be-stored/'
 php -S 0.0.0.0:8000 bin/mock_proxy_recorder.php
 ```
 
@@ -53,37 +61,59 @@ php -S 0.0.0.0:8000 bin/mock_proxy_recorder.php
 
 Validate
 --------
+Validate your contracts with
 ```bash
 docker run -it --rm \
-	-v $PWD/data:/srv/data \
-	-e CONTRACTS_DIR=data \
-	-p 8000:8000 \
-	90bigfoot/phpacto \
-	validate
+    -v $PWD/contracts:/srv/data \
+    -e CONTRACTS_DIR=data \
+    -p 8000:8000 \
+    90bigfoot/phpacto \
+    validate
+```
+
+cURL command generator
+--------
+Generate cURL commands from contracts with
+```bash
+docker run -it --rm \
+    -v $PWD/contracts:/srv/data \
+    -e CONTRACTS_DIR=data \
+    -p 8000:8000 \
+    90bigfoot/phpacto \
+    curl
 ```
 
 Server Mock
 -----------
+You can use this server mock to provide mocked responses to your clients.
 ```bash
 docker run -it --rm \
-	-v $PWD/data:/srv/data \
-	-e CONTRACTS_DIR=data \
-	-p 8000:8000 \
-	90bigfoot/phpacto \
-	server_mock
+    -v $PWD/contracts:/srv/data \
+    -e CONTRACTS_DIR=data \
+    -p 8000:8000 \
+    90bigfoot/phpacto \
+    server_mock
 ```
 
 Mock Proxy Recorder
 -------------------
+You can create new contract file from an already working client-server application.
 ```bash
 docker run -it --rm \
-	-v $PWD/data:/srv/data \
+	-v $PWD/contracts:/srv/data \
 	-e CONTRACTS_DIR=data \
 	-e RECORDER_PROXY_TO=http://localhost/ \
 	-p 8000:8000 \
 	90bigfoot/phpacto \
 	mock_proxy_recorder
 ```
+
+# Testing your application with PHPUnit and PHPacto
+
+PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^6|^7`, `Guzzle ^5.3.1|^6`.
+
+If your project satisfies this requirements, you can run `composer req --dev bigfoot90/phpacto` and test 
+your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any kind of application.
 
 # Integration with PHPUnit
 
@@ -92,12 +122,9 @@ If your test ends with so much verbose tracelog maybe your TestCase is not exten
 PHPUnit\Util\Blacklist\Blacklist::$blacklistedClassNames[__CLASS__] = 1;
 ```
 
-# Testing your project with PHPUnit and PHPacto
+# Integration with Guzzle
 
-PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^6|^7`, `Guzzle ^5.3.1|^6`.
-
-If your project satisfies this requirements, then you can add `bigfoot90/phpacto` into your composer dev requirements and test 
-your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any application.
+Need to write ...
 
 # Mastering with PHPacto contract Rules
 
