@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -25,5 +27,5 @@ use Bigfoot\PHPacto\PactInterface;
 
 interface ServerMock
 {
-    function handlePact(PactInterface $pact): void;
+    public function handlePact(PactInterface $pact): void;
 }

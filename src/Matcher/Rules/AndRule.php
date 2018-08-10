@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -71,6 +73,10 @@ class AndRule extends AbstractRule
      */
     protected function assertSupport(array $rules): void
     {
+        if (!count($rules)) {
+            throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
+        }
+
         foreach ($rules as $item) {
             if (!$item instanceof Rule) {
                 throw new Mismatches\TypeMismatch('Rule', gettype($item), 'Each item should be an instance of {{ expected }}');

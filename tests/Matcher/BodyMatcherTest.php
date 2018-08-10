@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -46,7 +48,7 @@ class BodyMatcherTest extends TestCase
     public function test_it_match_if_rules_are_satisfied_with_body_plain_string()
     {
         $rules = [
-            $this->rule->isMatching(),
+            $this->rule->matching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -66,8 +68,8 @@ class BodyMatcherTest extends TestCase
     public function test_it_match_if_rules_are_satisfied_with_body_url_encoded()
     {
         $rules = [
-            'a' => $this->rule->isMatching(),
-            'b' => $this->rule->isMatching(),
+            'a' => $this->rule->matching(),
+            'b' => $this->rule->matching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -88,8 +90,8 @@ class BodyMatcherTest extends TestCase
     public function test_it_match_if_rules_are_satisfied_with_body_json_encoded()
     {
         $rules = [
-            'a' => $this->rule->isMatching(),
-            0 => $this->rule->isMatching(),
+            'a' => $this->rule->matching(),
+            0 => $this->rule->matching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -167,7 +169,7 @@ class BodyMatcherTest extends TestCase
     public function test_it_throws_mismatch_if_value_doesnt_match_with_body_plain_string()
     {
         $rules = [
-            $this->rule->isNotMatching(),
+            $this->rule->notMatching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -195,7 +197,7 @@ class BodyMatcherTest extends TestCase
     public function test_it_throws_mismatch_if_value_doesnt_match_with_body_url_encoded()
     {
         $rules = [
-            'a' => $this->rule->isNotMatching(),
+            'a' => $this->rule->notMatching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -224,7 +226,7 @@ class BodyMatcherTest extends TestCase
     public function test_it_throws_mismatch_if_value_doesnt_match_with_body_json_encoded()
     {
         $rules = [
-            'a' => $this->rule->isNotMatching(),
+            'a' => $this->rule->notMatching(),
         ];
 
         $stream = new Stream('php://memory', 'w');
@@ -253,7 +255,7 @@ class BodyMatcherTest extends TestCase
     public function test_it_throws_mismatch_if_expected_array_but_got_string()
     {
         $rules = [
-            'a' => $this->rule->isMatching(),
+            'a' => $this->rule->matching(),
         ];
 
         $stream = new Stream('php://memory', 'w');

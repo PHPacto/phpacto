@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -21,10 +23,10 @@
 
 namespace Bigfoot\PHPacto\Factory;
 
-use Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Serializer\PactNormalizer;
 use Bigfoot\PHPacto\Serializer\PactRequestNormalizer;
 use Bigfoot\PHPacto\Serializer\PactResponseNormalizer;
+use Bigfoot\PHPacto\Serializer\RuleMap;
 use Bigfoot\PHPacto\Serializer\RuleNormalizer;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
@@ -43,9 +45,16 @@ abstract class SerializerFactory
      */
     private static $instance;
 
+    /**
+     * @var RuleMap
+     */
+    private static $ruleMap;
+
     public static function getInstance(): Serializer
     {
         if (!self::$instance) {
+            self::$ruleMap = new RuleMap();
+
             self::$instance = new Serializer(
                 self::getNormalizers(),
                 self::getEncoders()
@@ -53,6 +62,11 @@ abstract class SerializerFactory
         }
 
         return self::$instance;
+    }
+
+    public static function getRuleMap(): RuleMap
+    {
+        return self::$ruleMap;
     }
 
     /**
@@ -63,7 +77,7 @@ abstract class SerializerFactory
         $nameConverter = new CamelCaseToSnakeCaseNameConverter();
 
         return [
-            new RuleNormalizer(null, $nameConverter, self::getRuleAliases()),
+            new RuleNormalizer(self::$ruleMap, null, $nameConverter),
             new PactResponseNormalizer(null, $nameConverter),
             new PactRequestNormalizer(null, $nameConverter),
             new PactNormalizer(null, $nameConverter),
@@ -78,39 +92,6 @@ abstract class SerializerFactory
         return [
             new JsonEncoder(new JsonEncode(JSON_PRETTY_PRINT), new JsonDecode(true)),
             new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
-        ];
-    }
-
-    /**
-     * @return string[]
-     */
-    protected static function getRuleAliases(): array
-    {
-        return [
-            'and' => Rules\AndRule::class,
-            'any' => Rules\AnyRule::class,
-            'contains' => Rules\ContainsRule::class,
-            'count' => Rules\CountRule::class,
-            'datetime' => Rules\DateTimeRule::class,
-            'each' => Rules\EachRule::class,
-            'eq' => Rules\EqualsRule::class,
-            'gte' => Rules\GreaterOrEqualRule::class,
-            'gt' => Rules\GreaterRule::class,
-            'int' => Rules\IntegerRule::class,
-            'lte' => Rules\LowerOrEqualRule::class,
-            'lt' => Rules\LowerRule::class,
-            'not' => Rules\NotEqualsRule::class,
-            'number' => Rules\NumericRule::class,
-            'or' => Rules\OrRule::class,
-            'regex' => Rules\RegexpRule::class,
-            'str' => Rules\StringRule::class,
-            'strBegins' => Rules\StringBeginsRule::class,
-            'strContains' => Rules\StringContainsRule::class,
-            'strEnds' => Rules\StringEndsRule::class,
-            'strEq' => Rules\StringEqualsRule::class,
-            'strLen' => Rules\StringLengthRule::class,
-            'uuid' => Rules\UuidRule::class,
-            'ver' => Rules\VersionRule::class,
         ];
     }
 }

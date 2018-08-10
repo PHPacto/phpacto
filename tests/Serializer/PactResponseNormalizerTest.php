@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -22,11 +24,9 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use Bigfoot\PHPacto\PactResponseInterface;
-use PHPUnit\Framework\TestCase;
 
-class PactResponseNormalizerTest extends TestCase
+class PactResponseNormalizerTest extends SerializerAwareTestCase
 {
     public function normalizationFormatProvider()
     {
@@ -69,10 +69,6 @@ class PactResponseNormalizerTest extends TestCase
 
     public function test_normalize()
     {
-        $serializer = SerializerFactory::getInstance();
-
-        $this->rule = new RuleMockFactory();
-
         $response = $this->createMock(PactResponseInterface::class);
 
         $response
@@ -83,7 +79,7 @@ class PactResponseNormalizerTest extends TestCase
             'status_code' => ['@rule' => get_class($response->getStatusCode()), 'sample' => 200],
         ];
 
-        self::assertEquals($expected, $serializer->normalize($response));
+        self::assertEquals($expected, $this->normalizer->normalize($response));
     }
 
     public function test_denormalize()

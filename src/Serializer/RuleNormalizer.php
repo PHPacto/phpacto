@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -37,15 +39,19 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
-     * @var string[]
+     * @var array
      */
-    private $ruleAliases;
+    protected $ignoredAttributes = ['alias'];
+    /**
+     * @var RuleMap
+     */
+    private $ruleMap;
 
-    public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null, array $ruleAliases = [])
+    public function __construct(RuleMap $ruleMap, ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null)
     {
         parent::__construct($classMetadataFactory, $nameConverter);
 
-        $this->ruleAliases = $ruleAliases;
+        $this->ruleMap = $ruleMap;
     }
 
     /**
@@ -91,13 +97,13 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     {
         $class = rtrim($class, '[]');
 
-        if ($class !== Rule::class) {
+        if (Rule::class !== $class) {
             throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
         }
 
         if (is_array($data)) {
             if (array_key_exists('@rule', $data)) {
-                $class = $this->getClassNameFromAlias($data['@rule']);
+                $class = $this->ruleMap->getClassName($data['@rule']);
                 unset($data['@rule']);
 
                 return $this->denormalizeRuleArray($data, $class, $format, $context);
@@ -129,20 +135,20 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         return in_array($format, [null, 'json', 'yaml'], true);
     }
 
-    private function normalizeRuleObject(Rule $object, $format = null, array $context = [])
+    private function normalizeRuleObject(Rule $rule, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
         $data = [
-            '@rule' => $this->getAliasForRule($object),
+            '@rule' => $this->ruleMap->getAlias(get_class($rule)),
         ];
 
-        $attributes = $this->getAttributes($object, $format, $context);
+        $attributes = $this->getAttributes($rule, $format, $context);
 
         foreach ($attributes as $attribute) {
-            $attributeValue = $this->getAttributeValue($object, $attribute, $format, $context);
+            $attributeValue = $this->getAttributeValue($rule, $attribute, $format, $context);
 
             if (null === $attributeValue) {
                 continue;
@@ -236,23 +242,5 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             // The context cannot be serialized, skip the cache
             return false;
         }
-    }
-
-    private function getAliasForRule(Rule $rule): string
-    {
-        $class = get_class($rule);
-
-        return array_flip($this->ruleAliases)[$class] ?? $class;
-    }
-
-    private function getClassNameFromAlias(string $alias): string
-    {
-        $class = @$this->ruleAliases[$alias] ?: $alias;
-
-        if (!is_subclass_of($class, Rule::class)) {
-            throw new InvalidArgumentException(sprintf('This "%s" is not a valid Rule or Rule\'s alias', $class));
-        }
-
-        return $class;
     }
 }

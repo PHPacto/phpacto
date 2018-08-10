@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -29,7 +31,7 @@ class KeyNotFoundMismatchTest extends TestCase
     {
         $miss = new KeyNotFoundMismatch('key');
 
-        self::assertEquals('Key `key` was not found', $miss->getMessage());
+        self::assertContains('not found', $miss->getMessage());
     }
 
     public function test_is_has_expected_key_name()

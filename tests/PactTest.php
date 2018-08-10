@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -21,10 +23,11 @@
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use PHPUnit\Framework\TestCase;
+use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-class PactTest extends TestCase
+class PactTest extends SerializerAwareTestCase
 {
     public function test_it_should_get_request_response()
     {
@@ -56,19 +59,87 @@ class PactTest extends TestCase
 
         $pact = new Pact($request, $response, 'desc', 'ver');
 
+        $this->rule->map($request->getMethod());
+        $this->rule->map($request->getPath());
+        $this->rule->map($response->getStatusCode());
+
         $expected = [
             'version' => 'ver',
             'description' => 'desc',
             'request' => [
                 'method' => ['@rule' => get_class($request->getMethod())],
-                'uri' => ['@rule' => get_class($request->getUri())],
+                'path' => ['@rule' => get_class($request->getPath())],
             ],
             'response' => [
                 'status_code' => ['@rule' => get_class($response->getStatusCode())],
             ],
         ];
 
-        $normalizer = SerializerFactory::getInstance();
-        self::assertSame($expected, $normalizer->normalize($pact));
+        self::assertSame($expected, $this->normalizer->normalize($pact));
+    }
+
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            'version' => 'ver',
+            'description' => 'desc',
+            'request' => [
+                'method' => 'get',
+                'path' => '/',
+            ],
+            'response' => [
+                'status_code' => 200,
+            ],
+        ];
+
+        $pact = $this->normalizer->denormalize($data, PactInterface::class);
+
+        self::assertInstanceOf(Pact::class, $pact);
+    }
+
+    public function test_that_request_is_matching_its_rules_when_instantiating()
+    {
+        $request = $this->getMockBuilder(PactRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request
+            ->expects(self::once())
+            ->method('getSample')
+            ->willReturn($sampleRequest = $this->createMock(ServerRequestInterface::class));
+
+        $request
+            ->expects(self::once())
+            ->method('assertMatch')
+            ->with($sampleRequest);
+
+        $response = $this->getMockBuilder(PactResponse::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        new Pact($request, $response);
+    }
+
+    public function test_that_response_is_matching_its_rules_when_instantiating()
+    {
+        $request = $this->getMockBuilder(PactRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(PactResponse::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response
+            ->expects(self::once())
+            ->method('getSample')
+            ->willReturn($sampleResponse = $this->createMock(ResponseInterface::class));
+
+        $response
+            ->expects(self::once())
+            ->method('assertMatch')
+            ->with($this->isInstanceOf(ResponseInterface::class));
+
+        new Pact($request, $response);
     }
 }

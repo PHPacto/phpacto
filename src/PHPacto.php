@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * PHPactoHelper - Contract testing solution
+ * PHPacto - Contract testing solution
  *
  * Copyright (c) 2017  Damian Długosz
  *
@@ -34,20 +36,20 @@ class PHPacto
     /**
      * @param string $contractsBasePath
      */
-    public function __construct(string $contractsBasePath = null)
+    public function __construct(string $contractsBasePath = '')
     {
-        $this->contractsBasePath = rtrim($contractsBasePath,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
     }
 
     public function createServerMock(): Guzzle\ServerMock
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, 6, '<')) {
+        if (version_compare($guzzleVersion, '6', '<')) {
             return new Guzzle\ServerMock5();
         }
 
-        if (version_compare($guzzleVersion, 7, '<')) {
+        if (version_compare($guzzleVersion, '7', '<')) {
             return new Guzzle\ServerMock6();
         }
 
@@ -55,9 +57,10 @@ class PHPacto
     }
 
     /**
-     * Load a contract file and returns a Pactgit
+     * Load a contract file and returns a Pactgit.
      *
      * @param string $path
+     *
      * @return PactInterface
      */
     public function getPact(string $path): PactInterface

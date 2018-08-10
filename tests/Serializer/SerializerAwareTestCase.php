@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -19,18 +21,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher\Rules;
+namespace Bigfoot\PHPacto\Serializer;
 
-class AnyRule extends AbstractRule
+use Bigfoot\PHPacto\Factory\SerializerFactory;
+use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
+use PHPUnit\Framework\TestCase;
+
+abstract class SerializerAwareTestCase extends TestCase
 {
-    public function __construct()
-    {
-        // This rule hasn't a sample
-    }
+    /**
+     * @var RuleNormalizer
+     */
+    protected $normalizer;
 
-    public function assertMatch($test): void
+    /**
+     * @var RuleMockFactory
+     */
+    protected $rule;
+
+    public function setUp()
     {
-        // This ever match the test value
-        // It's used to validate that an array has a key
+        $this->normalizer = SerializerFactory::getInstance();
+        $this->rule = new RuleMockFactory(SerializerFactory::getRuleMap());
     }
 }

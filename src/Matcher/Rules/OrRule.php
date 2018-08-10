@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -49,22 +51,51 @@ class OrRule extends AbstractRule
         return $this->rules;
     }
 
-    public function assertMatch($test): void
+    public function assertMatch($test, $rules = null, $isMatchingArray = false): void
     {
-        $mismatches = [];
+        if (null === $rules) {
+            $rules = $this->rules;
+            $exitOnMatch = true;
+        }
 
-        foreach ($this->rules as $rule) {
-            try {
-                $rule->assertMatch($test);
+        if ($rules instanceof Rule) {
+            $rules->assertMatch($test);
 
-                // If at least one Rule match the value, its OK
-                return;
-            } catch (Mismatches\Mismatch $e) {
-                $mismatches[] = $e;
+            return;
+        }
+
+        if ($isMatchingArray) {
+            if (!is_array($test)) {
+                throw new Mismatches\TypeMismatch('array', gettype($test));
             }
         }
 
-        if (count($mismatches) === count($this->rules)) {
+        $mismatches = [];
+
+        foreach ($rules as $key => $rule) {
+            try {
+                if ($isMatchingArray) {
+                    if (!array_key_exists($key, $test)) {
+                        throw new Mismatches\KeyNotFoundMismatch((string) $key);
+                    }
+
+                    $testValue = $test[$key];
+                } else {
+                    $testValue = $test;
+                }
+
+                $this->assertMatch($testValue, $rule, @$exitOnMatch && is_array($rule));
+
+                if (@$exitOnMatch) {
+                    // If at least one Rule match the value, its OK
+                    return;
+                }
+            } catch (Mismatches\Mismatch $e) {
+                $mismatches[$key] = $e;
+            }
+        }
+
+        if (@$exitOnMatch && count($mismatches) === count($this->rules) || count($mismatches)) {
             throw new Mismatches\MismatchCollection($mismatches, 'None of the {{ count }} rules is matching');
         }
     }
@@ -74,12 +105,6 @@ class OrRule extends AbstractRule
         if (null !== $this->sample) {
             return $this->sample;
         }
-
-        if (count($this->rules)) {
-            $rule = $this->rules[array_rand($this->rules)];
-
-            return $rule->getSample();
-        }
     }
 
     /**
@@ -87,8 +112,14 @@ class OrRule extends AbstractRule
      */
     protected function assertSupport(array $rules): void
     {
+        if (!count($rules)) {
+            throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
+        }
+
         foreach ($rules as $item) {
-            if (!$item instanceof Rule) {
+            if (is_array($item)) {
+                $this->assertSupport($item);
+            } elseif (!$item instanceof Rule) {
                 throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Each item should be an instance of {{ expected }}');
             }
         }

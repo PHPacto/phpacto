@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -46,7 +48,7 @@ class CurlCommandTest extends TestCase
             'description' => '',
             'request' => [
                 'method' => 'GET',
-                'uri' => '/',
+                'path' => '/',
             ],
             'response' => [
                 'status_code' => 200,

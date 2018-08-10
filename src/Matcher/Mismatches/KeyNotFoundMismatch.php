@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -27,8 +29,8 @@ class KeyNotFoundMismatch extends Mismatch
 
     public function __construct(string $keyName)
     {
-        parent::__construct(sprintf('Key `%s` was not found', $keyName));
-
+        parent::__construct('Key not found');
+        
         $this->keyName = $keyName;
     }
 

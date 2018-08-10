@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -21,34 +23,14 @@
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
-use PHPUnit\Framework\TestCase;
+use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Response;
 
-class PactResponseTest extends TestCase
+class PactResponseTest extends SerializerAwareTestCase
 {
-    /**
-     * @var NormalizerInterface|DenormalizerInterface
-     */
-    protected $normalizer;
-
-    /**
-     * @var RuleMockFactory
-     */
-    private $rule;
-
-    protected function setUp()
-    {
-        $this->normalizer = SerializerFactory::getInstance();
-        $this->rule = new RuleMockFactory();
-    }
-
     public function test_has_sample()
     {
         $response = new PactResponse(
@@ -63,28 +45,6 @@ class PactResponseTest extends TestCase
         self::assertEquals(201, $sample->getStatusCode());
         self::assertEquals('X', $sample->getHeaderLine('X-Custom'));
         self::assertEquals('Body', (string) $sample->getBody());
-    }
-
-    public function test_that_sample_is_matching_rules_when_instantiating()
-    {
-        $response = $this->getMockBuilder(PactResponse::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $response
-            ->expects(self::once())
-            ->method('getSample')
-            ->willReturn($this->createMock(ResponseInterface::class));
-
-        $response
-            ->expects(self::once())
-            ->method('assertMatch');
-
-        $response->__construct(
-            $this->rule->hasSample(200)
-        );
-
-        self::assertTrue(true, 'assertMatch is called');
     }
 
     public function test_has_sample_with_body_url_encoded()

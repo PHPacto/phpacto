@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -23,20 +25,16 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class ContainsRule extends AbstractRule
+class ContainsItemRule extends AbstractRule
 {
     /**
-     * @var Rule[]
+     * @var Rule
      */
-    protected $rules;
+    protected $rule;
 
-    /**
-     * @param Rule|Rule[] $rules
-     * @param mixed  $sample
-     */
-    public function __construct($rules, $sample = null)
+    public function __construct(Rule $rule, $sample = null)
     {
-        $this->assertSupport($this->rules = $rules);
+        $this->assertSupport($this->rule = $rule);
 
         parent::__construct($sample);
     }
@@ -44,9 +42,9 @@ class ContainsRule extends AbstractRule
     /**
      * @return Rule|Rule[]
      */
-    public function getRules()
+    public function getRule()
     {
-        return $this->rules;
+        return $this->rule;
     }
 
     public function assertMatch($test): void
@@ -55,36 +53,17 @@ class ContainsRule extends AbstractRule
             throw new Mismatches\TypeMismatch('array', gettype($test));
         }
 
+        if (!count($test)) {
+            throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
+        }
+
         $mismatches = [];
 
         foreach ($test as $key => $item) {
             try {
-                if ($this->rules instanceof Rule) {
-                    $this->rules->assertMatch($item);
-                } elseif (is_array($this->rules)) {
-                    if (!is_array($item)) {
-                        throw new Mismatches\TypeMismatch('array', gettype($item));
-                    }
+                $this->rule->assertMatch($item);
 
-                    $itemMismatches = [];
-                    foreach ($this->rules as $rKey => $rule) {
-                        if (!array_key_exists($rKey, $item)) {
-                            throw new Mismatches\KeyNotFoundMismatch($rKey);
-                        }
-
-                        try {
-                            $rule->assertMatch($item[$rKey]);
-                        } catch (Mismatches\Mismatch $e) {
-                            $itemMismatches[$rKey] = $e;
-                        }
-                    }
-
-                    if ($itemMismatches) {
-                        throw new Mismatches\MismatchCollection($itemMismatches, 'One or more of the {{ count }} values are not matching the rule');
-                    }
-                }
-
-                // If at least one item match the value, its OK
+                // If at least one item matches the rule, its OK
                 return;
             } catch (Mismatches\Mismatch $e) {
                 $mismatches[$key] = $e;
@@ -92,24 +71,6 @@ class ContainsRule extends AbstractRule
         }
 
         throw new Mismatches\MismatchCollection($mismatches, 'At least one item of array should match the rule');
-    }
-
-    public function getSample()
-    {
-        if (null !== $this->sample) {
-            return $this->sample;
-        }
-
-        if ($this->rules instanceof Rule) {
-            return $this->rules->getSample();
-        }
-
-        $sample = [];
-        foreach ($this->rules as $key => $rule) {
-            $sample[$key] = $rule->getSample();
-        }
-
-        return [$sample];
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -27,7 +29,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface HttpMessageFactoryInterface
 {
-    static function createRequest(): ServerRequestInterface;
+    public static function createRequest(): ServerRequestInterface;
 
-    static function createResponse(RequestInterface $request): ResponseInterface;
+    public static function createResponse(RequestInterface $request): ResponseInterface;
 }

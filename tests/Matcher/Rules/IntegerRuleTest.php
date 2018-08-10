@@ -1,24 +1,5 @@
 <?php
 
-/*
- * This file is part of PHPacto
- *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 declare(strict_types=1);
 
 /*
@@ -42,7 +23,9 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-class IntegerRuleTest extends RuleAbstractTest
+use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+
+class IntegerRuleTest extends SerializerAwareTestCase
 {
     public function test_it_has_a_default_sample()
     {
@@ -55,13 +38,10 @@ class IntegerRuleTest extends RuleAbstractTest
 
     public function test_it_is_normalizable()
     {
-        $rule = $this->getMockBuilder(IntegerRule::class)
-            ->setConstructorArgs([5])
-            ->setMethods(null)
-            ->getMock();
+        $rule = new IntegerRule(5);
 
         $expected = [
-            '@rule' => get_class($rule),
+            '@rule' => 'integer',
             'sample' => 5,
         ];
 
@@ -71,7 +51,7 @@ class IntegerRuleTest extends RuleAbstractTest
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => IntegerRule::class,
+            '@rule' => 'integer',
             'sample' => 5,
         ];
 
@@ -79,5 +59,21 @@ class IntegerRuleTest extends RuleAbstractTest
 
         self::assertInstanceOf(IntegerRule::class, $rule);
         self::assertSame(5, $rule->getSample());
+    }
+
+    public function supportedValuesProvider()
+    {
+        return [
+            [true, 100],
+            [false, 10.0],
+            [false, 'string'],
+            [false, true],
+            [false, false],
+            [false, null],
+            [false, []],
+            [false, new class() {
+            }],
+            [false, new \stdClass()],
+        ];
     }
 }

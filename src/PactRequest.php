@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -41,7 +43,7 @@ class PactRequest implements PactRequestInterface
     /**
      * @var Rule
      */
-    private $uri;
+    private $path;
 
     /**
      * @var Rule[]
@@ -55,18 +57,16 @@ class PactRequest implements PactRequestInterface
 
     /**
      * @param Rule             $method
-     * @param Rule             $uri
+     * @param Rule             $path
      * @param Rule[]           $headers
      * @param Rule|Rule[]|null $body
      */
-    public function __construct(Rule $method, Rule $uri, array $headers = [], $body = null)
+    public function __construct(Rule $method, Rule $path, array $headers = [], $body = null)
     {
         $this->method = $method;
-        $this->uri = $uri;
+        $this->path = $path;
         $this->headers = $headers;
         $this->body = $body;
-
-        $this->assertMatch($this->getSample());
     }
 
     /**
@@ -80,9 +80,9 @@ class PactRequest implements PactRequestInterface
     /**
      * @return Rule
      */
-    public function getUri(): Rule
+    public function getPath(): Rule
     {
-        return $this->uri;
+        return $this->path;
     }
 
     /**
@@ -104,7 +104,7 @@ class PactRequest implements PactRequestInterface
     public function getSample(): ServerRequestInterface
     {
         $method = strtoupper($this->method->getSample());
-        $uri = $this->uri->getSample();
+        $uri = $this->path->getSample();
 
         $headers = $this->getSampleRec($this->headers);
         $body = $this->getSampleRec($this->body);
@@ -131,7 +131,7 @@ class PactRequest implements PactRequestInterface
 
         try {
             $uri = urldecode((string) $request->getUri());
-            $this->uri->assertMatch($uri);
+            $this->path->assertMatch($uri);
         } catch (Mismatch $mismatch) {
             $mismatches['URI'] = $mismatch;
         }
@@ -159,64 +159,26 @@ class PactRequest implements PactRequestInterface
         }
     }
 
-    private function getSampleRec($data)
+    private function getSampleRec($rule)
     {
-        if ($data instanceof Rule) {
-            return $data->getSample();
-        } elseif (is_array($data)) {
+        if ($rule instanceof Rule) {
+            $sample = $rule->getSample();
+
+            if ($sample === null && method_exists($rule, 'getRule')) {
+                $sample = $rule->getRule();
+            }
+
+            return $sample;
+        } elseif (is_array($rule)) {
             $result = [];
 
-            foreach ($data as $key => $value) {
+            foreach ($rule as $key => $value) {
                 $result[$key] = $this->getSampleRec($value);
             }
 
             return $result;
         }
 
-        return $data;
-    }
-
-    /**
-     * @return string[][]
-     */
-    private function getHeadersSample(): array
-    {
-        $headers = [];
-
-        foreach ($this->headers as $key => $rule) {
-            $sample = $rule->getSample();
-
-            if (is_array($sample)) {
-                foreach ($sample as $i => $val) {
-                    $sample[$i] = (string) $val;
-                }
-            } else {
-                $headers[$key] = (string) $sample;
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getBodySample()
-    {
-        if (empty($this->body)) {
-            return '';
-        }
-
-        if (is_array($this->body)) {
-            $body = [];
-
-            foreach ($this->body as $key => $rule) {
-                $body[$key] = $rule instanceof Rule ? $rule->getSample() : $rule;
-            }
-
-            return $body;
-        }
-
-        return $this->body->getSample();
+        return $rule;
     }
 }

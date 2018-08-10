@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -32,6 +34,11 @@ use Zend\Diactoros\Request;
 
 class MockControllerTest extends TestCase
 {
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
     public function setUp()
     {
         $this->logger = $this->createMock(Logger::class);
@@ -84,7 +91,7 @@ class MockControllerTest extends TestCase
 
         $request = new Request();
 
-        self::expectExceptionMessage('No pact matching your request');
+        self::expectExceptionMessage('Any contract found matching your request');
 
         $controller->action($request);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -119,8 +121,8 @@ class MockProxyController
         return (new Uri())
             ->withScheme($this->proxyTo['scheme'] ?? 'http')
             ->withHost($this->proxyTo['host'] ?? 'localhost')
-            ->withPort($this->proxyTo['port'] ?? (@$this->proxyTo['scheme'] === 'https' ? 443 : 80))
-            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/') . $uri->getPath())
+            ->withPort($this->proxyTo['port'] ?? ('https' === @$this->proxyTo['scheme'] ? 443 : 80))
+            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/').$uri->getPath())
             ->withQuery($uri->getQuery())
             ->withFragment($uri->getFragment());
     }

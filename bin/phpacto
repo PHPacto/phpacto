@@ -1,1 +1,4 @@
-phpacto_cli.php
+#!/usr/bin/env php
+<?php
+
+require('phpacto_cli.php');

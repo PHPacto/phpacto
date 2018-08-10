@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -23,6 +25,7 @@ namespace Bigfoot\PHPacto\Command;
 
 use Bigfoot\PHPacto\Loader\ContractLoader;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
+use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -81,16 +84,16 @@ class ValidateContract extends BaseCommand
         $shortPath = self::getShortPath($filePath, $rootDir);
 
         try {
-            $this->loader->loadFromFile($filePath);
+            $pact = $this->loader->loadFromFile($filePath);
 
-            self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>', $rootDir);
+            self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>');
         } catch (\Throwable $e) {
             if ($e instanceof Mismatch) {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $rootDir);
-            } elseif ('Syntax error' === $e->getPrevious()->getMessage()) {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>', $rootDir);
+                self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $e);
+            } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
+                self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>', $e->getPrevious() ?? $e);
             } else {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Malformed</>', $rootDir);
+                self::outputResult($output, $shortPath, '<fg=red>✖ Error</>', $e->getPrevious() ?? $e);
             }
         }
     }
@@ -105,6 +108,7 @@ class ValidateContract extends BaseCommand
             $table->setHeaders([
                 'Contract',
                 'Status',
+                'Error',
             ]);
         }
 
@@ -120,8 +124,18 @@ class ValidateContract extends BaseCommand
         return $filePath;
     }
 
-    private static function outputResult(OutputInterface $output, string $filePath, string $status): void
+    private static function outputResult(OutputInterface $output, string $filePath, string $status, \Throwable $error = null): void
     {
-        self::getTable($output)->addRow([$filePath, $status]);
+        $row = [$filePath, $status];
+
+        if ($error) {
+            if ($error instanceof MismatchCollection) {
+                $row[] = (string) $error;
+            } else {
+                $row[] = sprintf('<options=bold>%s</>', $error->getMessage());
+            }
+        }
+
+        self::getTable($output)->addRow($row);
     }
 }

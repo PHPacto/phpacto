@@ -23,6 +23,7 @@ return PhpCsFixer\Config::create()
         '@Symfony:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'combine_consecutive_unsets' => true,
+        'declare_strict_types' => true,
         // one should use PHPUnit methods to set up expected exception instead of annotations
         'header_comment' => ['header' => $header],
         'heredoc_to_nowdoc' => true,

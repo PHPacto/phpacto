@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -22,7 +24,6 @@
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
-use Ramsey\Uuid\Uuid;
 
 class UuidRule extends AbstractRule
 {

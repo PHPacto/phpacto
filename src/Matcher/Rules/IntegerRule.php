@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -27,7 +29,7 @@ class IntegerRule extends AbstractRule
 {
     public function assertMatch($test): void
     {
-        if (!is_integer($test)) {
+        if (!is_int($test)) {
             throw new Mismatches\TypeMismatch('integer', gettype($test));
         }
     }

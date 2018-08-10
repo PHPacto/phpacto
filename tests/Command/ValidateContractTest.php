@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -22,7 +24,6 @@
 namespace Bigfoot\PHPacto\Factory;
 
 use Bigfoot\PHPacto\Command\ValidateContract;
-use Bigfoot\PHPacto\Matcher\Rules;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +55,7 @@ class ValidateContractTest extends TestCase
                     'description' => '',
                     'request' => [
                         'method' => 5,
-                        'uri' => '/',
+                        'path' => '/',
                     ],
                     'response' => [
                         'status_code' => 200,
@@ -66,7 +67,7 @@ class ValidateContractTest extends TestCase
                     'description' => '',
                     'request' => [
                         'method' => 'method',
-                        'uri' => '/',
+                        'path' => '/',
                     ],
                     'response' => [
                         'status_code' => 200,
@@ -77,32 +78,14 @@ class ValidateContractTest extends TestCase
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
-//                        'method' => [
-//                            '@rule' => OrRule::class,
-//                            'rules' => [
-//                                'get',
-//                                'post',
-//                                'put',
-//                                'patch'
-//                            ],
-//                            'sample' => 'post'
-//                        ],
                         'method' => [
-                            '@rule' => Rules\RegexpRule::class,
+                            '@rule' => 'regex',
                             'pattern' => '(get|post)',
                             'sample' => 'get',
                         ],
-                        'uri' => '/',
+                        'path' => '/',
                     ],
                     'response' => [
-//                        'status_code' => [
-//                            '@rule' => OrRule::class,
-//                            'rules' => [
-//                                200,
-//                                201,
-//                            ],
-//                            'sample' => 201
-//                        ],
                         'status_code' => 202,
                     ],
                 ]),
@@ -111,32 +94,14 @@ class ValidateContractTest extends TestCase
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
-//                        'method' => [
-//                            '@rule' => OrRule::class,
-//                            'rules' => [
-//                                'get',
-//                                'post',
-//                                'put',
-//                                'patch'
-//                            ],
-//                            'sample' => 'post'
-//                        ],
                         'method' => [
-                            '@rule' => Rules\RegexpRule::class,
+                            '@rule' => 'regex',
                             'pattern' => '(get|post)',
                             'sample' => 'put',
                         ],
-                        'uri' => '/',
+                        'path' => '/',
                     ],
                     'response' => [
-//                        'status_code' => [
-//                            '@rule' => OrRule::class,
-//                            'rules' => [
-//                                200,
-//                                201,
-//                            ],
-//                            'sample' => 201
-//                        ],
                         'status_code' => 404,
                     ],
                 ]),
@@ -160,8 +125,8 @@ class ValidateContractTest extends TestCase
         $output = $this->commandTester->getDisplay();
 
         self::assertContains('not-a-json.json     ✖ Syntax error', $output);
-        self::assertContains('malformed.json      ✖ Malformed', $output);
-        self::assertContains('invalid.json        ✖ Not valid', $output);
+        self::assertContains('malformed.json      ✖ Error', $output);
+        self::assertContains('invalid.json        ✖ Error', $output);
         self::assertContains('valid.json          ✔ Valid', $output);
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);

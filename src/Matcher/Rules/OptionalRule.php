@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -28,9 +30,11 @@ class OptionalRule extends AbstractRule
      */
     protected $rule;
 
-    public function __construct(Rule $rule, $sample = null)
+    public function __construct(Rule $rules, $sample = null)
     {
         parent::__construct($sample);
+
+        $this->rule = $rules;
     }
 
     public function getRule(): Rule

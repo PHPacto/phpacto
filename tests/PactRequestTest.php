@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -21,36 +23,16 @@
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
-use PHPUnit\Framework\TestCase;
+use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zend\Diactoros\Request;
 
-class PactRequestTest extends TestCase
+class PactRequestTest extends SerializerAwareTestCase
 {
-    /**
-     * @var NormalizerInterface|DenormalizerInterface
-     */
-    protected $normalizer;
-
-    /**
-     * @var RuleMockFactory
-     */
-    private $rule;
-
-    protected function setUp()
-    {
-        $this->normalizer = SerializerFactory::getInstance();
-        $this->rule = new RuleMockFactory();
-    }
-
     public function test_has_sample()
     {
         $request = new PactRequest(
@@ -67,29 +49,6 @@ class PactRequestTest extends TestCase
         self::assertEquals('/', $sample->getUri());
         self::assertEquals('X', $sample->getHeaderLine('X-Custom'));
         self::assertEquals('Body', (string) $sample->getBody());
-    }
-
-    public function test_that_sample_is_matching_rules_when_instantiating()
-    {
-        $request = $this->getMockBuilder(PactRequest::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request
-            ->expects(self::once())
-            ->method('getSample')
-            ->willReturn($this->createMock(ServerRequestInterface::class));
-
-        $request
-            ->expects(self::once())
-            ->method('assertMatch');
-
-        $request->__construct(
-            $this->rule->hasSample('get'),
-            $this->rule->hasSample('/')
-        );
-
-        self::assertTrue(true, 'assertMatch is called');
     }
 
     public function test_has_sample_with_body_url_encoded()
@@ -153,7 +112,7 @@ class PactRequestTest extends TestCase
     {
         $request = new PactRequest(
             $method = $this->rule->hasSample('get'),
-            $uri = $this->rule->hasSample('/'),
+            $path = $this->rule->hasSample('/'),
             ['x' => $header = $this->rule->hasSample(0)],
             $body = $this->rule->hasSample('')
         );
@@ -163,7 +122,7 @@ class PactRequestTest extends TestCase
             ->method('assertMatch')
             ->willThrowException($this->createMock(Mismatch::class));
 
-        $uri
+        $path
             ->expects(self::once())
             ->method('assertMatch')
             ->willThrowException($this->createMock(Mismatch::class));
@@ -179,7 +138,7 @@ class PactRequestTest extends TestCase
             ->willThrowException($this->createMock(Mismatch::class));
 
         try {
-            $request->assertMatch(new Request('/uri', 'Post'), 'php://memory', ['x' => 'any']);
+            $request->assertMatch(new Request('/path', 'Post'), 'php://memory', ['x' => 'any']);
         } catch (MismatchCollection $mismatch) {
             self::assertEquals(4, $mismatch->countAll());
 
@@ -193,7 +152,7 @@ class PactRequestTest extends TestCase
     {
         $request = new PactRequest(
             $mockMethod = $this->rule->hasSample('get'),
-            $mockUri = $this->rule->hasSample('/')
+            $mockPath = $this->rule->hasSample('/')
         );
 
         $expected = [
@@ -201,8 +160,8 @@ class PactRequestTest extends TestCase
                 '@rule' => get_class($mockMethod),
                 'sample' => 'get',
             ],
-            'uri' => [
-                '@rule' => get_class($mockUri),
+            'path' => [
+                '@rule' => get_class($mockPath),
                 'sample' => '/',
             ],
         ];
@@ -217,7 +176,7 @@ class PactRequestTest extends TestCase
     {
         $request = new PactRequest(
             $mockMethod = $this->rule->hasSample('put'),
-            $mockUri = $this->rule->hasSample('/path'),
+            $mockPath = $this->rule->hasSample('/path'),
             ['Y' => $mockHeaderValue = $this->rule->hasSample('X')],
             $mockBody = $this->rule->hasSample('Body')
         );
@@ -227,8 +186,8 @@ class PactRequestTest extends TestCase
                 '@rule' => get_class($mockMethod),
                 'sample' => 'put',
             ],
-            'uri' => [
-                '@rule' => get_class($mockUri),
+            'path' => [
+                '@rule' => get_class($mockPath),
                 'sample' => '/path',
             ],
             'headers' => [
@@ -250,7 +209,7 @@ class PactRequestTest extends TestCase
     {
         $data = [
             'method' => 'GET',
-            'uri' => '/',
+            'path' => '/',
         ];
 
         /** @var PactRequestInterface $request */
@@ -258,14 +217,14 @@ class PactRequestTest extends TestCase
 
         self::assertInstanceOf(PactRequestInterface::class, $request);
         self::assertEquals('GET', $request->getMethod()->getSample());
-        self::assertEquals('/', $request->getUri()->getSample());
+        self::assertEquals('/', $request->getPath()->getSample());
     }
 
     public function test_it_is_denormalizable_full()
     {
         $data = [
             'method' => 'POST',
-            'uri' => '/path?query',
+            'path' => '/path?query',
             'headers' => [
                 'Y' => 'X',
             ],
@@ -276,7 +235,7 @@ class PactRequestTest extends TestCase
         $request = $this->normalizer->denormalize($data, PactRequestInterface::class);
 
         self::assertEquals('POST', $request->getMethod()->getSample());
-        self::assertEquals('/path?query', $request->getUri()->getSample());
+        self::assertEquals('/path?query', $request->getPath()->getSample());
         self::assertEquals('X', $request->getHeaders()['Y']->getSample());
         self::assertEquals('Body', $request->getBody()->getSample());
     }

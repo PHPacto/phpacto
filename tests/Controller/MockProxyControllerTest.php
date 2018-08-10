@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -27,30 +29,55 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\SerializerInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
-use Zend\Diactoros\Uri;
 
 class MockProxyControllerTest extends TestCase
 {
+    /**
+     * @var vfsStream
+     */
+    protected $fs;
+
+    /**
+     * @var ClientInterface
+     */
+    protected $client;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
     /**
      * @var MockProxyController
      */
     protected $controller;
 
+    /**
+     * @var string
+     */
+    protected $proxyTo;
+
     public function setUp()
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, 6, '<') || version_compare($guzzleVersion, 7, '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped('MockProxyController works with Guzzle 6 or newer');
         }
 
         $this->client = $this->createMock(ClientInterface::class);
         $this->logger = $this->createMock(Logger::class);
         $this->serializer = SerializerFactory::getInstance();
-        $this->proxyTo = new Uri('http://proxied-host:8888/proxied-dir');
+        $this->proxyTo = 'http://proxied-host:8888/proxied-dir';
 
         // Define my virtual file system
         $directory = [
@@ -69,7 +96,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client wiil make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-uri-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new Request('/my-path-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -80,7 +107,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', 'http://proxied-host:8888/proxied-dir/my-uri-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', 'http://proxied-host:8888/proxied-dir/my-path-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willReturn($response);
 
         $response = $this->controller->action($request);
@@ -98,7 +125,7 @@ class MockProxyControllerTest extends TestCase
 
         // Contract Request
         self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('uri: /my-uri-test', $contract);
+        self::assertStringContains('path: /my-path-test', $contract);
         self::assertStringContains('X: \'REQUEST HEADERS\'', $contract);
         self::assertStringContains('body: \'Request Body\'', $contract);
 
@@ -115,7 +142,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client wiil make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-uri-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new Request('/my-path-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -126,7 +153,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', 'http://proxied-host:8888/proxied-dir/my-uri-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', 'http://proxied-host:8888/proxied-dir/my-path-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willThrowException(new BadResponseException('Server respond with a BAD status code', $request, $response));
 
         $response = $this->controller->action($request);
@@ -144,7 +171,7 @@ class MockProxyControllerTest extends TestCase
 
         // Contract Request
         self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('uri: /my-uri-test', $contract);
+        self::assertStringContains('path: /my-path-test', $contract);
         self::assertStringContains('X: \'REQUEST HEADERS\'', $contract);
         self::assertStringContains('body: \'Request Body\'', $contract);
 
@@ -156,6 +183,6 @@ class MockProxyControllerTest extends TestCase
 
     private static function assertStringContains(string $needle, string $haystack, string $message = '')
     {
-        self::assertRegexp('/' . preg_quote($needle, '/') . '/', $haystack, $message);
+        self::assertRegexp('/'.preg_quote($needle, '/').'/', $haystack, $message);
     }
 }

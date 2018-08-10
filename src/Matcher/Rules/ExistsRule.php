@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -23,6 +25,11 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 class ExistsRule extends AbstractRule
 {
+    public function __construct()
+    {
+        // This rule hasn't a sample
+    }
+
     public function assertMatch($test): void
     {
         // If you are here, the key exists, and any value is good

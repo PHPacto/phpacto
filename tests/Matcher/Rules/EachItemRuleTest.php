@@ -26,18 +26,34 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
-class OrRuleTest extends SerializerAwareTestCase
+class EachItemRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
-        $rule = new OrRule([$childRule]);
+        $rule = new EachItemRule($childRule, []);
 
         $expected = [
-            '@rule' => 'or',
+            '@rule' => 'each',
+            'rules' => ['@rule' => get_class($childRule)],
+            'sample' => [],
+        ];
+
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_it_is_normalizable_with_rules_array()
+    {
+        $childRule = $this->rule->empty();
+        $rule = new EachItemRule(['key1' => $childRule, 'key2' => $childRule], []);
+
+        $expected = [
+            '@rule' => 'each',
             'rules' => [
-                ['@rule' => get_class($childRule)],
+                'key1' => ['@rule' => get_class($childRule)],
+                'key2' => ['@rule' => get_class($childRule)]
             ],
+            'sample' => [],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -45,18 +61,37 @@ class OrRuleTest extends SerializerAwareTestCase
 
     public function test_it_is_denormalizable()
     {
+        $childRule = $this->rule->empty();
+
         $data = [
-            '@rule' => 'or',
-            'rules' => [5],
-            'sample' => 5,
+            '@rule' => 'each',
+            'rules' => ['@rule' => get_class($childRule)],
+            'sample' => [],
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(OrRule::class, $rule);
-        self::assertSame(5, $rule->getSample());
-        self::assertCount(1, $rule->getRules());
-        self::assertInstanceOf(Rule::class, $rule->getRules()[0]);
+        self::assertInstanceOf(EachItemRule::class, $rule);
+        self::assertSame([], $rule->getSample());
+    }
+
+    public function test_it_is_denormalizable_with_rules_array()
+    {
+        $childRule = $this->rule->empty();
+
+        $data = [
+            '@rule' => 'each',
+            'rules' => [
+                'key1' => ['@rule' => get_class($childRule)],
+                'key2' => ['@rule' => get_class($childRule)]
+            ],
+            'sample' => [],
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(EachItemRule::class, $rule);
+        self::assertSame([], $rule->getSample());
     }
 
     public function supportedValuesProvider()
@@ -75,7 +110,8 @@ class OrRuleTest extends SerializerAwareTestCase
             [false, new class() {
             }],
             [false, new \stdClass()],
-            [false, $rule],
+            [true, $rule],
+            [false, [[]]],
             [false, [100]],
             [false, [1.0]],
             [false, ['string']],
@@ -86,7 +122,6 @@ class OrRuleTest extends SerializerAwareTestCase
             }]],
             [false, [new \stdClass()]],
             [true, [$rule]],
-            [true, [['key' => $rule]]],
         ];
     }
 
@@ -97,61 +132,59 @@ class OrRuleTest extends SerializerAwareTestCase
      */
     public function testSupportedValues(bool $shouldBeSupported, $value)
     {
-        $rule = self::getMockBuilder(OrRule::class)
+        $rule = self::getMockBuilder(EachItemRule::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['assertSupport'])
             ->getMock();
 
         if (!$shouldBeSupported) {
-            $this->expectException(\Throwable::class);
+            $this->expectException(Mismatches\Mismatch::class);
         }
 
-        $method = new \ReflectionMethod(OrRule::class, 'assertSupport');
+        $method = new \ReflectionMethod(EachItemRule::class, 'assertSupport');
         $method->setAccessible(true);
         $method->invoke($rule, $value);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
 
-    public function testMatch()
+    public function testExpectingArrayButGotString()
     {
         $matching = $this->rule->matching();
-        $mismatching = $this->rule->notMatching();
 
-        $rule = new OrRule([$mismatching, $matching]);
+        $rule = new EachItemRule($matching);
 
-        $rule->assertMatch('No Mismatch is thrown');
+        $this->expectException(Mismatches\TypeMismatch::class);
+
+        $rule->assertMatch('This value is a string');
+    }
+
+    public function testMatch()
+    {
+        $childRule = $this->rule->matching();
+        $childRule->method('assertMatch')
+            ->withConsecutive([4], [5], [6]);
+
+        $childRule = new IntegerRule();
+        $childRule = new OrRule([$childRule]);
+
+        $rule = new EachItemRule($childRule);
+
+        $rule->assertMatch([4, 5, 6]);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 
     public function testMismatch()
     {
-        $mismatching = $this->rule->notMatching();
+        $childRule = new EqualsRule(5);
 
-        $rule = new OrRule([$mismatching, $mismatching]);
+        $rule = new EachItemRule($childRule);
 
         try {
-            $rule->assertMatch('A Mismatch should be thrown');
+            $rule->assertMatch([4, 5, 6]);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertEquals(2, count($mismatches));
-
-            return;
-        }
-
-        self::fail('An MismatchCollection should been thrown');
-    }
-
-    public function testExpectingArrayButGotString()
-    {
-        $matching = $this->rule->matching();
-
-        $rule = new OrRule([['key' => $matching], ['key' => $matching]]);
-
-        try {
-            $rule->assertMatch('This value is a string');
-        } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, count($mismatches->toArrayFlat()));
 
             return;
         }
@@ -162,11 +195,10 @@ class OrRuleTest extends SerializerAwareTestCase
     public function testMatchArray()
     {
         $matching = $this->rule->matching();
-        $mismatching = $this->rule->notMatching();
 
-        $rule = new OrRule([['key' => $mismatching], $matching]);
+        $rule = new EachItemRule(['key' => $matching]);
 
-        $rule->assertMatch(['This value is matching the second Rule']);
+        $rule->assertMatch([['key' => 'No Mismatch is thrown']]);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
@@ -175,12 +207,20 @@ class OrRuleTest extends SerializerAwareTestCase
     {
         $matching = $this->rule->matching();
 
-        $rule = new OrRule([['a1' => $matching, 'a2' => $matching], ['b3' => $matching]]);
+        $rule = new EachItemRule([
+            'A' => $matching,
+            'B' => $matching,
+            'C' => $matching
+        ]);
 
         try {
-            $rule->assertMatch([]);
+            $rule->assertMatch([
+                ['B' => 'Y', 'C' => 'Z'],
+                ['A' => 'X', 'C' => 'Z'],
+                ['A' => 'X', 'B' => 'Y'],
+            ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(3, count($mismatches->toArrayFlat()));
+            self::assertEquals(['0.A','1.B','2.C'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
@@ -193,12 +233,18 @@ class OrRuleTest extends SerializerAwareTestCase
         $matching = $this->rule->matching();
         $mismatching = $this->rule->notMatching();
 
-        $rule = new OrRule([[$matching, $mismatching]]);
+        $rule = new EachItemRule([
+            'A' => $matching,
+            'B' => $mismatching,
+            'C' => $matching
+        ]);
 
         try {
-            $rule->assertMatch(['A Mismatch should be thrown']);
+            $rule->assertMatch([
+                ['A' => 'X', 'B' => 'Y', 'C' => 'Z']
+            ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(1, count($mismatches));
+            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }

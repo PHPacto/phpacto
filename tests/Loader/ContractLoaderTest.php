@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -54,7 +56,7 @@ class ContractLoaderTest extends TestCase
                     'description' => '',
                     'request' => [
                         'method' => 'GET',
-                        'uri' => '/',
+                        'path' => '/',
                         'headers' => [],
                         'body' => null,
                     ],

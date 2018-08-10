@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -71,7 +73,7 @@ class RegexpRule extends StringRule
 
     protected function assertSupport(string $value): void
     {
-        if (false === @preg_match('/'.$value.'/', null)) {
+        if (false === @preg_match('/'.$value.'/', '')) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');
         }
     }

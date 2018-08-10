@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -108,7 +110,7 @@ class PactMatchesResponse extends PHPUnitConstraint
         };
 
         $func = function ($k, $v) {
-            return [$k, $k. ":\n" .$v];
+            return [$k, $k.":\n".$v];
         };
 
         if ($mismatch instanceof MismatchCollection) {

@@ -1,24 +1,5 @@
 <?php
 
-/*
- * This file is part of PHPacto
- *
- * Copyright (c) 2017  Damian Długosz <bigfootdd@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 declare(strict_types=1);
 
 /*
@@ -42,7 +23,9 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-class StringRuleTest extends RuleAbstractTest
+use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+
+class StringRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_not_case_sensitive_by_default()
     {
@@ -85,15 +68,12 @@ class StringRuleTest extends RuleAbstractTest
 
     public function test_it_is_normalizable()
     {
-        $rule = $this->getMockBuilder(StringRule::class)
-            ->setConstructorArgs(['sample', true])
-            ->setMethods(null)
-            ->getMock();
+        $rule = new StringRule('Sample', true);
 
         $expected = [
-            '@rule' => get_class($rule),
-            'caseSensitive' => true,
-            'sample' => 'sample',
+            '@rule' => 'string',
+            'case_sensitive' => true,
+            'sample' => 'Sample',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -102,8 +82,8 @@ class StringRuleTest extends RuleAbstractTest
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => StringRule::class,
-            'caseSensitive' => true,
+            '@rule' => 'string',
+            'case_sensitive' => true,
             'sample' => 'Sample',
         ];
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -36,7 +38,7 @@ class PactRequestFactoryTest extends TestCase
 
         self::assertInstanceOf(PactRequest::class, $pactRequest);
         self::assertEquals('GET', $pactRequest->getMethod()->getSample());
-        self::assertEquals('/path', $pactRequest->getUri()->getSample());
+        self::assertEquals('/path', $pactRequest->getPath()->getSample());
         self::assertCount(0, $pactRequest->getHeaders());
         self::assertNull($pactRequest->getBody());
     }

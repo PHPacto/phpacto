@@ -2,7 +2,7 @@ version: dev
 description: 'My first contract'
 request:
     method: GET
-    uri: /
+    path: /
 response:
     status_code: 200
     headers:

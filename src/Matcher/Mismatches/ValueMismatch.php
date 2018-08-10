@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -80,12 +82,21 @@ class ValueMismatch extends Mismatch
      */
     protected static function wrap($value): string
     {
-        if ($value === null) return 'NULL';
-        if ($value === false) return 'FALSE';
-        if ($value === true) return 'TRUE';
-        if (is_float($value)) return sprintf('%G', $value);
-        if (is_int($value)) return $value;
-
+        if (null === $value) {
+            return 'NULL';
+        }
+        if (false === $value) {
+            return 'FALSE';
+        }
+        if (true === $value) {
+            return 'TRUE';
+        }
+        if (is_float($value)) {
+            return sprintf('%G', $value);
+        }
+        if (is_int($value)) {
+            return (string) $value;
+        }
         switch ($value) {
             case 'array':
             case 'double':

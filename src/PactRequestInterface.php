@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -27,15 +29,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface PactRequestInterface
 {
-    /**
-     * @return Rule
-     */
     public function getMethod(): Rule;
 
-    /**
-     * @return Rule
-     */
-    public function getUri(): Rule;
+    public function getPath(): Rule;
 
     /**
      * @return Rule[]
@@ -55,7 +51,7 @@ interface PactRequestInterface
     /**
      * Match against a PSR7 Request.
      *
-     * @throws Matcher\Mismatches\MismatchCollection if not matching
+     * @throws Matcher\Mismatches\Mismatch if not matching
      */
     public function assertMatch(RequestInterface $request);
 }

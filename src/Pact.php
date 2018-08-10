@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -20,6 +22,9 @@
  */
 
 namespace Bigfoot\PHPacto;
+
+use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
+use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 
 class Pact implements PactInterface
 {
@@ -51,6 +56,28 @@ class Pact implements PactInterface
         $this->version = $version;
 
         $this->assertVersionIsCompatible($version);
+
+        $mismatches = [];
+
+        try {
+            // Assert that sample is matching its own rules
+            $sample = $request->getSample();
+            $request->assertMatch($sample);
+        } catch (Mismatch $mismatch) {
+            $mismatches['REQUEST'] = $mismatch;
+        }
+
+        try {
+            // Assert that sample is matching its own rules
+            $sample = $response->getSample();
+            $response->assertMatch($sample);
+        } catch (Mismatch $mismatch) {
+            $mismatches['RESPONSE'] = $mismatch;
+        }
+
+        if ($mismatches) {
+            throw new MismatchCollection($mismatches, 'Pact is not valid');
+        }
     }
 
     public function getRequest(): PactRequestInterface

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -37,12 +39,8 @@ foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] a
 // Load environment
 $_root = getenv('PWD');
 
-if (class_exists('Dotenv\Dotenv') && file_exists($_root.'/.env')) {
-    (new Dotenv\Dotenv($_root))->load();
-}
-
 $_contracts_dir = getenv('CONTRACTS_DIR');
-if (!is_dir($_contracts_dir)) {
-    $_contracts_dir = $_root . DIRECTORY_SEPARATOR . $_contracts_dir;
+if (!($_contracts_dir && is_dir($_contracts_dir))) {
+    $_contracts_dir = $_root.\DIRECTORY_SEPARATOR.$_contracts_dir;
 }
 define('CONTRACTS_DIR', $_contracts_dir);

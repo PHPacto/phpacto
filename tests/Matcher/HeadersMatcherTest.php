@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -44,8 +46,8 @@ class HeadersMatcherTest extends TestCase
     public function test_it_match_if_rules_are_satisfied()
     {
         $rules = [
-            'Key1' => $this->rule->isMatching(),
-            'key-2' => $this->rule->isMatching(),
+            'Key1' => $this->rule->matching(),
+            'key-2' => $this->rule->matching(),
         ];
 
         $message = (new Request())
@@ -87,7 +89,7 @@ class HeadersMatcherTest extends TestCase
     public function test_it_throws_mismatch_if_value_doesnt_match()
     {
         $rules = [
-            'key' => $this->rule->isNotMatching(),
+            'key' => $this->rule->notMatching(),
         ];
 
         $message = (new Request())

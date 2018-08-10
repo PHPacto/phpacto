@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -38,7 +40,6 @@ class PHPactoTest extends TestCase
     {
         // PHPacto mock
         $phpacto = new class() extends PHPacto {
-
             // Mock getLoader() protected method
             public function getLoaderPublic()
             {

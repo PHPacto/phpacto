@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -25,6 +27,7 @@ use Bigfoot\PHPacto\Loader\ContractLoader;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\PactInterface;
 use Namshi\Cuzzle\Formatter\CurlFormatter;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -52,18 +55,23 @@ class CurlCommand extends BaseCommand
             ->setName('curl')
             ->setDescription('Generate cURL commands for contracts')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
+
+        $this->addOption('host', 'h', InputArgument::OPTIONAL, 'On wich host is your service located', 'localhost');
+        $this->addOption('port', 'p', InputArgument::OPTIONAL, 'On wich port is your service located', 80);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('path');
+        $host = $input->getOption('host');
+        $port = $input->getOption('port');
 
         $curlFormatter = new CurlFormatter(INF);
 
         if (is_file($path) && is_readable($path)) {
 //            try {
-                $pact = $this->loadPact((string) $path);
-                $this->printCurlCommand($output, $curlFormatter, $pact, $path, false);
+            $pact = $this->loadPact((string) $path);
+            $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path, false);
 //            } catch (\Throwable $e) {
 //                if ($e instanceof Mismatch) {
 //                    self::outputResult($output, $path, '<fg=red>✖ Not valid</>');
@@ -84,12 +92,14 @@ class CurlCommand extends BaseCommand
 
                 try {
                     $pact = $this->loadPact((string) $file);
-                    $this->printCurlCommand($output, $curlFormatter, $pact, $shortPath, true);
+                    $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $shortPath, true);
                 } catch (\Throwable $e) {
                     if ($e instanceof Mismatch) {
                         self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>');
-                    } elseif ('Syntax error' === $e->getPrevious()->getMessage()) {
+                    } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
                         self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>');
+                    } else {
+                        throw $e;
                     }
                 }
             }
@@ -105,20 +115,37 @@ class CurlCommand extends BaseCommand
         return $this->loader->loadFromFile($filePath);
     }
 
-    protected function printCurlCommand(OutputInterface $output, CurlFormatter $formatter, PactInterface $pact, string $path, bool $multipleFiles = false): void
+    private function printCurlCommand(OutputInterface $output, CurlFormatter $formatter, PactInterface $pact, string $host, int $port, string $path, bool $multipleFiles = false): void
     {
-        $request = $pact->getRequest()->getSample();
+        $sample = $pact->getRequest()->getSample();
 
-        $uri = $request->getUri()
+        $uri = $sample->getUri()
             ->withScheme('http')
-            ->withHost('localhost')
-            ->withPort(80);
+            ->withHost($host)
+            ->withPort($port);
 
-        $request = $request->withUri($uri);
+        $request = $sample->withUri($uri);
 
-        $curlCommand = $formatter->format($request);
+        $curlCommand = $this->generateCurlCommand($request, $formatter);
 
         self::outputResult($output, $path, $curlCommand, $multipleFiles);
+    }
+
+    /**
+     * This is a compatibility layer for Namshi/Cuzzle ^2 and ^1.
+     */
+    private function generateCurlCommand(ServerRequestInterface $request, CurlFormatter $formatter): string
+    {
+        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+
+        // For Guzzle 5 compatibility
+        if (version_compare($guzzleVersion, '6', '<')) {
+            $bodyStream = \GuzzleHttp\Stream\Stream::factory($request->getBody()->getContents());
+
+            $request = new \GuzzleHttp\Message\Request($request->getMethod(), (string) $request->getUri(), $request->getHeaders(), $bodyStream);
+        }
+
+        return $formatter->format($request);
     }
 
     private static function getTable(OutputInterface $output): Table

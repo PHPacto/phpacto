@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -25,6 +27,8 @@ use Bigfoot\PHPacto\Matcher\BodyMatcher;
 use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
+use Bigfoot\PHPacto\Matcher\Rules\OrRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
@@ -57,8 +61,6 @@ class PactResponse implements PactResponseInterface
         $this->statusCode = $statusCode;
         $this->headers = $headers;
         $this->body = $body;
-
-        $this->assertMatch($this->getSample());
     }
 
     /**
@@ -135,64 +137,34 @@ class PactResponse implements PactResponseInterface
         }
     }
 
-    private function getSampleRec($data)
+    private function getSampleRec($rule)
     {
-        if ($data instanceof Rule) {
-            return $data->getSample();
-        } elseif (is_array($data)) {
+        if ($rule instanceof Rule) {
+            $sample = $rule->getSample();
+
+            if ($sample === null) {
+                if ($rule instanceof EachItemRule) {
+                    $sample = [$this->getSampleRec($rule->getRules())];
+                } elseif ($rule instanceof OrRule) {
+                    $childRules = $rule->getRules();
+
+                    $sample = $childRules[array_rand($childRules)];
+                } elseif (method_exists($rule, 'getRule')) {
+                    $sample = $rule->getRule();
+                }
+            }
+
+            return $sample;
+        } elseif (is_array($rule)) {
             $result = [];
 
-            foreach ($data as $key => $value) {
+            foreach ($rule as $key => $value) {
                 $result[$key] = $this->getSampleRec($value);
             }
 
             return $result;
         }
 
-        return $data;
-    }
-
-    /**
-     * @return string[][]
-     */
-    private function getHeadersSample(): array
-    {
-        $headers = [];
-
-        foreach ($this->headers as $key => $rule) {
-            $sample = $rule->getSample();
-
-            if (is_array($sample)) {
-                foreach ($sample as $i => $val) {
-                    $sample[$i] = (string) $val;
-                }
-            } else {
-                $headers[$key] = (string) $sample;
-            }
-        }
-
-        return $headers;
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getBodySample()
-    {
-        if (empty($this->body)) {
-            return '';
-        }
-
-        if (is_array($this->body)) {
-            $body = [];
-
-            foreach ($this->body as $key => $rule) {
-                $body[$key] = $rule instanceof Rule ? $rule->getSample() : $rule;
-            }
-
-            return $body;
-        }
-
-        return $this->body->getSample();
+        return $rule;
     }
 }

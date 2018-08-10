@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -65,7 +67,7 @@ class MockController
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(sprintf('Using contract from file %s', $contractLocation));
+                $this->logger->log(sprintf('Found contract matching request %s', $contractLocation));
 
                 return $pact;
             } catch (Mismatch $e) {
@@ -73,6 +75,6 @@ class MockController
             }
         }
 
-        throw new \Exception('No pact matching your request was found');
+        throw new \Exception('Any contract found matching your request');
     }
 }

@@ -18,7 +18,9 @@ If you want to know more about Contract Testing please read more [here](https://
 [![Docker Pulls](https://img.shields.io/docker/pulls/90bigfoot/phpacto.svg)](https://hub.docker.com/r/90bigfoot/phpacto)
 [![Docker Stars](https://img.shields.io/docker/stars/90bigfoot/phpacto.svg)](https://hub.docker.com/r/90bigfoot/phpacto)
 
-This is a work in progress ...
+> DISCLAIMER: This is a work in progress.
+> The code can be subject to any changes **without BC** until the release version `1.0.0`.
+> Please use the issue tracker to report any enhancements or issues you encounter.
 
 You can find some contract examples in `examples` directory.
 

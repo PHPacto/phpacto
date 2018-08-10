@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -47,7 +49,7 @@ class ServerMock6Test extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, 6, '<') || version_compare($guzzleVersion, 7, '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 

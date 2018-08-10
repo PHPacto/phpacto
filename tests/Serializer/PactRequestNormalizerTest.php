@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -22,11 +24,9 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\PactRequestInterface;
-use PHPUnit\Framework\TestCase;
 
-class PactRequestNormalizerTest extends TestCase
+class PactRequestNormalizerTest extends SerializerAwareTestCase
 {
     public function normalizationFormatProvider()
     {
@@ -69,16 +69,17 @@ class PactRequestNormalizerTest extends TestCase
 
     public function test_normalize()
     {
-        $serializer = SerializerFactory::getInstance();
-
         $request = $this->createMock(PactRequestInterface::class);
+
+        $this->rule->map($request->getMethod());
+        $this->rule->map($request->getPath());
 
         $expected = [
             'method' => ['@rule' => get_class($request->getMethod())],
-            'uri' => ['@rule' => get_class($request->getUri())],
+            'path' => ['@rule' => get_class($request->getPath())],
         ];
 
-        self::assertEquals($expected, $serializer->normalize($request));
+        self::assertEquals($expected, $this->normalizer->normalize($request));
     }
 
     public function test_denormalize()
@@ -87,7 +88,7 @@ class PactRequestNormalizerTest extends TestCase
 
         $data = [
             'method' => 'get',
-            'uri' => '/uri',
+            'path' => '/path',
         ];
 
         /** @var PactRequestInterface $pact */
@@ -95,6 +96,6 @@ class PactRequestNormalizerTest extends TestCase
 
         self::assertInstanceOf(PactRequestInterface::class, $pact);
         self::assertEquals('GET', $pact->getMethod()->getSample());
-        self::assertEquals('/uri', $pact->getUri()->getSample());
+        self::assertEquals('/path', $pact->getPath()->getSample());
     }
 }

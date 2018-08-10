@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -35,6 +37,8 @@ abstract class PHPactoTestCase extends TestCase
      */
     protected $phpacto;
 
+    protected $contractsBasePath = '';
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -42,7 +46,8 @@ abstract class PHPactoTestCase extends TestCase
         Blacklist::$blacklistedClassNames[__CLASS__] = 1;
     }
 
-    public function setUp() {
-        $this->phpacto = new PHPacto();
+    public function setUp()
+    {
+        $this->phpacto = new PHPacto($this->contractsBasePath);
     }
 }

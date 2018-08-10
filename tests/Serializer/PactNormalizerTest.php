@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * PHPacto - Contract testing solution
  *
@@ -129,13 +131,11 @@ class PactNormalizerTest extends TestCase
         $requestNormalizer
             ->expects(self::once())
             ->method('denormalize')
-            ->with(self::equalTo(['Request']))
             ->willReturn($this->createMock(PactRequestInterface::class));
 
         $responseNormalizer
             ->expects(self::once())
             ->method('denormalize')
-            ->with(self::equalTo(['Response']))
             ->willReturn($this->createMock(PactResponseInterface::class));
 
         $serializer = new Serializer(
