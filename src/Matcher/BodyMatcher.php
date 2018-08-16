@@ -28,12 +28,11 @@ use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
 
-class BodyMatcher implements MessageMatcher
+class BodyMatcher
 {
-    public function assertMatch($rules, MessageInterface $message): void
+    public function assertMatch($rules, string $body, string $contentType = null): void
     {
-        $contentType = $message->getHeaderLine('Content-Type');
-        $body = BodyEncoder::decode((string) $message->getBody(), $contentType);
+        $body = BodyEncoder::decode($body, $contentType);
 
         switch (true) {
             case is_string($body):

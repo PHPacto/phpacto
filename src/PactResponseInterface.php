@@ -26,7 +26,7 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\ResponseInterface;
 
-interface PactResponseInterface
+interface PactResponseInterface extends PactMessageInterface
 {
     /**
      * @return Rule

@@ -27,7 +27,7 @@ use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-interface PactRequestInterface
+interface PactRequestInterface extends PactMessageInterface
 {
     public function getMethod(): Rule;
 

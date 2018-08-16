@@ -26,12 +26,12 @@ namespace Bigfoot\PHPacto\Matcher;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
 
-class HeadersMatcher implements MessageMatcher
+class HeadersMatcher
 {
-    public function assertMatch($rules, MessageInterface $message): void
+    public function assertMatch($rules, array $headers): void
     {
         $expectedHeaders = $this->normalizeKeys($rules);
-        $actualHeaders = $this->normalizeKeys($message->getHeaders());
+        $actualHeaders = $this->normalizeKeys($headers);
 
         $this->compareHeaders($expectedHeaders, $actualHeaders);
     }

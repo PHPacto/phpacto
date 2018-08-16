@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Matcher\BodyMatcher;
-use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
@@ -33,7 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 
-class PactRequest implements PactRequestInterface
+class PactRequest extends PactMessage implements PactRequestInterface
 {
     /**
      * @var Rule
@@ -46,16 +44,6 @@ class PactRequest implements PactRequestInterface
     private $path;
 
     /**
-     * @var Rule[]
-     */
-    private $headers;
-
-    /**
-     * @var Rule|Rule[]|null
-     */
-    private $body;
-
-    /**
      * @param Rule             $method
      * @param Rule             $path
      * @param Rule[]           $headers
@@ -63,10 +51,10 @@ class PactRequest implements PactRequestInterface
      */
     public function __construct(Rule $method, Rule $path, array $headers = [], $body = null)
     {
+        parent::__construct($headers, $body);
+
         $this->method = $method;
         $this->path = $path;
-        $this->headers = $headers;
-        $this->body = $body;
     }
 
     /**
@@ -83,40 +71,6 @@ class PactRequest implements PactRequestInterface
     public function getPath(): Rule
     {
         return $this->path;
-    }
-
-    /**
-     * @return Rule[]
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    /**
-     * @return Rule|Rule[]|null
-     */
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    public function getSample(): ServerRequestInterface
-    {
-        $method = strtoupper($this->method->getSample());
-        $uri = $this->path->getSample();
-
-        $headers = $this->getSampleRec($this->headers);
-        $body = $this->getSampleRec($this->body);
-
-        $contentType = @array_change_key_case($headers, CASE_LOWER)['content-type'] ?: '';
-
-        $stream = new Stream('php://memory', 'w');
-        $stream->write(BodyEncoder::encode($body, $contentType));
-
-        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], is_array($body) ? $body : []);
-
-        return $response;
     }
 
     public function assertMatch(RequestInterface $request)
@@ -136,22 +90,16 @@ class PactRequest implements PactRequestInterface
             $mismatches['URI'] = $mismatch;
         }
 
-        if ($this->headers) {
-            try {
-                $matcher = new HeadersMatcher();
-                $matcher->assertMatch($this->headers, $request);
-            } catch (Mismatch $mismatch) {
-                $mismatches['HEADERS'] = $mismatch;
-            }
+        try {
+            $this->assertMatchHeaders($request);
+        } catch (Mismatch $mismatch) {
+            $mismatches['HEADERS'] = $mismatch;
         }
 
-        if ($this->body) {
-            try {
-                $matcher = new BodyMatcher();
-                $matcher->assertMatch($this->body, $request);
-            } catch (Mismatch $mismatch) {
-                $mismatches['BODY'] = $mismatch;
-            }
+        try {
+            $this->assertMatchBody($request);
+        } catch (Mismatch $mismatch) {
+            $mismatches['BODY'] = $mismatch;
         }
 
         if ($mismatches) {
@@ -159,26 +107,21 @@ class PactRequest implements PactRequestInterface
         }
     }
 
-    private function getSampleRec($rule)
+    public function getSample(): ServerRequestInterface
     {
-        if ($rule instanceof Rule) {
-            $sample = $rule->getSample();
+        $method = strtoupper($this->method->getSample());
+        $uri = $this->path->getSample();
 
-            if ($sample === null && method_exists($rule, 'getRule')) {
-                $sample = $rule->getRule();
-            }
+        $headers = $this->getSampleHeaders();
+        $body = $this->getSampleBody();
 
-            return $sample;
-        } elseif (is_array($rule)) {
-            $result = [];
+        $contentType = $this->getContentType();
 
-            foreach ($rule as $key => $value) {
-                $result[$key] = $this->getSampleRec($value);
-            }
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(BodyEncoder::encode($body, $contentType));
 
-            return $result;
-        }
+        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], is_array($body) ? $body : []);
 
-        return $rule;
+        return $response;
     }
 }

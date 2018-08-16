@@ -27,25 +27,29 @@ use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 
 abstract class BodyEncoder
 {
-    public static function encode($body, string $contentType): string
+    public static function encode($body, ?string $contentType = null): string
     {
-        $isJson = false !== stripos($contentType, 'application/json');
+        if ($contentType) {
+            $isJson = false !== stripos($contentType, 'application/json');
 
-        if ($isJson) {
-            return json_encode($body);
-        } elseif (is_array($body)) {
-            return http_build_query($body);
+            if ($isJson) {
+                return json_encode($body);
+            } elseif (is_array($body)) {
+                return http_build_query($body);
+            }
         }
 
         return (string) $body;
     }
 
-    public static function decode(string $body, ?string $contentType)
+    public static function decode(string $body, ?string $contentType = null)
     {
-        if (false !== strpos($contentType, 'application/json')) {
-            return static::decodeJsonEncoded($body);
-        } elseif (false !== stripos($contentType, 'application/x-www-form-urlencoded') || false !== strpos($contentType, 'multipart/form-data')) {
-            return static::decodeUrlEncoded($body);
+        if ($contentType) {
+            if (false !== strpos($contentType, 'application/json')) {
+                return static::decodeJsonEncoded($body);
+            } elseif (false !== stripos($contentType, 'application/x-www-form-urlencoded') || false !== strpos($contentType, 'multipart/form-data')) {
+                return static::decodeUrlEncoded($body);
+            }
         }
 
         return $body;

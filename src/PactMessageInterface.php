@@ -21,21 +21,22 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher;
+namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Bigfoot\PHPacto\Matcher\BodyMatcher;
+use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
 
-interface MessageMatcher
+interface PactMessageInterface
 {
     /**
-     * Match the message with given rules.
-     *
-     * @param Rule|Rule[]|array $rules
-     * @param MessageInterface  $message
-     *
-     * @throws MismatchCollection
+     * @return Rule[]
      */
-    public function assertMatch($rules, MessageInterface $message): void;
+    public function getHeaders(): array;
+
+    /**
+     * @return Rule|Rule[]|null
+     */
+    public function getBody();
 }

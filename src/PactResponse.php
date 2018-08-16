@@ -34,22 +34,12 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
-class PactResponse implements PactResponseInterface
+class PactResponse extends PactMessage implements PactResponseInterface
 {
     /**
      * @var Rule
      */
     private $statusCode;
-
-    /**
-     * @var Rule[]
-     */
-    private $headers;
-
-    /**
-     * @var Rule|Rule[]|null
-     */
-    private $body;
 
     /**
      * @param Rule      $statusCode
@@ -58,9 +48,9 @@ class PactResponse implements PactResponseInterface
      */
     public function __construct(Rule $statusCode, array $headers = [], $body = null)
     {
+        parent::__construct($headers, $body);
+
         $this->statusCode = $statusCode;
-        $this->headers = $headers;
-        $this->body = $body;
     }
 
     /**
@@ -71,30 +61,14 @@ class PactResponse implements PactResponseInterface
         return $this->statusCode;
     }
 
-    /**
-     * @return Rule[]
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    /**
-     * @return Rule|Rule[]|null
-     */
-    public function getBody()
-    {
-        return $this->body;
-    }
-
     public function getSample(): ResponseInterface
     {
         $statusCode = $this->statusCode->getSample();
 
-        $headers = $this->getSampleRec($this->headers);
-        $body = $this->getSampleRec($this->body);
+        $headers = $this->getSampleHeaders();
+        $body = $this->getSampleBody();
 
-        $contentType = @array_change_key_case($headers, CASE_LOWER)['content-type'] ?: '';
+        $contentType = $this->getContentType();
 
         $stream = new Stream('php://memory', 'w');
         $stream->write(BodyEncoder::encode($body, $contentType));
@@ -114,57 +88,20 @@ class PactResponse implements PactResponseInterface
             $mismatches['STATUS CODE'] = $mismatch;
         }
 
-        if ($this->headers) {
-            try {
-                $matcher = new HeadersMatcher();
-                $matcher->assertMatch($this->headers, $request);
-            } catch (Mismatch $mismatch) {
-                $mismatches['HEADERS'] = $mismatch;
-            }
+        try {
+            $this->assertMatchHeaders($request);
+        } catch (Mismatch $mismatch) {
+            $mismatches['HEADERS'] = $mismatch;
         }
 
-        if ($this->body) {
-            try {
-                $matcher = new BodyMatcher();
-                $matcher->assertMatch($this->body, $request);
-            } catch (Mismatch $mismatch) {
-                $mismatches['BODY'] = $mismatch;
-            }
+        try {
+            $this->assertMatchBody($request);
+        } catch (Mismatch $mismatch) {
+            $mismatches['BODY'] = $mismatch;
         }
 
         if ($mismatches) {
             throw new MismatchCollection($mismatches, 'Response does not match');
         }
-    }
-
-    private function getSampleRec($rule)
-    {
-        if ($rule instanceof Rule) {
-            $sample = $rule->getSample();
-
-            if ($sample === null) {
-                if ($rule instanceof EachItemRule) {
-                    $sample = [$this->getSampleRec($rule->getRules())];
-                } elseif ($rule instanceof OrRule) {
-                    $childRules = $rule->getRules();
-
-                    $sample = $childRules[array_rand($childRules)];
-                } elseif (method_exists($rule, 'getRule')) {
-                    $sample = $rule->getRule();
-                }
-            }
-
-            return $sample;
-        } elseif (is_array($rule)) {
-            $result = [];
-
-            foreach ($rule as $key => $value) {
-                $result[$key] = $this->getSampleRec($value);
-            }
-
-            return $result;
-        }
-
-        return $rule;
     }
 }
