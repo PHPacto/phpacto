@@ -56,7 +56,7 @@ class CurlCommand extends BaseCommand
             ->setDescription('Generate cURL commands for contracts')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
 
-        $this->addOption('host', 'h', InputArgument::OPTIONAL, 'On wich host is your service located', 'localhost');
+        $this->addOption('host', null, InputArgument::OPTIONAL, 'On wich host is your service located', 'localhost');
         $this->addOption('port', 'p', InputArgument::OPTIONAL, 'On wich port is your service located', 80);
     }
 
