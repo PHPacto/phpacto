@@ -50,12 +50,13 @@ class HeadersMatcherTest extends TestCase
             'key-2' => $this->rule->matching(),
         ];
 
-        $message = (new Request())
-            ->withHeader('key1', 'A')
-            ->withHeader('KEY-2', ['B', 'C'])
-            ->withHeader('other', '3');
+        $headers = [
+            'key1' => 'a matching value',
+            'KEY-2' => ['a matching value', 'another matching value'],
+            'other' => 'an extra value',
+        ];
 
-        $this->matcher->assertMatch($rules, $message);
+        $this->matcher->assertMatch($rules, $headers);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -69,10 +70,11 @@ class HeadersMatcherTest extends TestCase
             'missing' => $this->rule->empty(),
         ];
 
-        $message = new Request();
+        $headers = [];
 
         try {
-            $this->matcher->assertMatch($rules, $message);
+
+            $this->matcher->assertMatch($rules, $headers);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['missing']);
@@ -92,14 +94,16 @@ class HeadersMatcherTest extends TestCase
             'key' => $this->rule->notMatching(),
         ];
 
-        $message = (new Request())
-            ->withHeader('key', '');
+        $headers = [
+            'a key' => 'is not matching'
+        ];
 
         try {
-            $this->matcher->assertMatch($rules, $message);
+
+            $this->matcher->assertMatch($rules, $headers);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
-            self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches[0]);
+            self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['key']);
 
             return;
         }
