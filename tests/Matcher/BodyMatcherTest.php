@@ -51,13 +51,7 @@ class BodyMatcherTest extends TestCase
             $this->rule->matching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('String');
-
-        $message = (new Request())
-            ->withBody($stream);
-
-        $this->matcher->assertMatch($rules, $message);
+        $this->matcher->assertMatch($rules, 'String');
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -72,14 +66,7 @@ class BodyMatcherTest extends TestCase
             'b' => $this->rule->matching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('a=1&b%5B0%5D=2&b%5B1%5D=3');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
-            ->withBody($stream);
-
-        $this->matcher->assertMatch($rules, $message);
+        $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -94,14 +81,7 @@ class BodyMatcherTest extends TestCase
             0 => $this->rule->matching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('{"a":1,"0":[2,"3"]}');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/json')
-            ->withBody($stream);
-
-        $this->matcher->assertMatch($rules, $message);
+        $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -115,15 +95,8 @@ class BodyMatcherTest extends TestCase
             'missing-key' => $this->rule->empty(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('a=1&b%5B0%5D=2&b%5B1%5D=3');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['missing-key']);
@@ -144,15 +117,8 @@ class BodyMatcherTest extends TestCase
             'missing-key' => $this->rule->empty(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('{"a":1,"0":[2,"3"]}');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/json')
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['missing-key']);
@@ -172,14 +138,8 @@ class BodyMatcherTest extends TestCase
             $this->rule->notMatching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('String');
-
-        $message = (new Request())
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, 'String');
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches[0]);
@@ -200,15 +160,8 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->notMatching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('a=1&b%5B0%5D=2&b%5B1%5D=3');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches['a']);
@@ -229,15 +182,8 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->notMatching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('{"a":1,"0":[2,"3"]}');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'application/json')
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches['a']);
@@ -258,15 +204,8 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->matching(),
         ];
 
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('a string');
-
-        $message = (new Request())
-            ->withHeader('Content-Type', 'text/html')
-            ->withBody($stream);
-
         try {
-            $this->matcher->assertMatch($rules, $message);
+            $this->matcher->assertMatch($rules, 'a string', 'text/html');
         } catch (TypeMismatch $mismatch) {
             self::assertInstanceOf(Mismatches\TypeMismatch::class, $mismatch);
 
