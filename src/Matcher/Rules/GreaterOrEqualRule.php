@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class GreaterOrEqualRule extends AbstractRule
+class GreaterOrEqualRule extends AbstractRule implements ComparisonRule
 {
     /**
      * @var int|float|string

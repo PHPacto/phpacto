@@ -30,7 +30,7 @@ class DateTimeRule extends AbstractRule
      */
     protected $format;
 
-    public function __construct(string $format, $sample = null)
+    public function __construct($format, $sample = null)
     {
         $this->assertSupport($this->format = $format);
 

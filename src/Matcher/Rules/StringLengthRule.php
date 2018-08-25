@@ -26,18 +26,18 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class StringLengthRule extends AbstractRule
 {
     /**
-     * @var Rule
+     * @var ComparisonRule
      */
     protected $length;
 
-    public function __construct(Rule $length, $sample = null)
+    public function __construct(ComparisonRule $length, $sample = null)
     {
         $this->length = $length;
 
         parent::__construct($sample);
     }
 
-    public function getLength(): Rule
+    public function getLength(): ComparisonRule
     {
         return $this->length;
     }

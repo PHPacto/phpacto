@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
+use Bigfoot\PHPacto\Matcher\Rules\ComparisonRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
@@ -29,7 +30,7 @@ use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 
 class RuleNormalizerTest extends SerializerAwareTestCase
 {
-    public function normalizationFormatProvider()
+    public function format_provider()
     {
         return [
             [null],
@@ -39,9 +40,9 @@ class RuleNormalizerTest extends SerializerAwareTestCase
     }
 
     /**
-     * @dataProvider normalizationFormatProvider
+     * @dataProvider format_provider
      */
-    public function test_it_support_normalization(?string $format)
+    public function test_it_supports_normalization(?string $format)
     {
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
@@ -49,15 +50,31 @@ class RuleNormalizerTest extends SerializerAwareTestCase
             ->setMethodsExcept(['supportsNormalization'])
             ->getMock();
 
-        $rule = $this->createMock(Rule::class);
+        $rule = $this->rule->empty();
 
         self::assertTrue($normalizer->supportsNormalization($rule, $format));
     }
 
     /**
-     * @dataProvider normalizationFormatProvider
+     * @dataProvider format_provider
      */
-    public function test_it_support_denormalization(?string $format)
+    public function test_it_supports_normalization_comparison(?string $format)
+    {
+        /** @var RuleNormalizer $normalizer */
+        $normalizer = $this->getMockBuilder(RuleNormalizer::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['supportsNormalization'])
+            ->getMock();
+
+        $rule = $this->rule->empty(ComparisonRule::class);
+
+        self::assertTrue($normalizer->supportsNormalization($rule, $format));
+    }
+
+    /**
+     * @dataProvider format_provider
+     */
+    public function test_it_supports_denormalization(?string $format)
     {
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
@@ -66,6 +83,20 @@ class RuleNormalizerTest extends SerializerAwareTestCase
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], Rule::class, $format));
+    }
+
+    /**
+     * @dataProvider format_provider
+     */
+    public function test_it_supports_denormalization_comparison(?string $format)
+    {
+        /** @var RuleNormalizer $normalizer */
+        $normalizer = $this->getMockBuilder(RuleNormalizer::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['supportsDenormalization'])
+            ->getMock();
+
+        self::assertTrue($normalizer->supportsDenormalization([], ComparisonRule::class, $format));
     }
 
     public function test_normalize()

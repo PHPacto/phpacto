@@ -28,7 +28,7 @@ class CountItemsRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
-        $childRule = $this->rule->empty();
+        $childRule = $this->rule->empty(ComparisonRule::class);
         $rule = new CountItemsRule($childRule, []);
 
         $expected = [
@@ -42,7 +42,7 @@ class CountItemsRuleTest extends SerializerAwareTestCase
 
     public function test_it_is_denormalizable()
     {
-        $childRule = $this->rule->empty();
+        $childRule = $this->rule->empty(ComparisonRule::class);
 
         $data = [
             '@rule' => 'count',

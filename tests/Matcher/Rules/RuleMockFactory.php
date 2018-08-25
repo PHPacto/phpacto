@@ -43,9 +43,9 @@ final class RuleMockFactory extends TestCase
         $this->ruleMap->addRule(get_class($mock), get_class($mock));
     }
 
-    public function empty(): Rule
+    public function empty(string $type = Rule::class): Rule
     {
-        $mock = $this->createMock(Rule::class);
+        $mock = $this->createMock($type);
 
         if ($this->ruleMap) {
             $this->map($mock);

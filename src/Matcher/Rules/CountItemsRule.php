@@ -26,18 +26,18 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 class CountItemsRule extends AbstractRule
 {
     /**
-     * @var Rule
+     * @var ComparisonRule
      */
     protected $rule;
 
-    public function __construct(Rule $rule, $sample = null)
+    public function __construct(ComparisonRule $rule, $sample = null)
     {
         $this->rule = $rule;
 
         parent::__construct($sample);
     }
 
-    public function getRule(): Rule
+    public function getRule(): ComparisonRule
     {
         return $this->rule;
     }

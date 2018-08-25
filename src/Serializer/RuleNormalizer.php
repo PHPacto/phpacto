@@ -95,8 +95,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     {
         $class = rtrim($class, '[]');
 
-        if (Rule::class !== $class) {
-            throw new InvalidArgumentException(sprintf('Class must be equal to "%s".', Rule::class));
+        if (!(Rule::class === $class || (interface_exists($class) && is_subclass_of($class, Rule::class)))) {
+            throw new InvalidArgumentException(sprintf('Interface "%s" should extends "%s"', $class, Rule::class));
         }
 
         if (is_array($data)) {

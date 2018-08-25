@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class LowerOrEqualRule extends AbstractRule
+class LowerOrEqualRule extends AbstractRule implements ComparisonRule
 {
     /**
      * @var string

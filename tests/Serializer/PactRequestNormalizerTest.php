@@ -38,7 +38,7 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
     /**
      * @dataProvider normalizationFormatProvider
      */
-    public function test_it_support_normalization(?string $format)
+    public function test_it_supports_normalization(?string $format)
     {
         /** @var PactRequestNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactRequestNormalizer::class)
@@ -54,7 +54,7 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
     /**
      * @dataProvider normalizationFormatProvider
      */
-    public function test_it_support_denormalization(?string $format)
+    public function test_it_supports_denormalization(?string $format)
     {
         /** @var PactRequestNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactRequestNormalizer::class)
