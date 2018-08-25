@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -37,7 +35,7 @@ class RegexpRule extends StringRule
      */
     protected $multiLine;
 
-    public function __construct(string $pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
+    public function __construct($pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
     {
         $this->assertSupport($this->pattern = $pattern);
         $this->multiLine = $multiLine;
@@ -71,8 +69,12 @@ class RegexpRule extends StringRule
         }
     }
 
-    protected function assertSupport(string $value): void
+    protected function assertSupport($value): void
     {
+        if (!is_string($value)) {
+            throw new Mismatches\TypeMismatch('string', gettype($value), 'Regex pattern should be a {{ expected }}, but {{ actual }} was given');
+        }
+
         if (false === @preg_match('/'.$value.'/', '')) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');
         }

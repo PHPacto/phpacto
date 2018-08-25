@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -71,16 +69,16 @@ abstract class PactMessage implements PactMessageInterface
     protected function assertMatchHeaders(MessageInterface $message)
     {
         if ($this->headers) {
-            $matcher = new HeadersMatcher();
-            $matcher->assertMatch($this->headers, $message->getHeaders());
+            $this->getHeadersMatcher()->assertMatch($this->headers, $message->getHeaders());
         }
     }
 
     protected function assertMatchBody(MessageInterface $message)
     {
         if ($this->body) {
-            $matcher = new BodyMatcher();
-            $matcher->assertMatch($this->body, (string) $message->getBody(), $message->getHeaderLine('Content-Type'));
+            $messageBody = BodyEncoder::decode((string) $message->getBody(), $message->getHeaderLine('Content-Type'));
+
+            $this->getBodyMatcher()->assertMatch($this->body, $messageBody);
         }
     }
 
@@ -99,7 +97,7 @@ abstract class PactMessage implements PactMessageInterface
         if ($rule instanceof Rule) {
             $sample = $rule->getSample();
 
-            if ($sample === null) {
+            if (null === $sample) {
                 if ($rule instanceof EachItemRule) {
                     $sample = [$this->getSampleRec($rule->getRules())];
                 } elseif ($rule instanceof OrRule) {
@@ -124,7 +122,7 @@ abstract class PactMessage implements PactMessageInterface
 
         return $rule;
     }
-    
+
     protected function getContentType(): ?string
     {
         $val = @array_change_key_case($this->headers, CASE_LOWER)['content-type'];
@@ -134,5 +132,15 @@ abstract class PactMessage implements PactMessageInterface
         }
 
         return $val;
+    }
+
+    protected function getHeadersMatcher(): HeadersMatcher
+    {
+        return new HeadersMatcher();
+    }
+
+    protected function getBodyMatcher(): BodyMatcher
+    {
+        return new BodyMatcher();
     }
 }

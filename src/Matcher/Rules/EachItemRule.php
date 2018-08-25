@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -34,7 +32,7 @@ class EachItemRule extends AbstractRule
 
     /**
      * @param Rule|Rule[] $rules
-     * @param mixed $sample
+     * @param mixed       $sample
      */
     public function __construct($rules, $sample = null)
     {
@@ -103,7 +101,6 @@ class EachItemRule extends AbstractRule
                 $item = $test[$key];
 
                 $this->assertMatchRec($rule, $item);
-
             } catch (Mismatches\Mismatch $e) {
                 $mismatches[$key] = $e;
             }
@@ -120,7 +117,7 @@ class EachItemRule extends AbstractRule
     protected function assertSupport($rule): void
     {
         if (is_array($rule)) {
-            if (count($rule) == 0) {
+            if (0 === count($rule)) {
                 throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
             }
 

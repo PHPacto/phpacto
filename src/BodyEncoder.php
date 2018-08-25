@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -24,6 +22,7 @@ declare(strict_types=1);
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
+use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
 
 abstract class BodyEncoder
 {
@@ -47,7 +46,7 @@ abstract class BodyEncoder
         if ($contentType) {
             if (false !== strpos($contentType, 'application/json')) {
                 return static::decodeJsonEncoded($body);
-            } elseif (false !== stripos($contentType, 'application/x-www-form-urlencoded') || false !== strpos($contentType, 'multipart/form-data')) {
+            } elseif (false !== stripos($contentType, 'application/x-www-form-urlencoded')) {
                 return static::decodeUrlEncoded($body);
             }
         }
@@ -60,6 +59,10 @@ abstract class BodyEncoder
         $decoded = [];
         parse_str($body, $decoded);
 
+        if (empty($decoded)) {
+            throw new ValueMismatch('Body content has not a valid FORM data', 'form', 'string');
+        }
+
         return $decoded;
     }
 
@@ -68,7 +71,7 @@ abstract class BodyEncoder
         $decoded = json_decode($body, true);
 
         if (null === $decoded) {
-            throw new TypeMismatch('json', 'string', 'Body content is not a valid JSON');
+            throw new ValueMismatch('Body content is not a valid JSON', 'json', 'string');
         }
 
         return $decoded;

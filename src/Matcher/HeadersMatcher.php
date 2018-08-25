@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -24,7 +22,6 @@ declare(strict_types=1);
 namespace Bigfoot\PHPacto\Matcher;
 
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Psr\Http\Message\MessageInterface;
 
 class HeadersMatcher
 {

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -25,7 +23,6 @@ namespace Bigfoot\PHPacto\Matcher;
 
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
 
 class HeadersMatcherTest extends TestCase
 {
@@ -73,7 +70,6 @@ class HeadersMatcherTest extends TestCase
         $headers = [];
 
         try {
-
             $this->matcher->assertMatch($rules, $headers);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
@@ -95,11 +91,10 @@ class HeadersMatcherTest extends TestCase
         ];
 
         $headers = [
-            'a key' => 'is not matching'
+            'a key' => 'is not matching',
         ];
 
         try {
-
             $this->matcher->assertMatch($rules, $headers);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);

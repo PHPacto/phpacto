@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -51,7 +49,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
             '@rule' => 'each',
             'rules' => [
                 'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)]
+                'key2' => ['@rule' => get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -83,7 +81,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
             '@rule' => 'each',
             'rules' => [
                 'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)]
+                'key2' => ['@rule' => get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -210,7 +208,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $rule = new EachItemRule([
             'A' => $matching,
             'B' => $matching,
-            'C' => $matching
+            'C' => $matching,
         ]);
 
         try {
@@ -220,7 +218,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.A','1.B','2.C'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.A', '1.B', '2.C'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
@@ -236,12 +234,12 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $rule = new EachItemRule([
             'A' => $matching,
             'B' => $mismatching,
-            'C' => $matching
+            'C' => $matching,
         ]);
 
         try {
             $rule->assertMatch([
-                ['A' => 'X', 'B' => 'Y', 'C' => 'Z']
+                ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));

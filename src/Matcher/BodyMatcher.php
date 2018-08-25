@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -23,17 +21,13 @@ declare(strict_types=1);
 
 namespace Bigfoot\PHPacto\Matcher;
 
-use Bigfoot\PHPacto\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Psr\Http\Message\MessageInterface;
 
 class BodyMatcher
 {
-    public function assertMatch($rules, string $body, string $contentType = null): void
+    public function assertMatch($rules, $body): void
     {
-        $body = BodyEncoder::decode($body, $contentType);
-
         switch (true) {
             case is_string($body):
                 $this->matchBodySting($rules, $body);

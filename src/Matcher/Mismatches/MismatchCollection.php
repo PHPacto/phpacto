@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -39,6 +37,17 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         parent::__construct(str_replace('{{ count }}', count($mismatches), $message ?: '{{ count }} rules are failed'));
 
         $this->mismatches = $mismatches;
+    }
+
+    public function __toString(): string
+    {
+        $mismatches = $this->toArrayFlat();
+
+        $map = function ($k, $v) {
+            return sprintf('%s: %s', $k, $v);
+        };
+
+        return implode("\n", array_map($map, array_keys($mismatches), $mismatches));
     }
 
     /**
@@ -86,17 +95,6 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         }
 
         return $result;
-    }
-
-    public function __toString(): string
-    {
-        $mismatches = $this->toArrayFlat();
-
-        $map = function ($k, $v) {
-            return sprintf('%s: %s', $k, $v);
-        };
-
-        return implode("\n", array_map($map, array_keys($mismatches), $mismatches));
     }
 
     public function count()

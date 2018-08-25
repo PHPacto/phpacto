@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -126,7 +124,7 @@ class ValidateContractTest extends TestCase
 
         self::assertContains('not-a-json.json     ✖ Syntax error', $output);
         self::assertContains('malformed.json      ✖ Error', $output);
-        self::assertContains('invalid.json        ✖ Error', $output);
+        self::assertContains('invalid.json        ✖ Not valid', $output);
         self::assertContains('valid.json          ✔ Valid', $output);
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);

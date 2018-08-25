@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * PHPacto - Contract testing solution
  *
@@ -26,8 +24,6 @@ namespace Bigfoot\PHPacto\Matcher;
 use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Stream;
 
 class BodyMatcherTest extends TestCase
 {
@@ -51,7 +47,9 @@ class BodyMatcherTest extends TestCase
             $this->rule->matching(),
         ];
 
-        $this->matcher->assertMatch($rules, 'String');
+        $body = 'String';
+
+        $this->matcher->assertMatch($rules, $body);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -66,7 +64,12 @@ class BodyMatcherTest extends TestCase
             'b' => $this->rule->matching(),
         ];
 
-        $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
+        $body = [
+            'a' => '1',
+            'b' => [2, true],
+        ];
+
+        $this->matcher->assertMatch($rules, $body);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -81,7 +84,12 @@ class BodyMatcherTest extends TestCase
             0 => $this->rule->matching(),
         ];
 
-        $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
+        $body = [
+            'a' => '1',
+            0 => [2, true],
+        ];
+
+        $this->matcher->assertMatch($rules, $body);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
@@ -95,8 +103,13 @@ class BodyMatcherTest extends TestCase
             'missing-key' => $this->rule->empty(),
         ];
 
+        $body = [
+            'a' => '1',
+            'b' => [2, true],
+        ];
+
         try {
-            $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
+            $this->matcher->assertMatch($rules, $body);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['missing-key']);
@@ -117,8 +130,13 @@ class BodyMatcherTest extends TestCase
             'missing-key' => $this->rule->empty(),
         ];
 
+        $body = [
+            'a' => '1',
+            'b' => [2, true],
+        ];
+
         try {
-            $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
+            $this->matcher->assertMatch($rules, $body);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['missing-key']);
@@ -138,8 +156,10 @@ class BodyMatcherTest extends TestCase
             $this->rule->notMatching(),
         ];
 
+        $body = 'String';
+
         try {
-            $this->matcher->assertMatch($rules, 'String');
+            $this->matcher->assertMatch($rules, $body);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches[0]);
@@ -160,8 +180,13 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->notMatching(),
         ];
 
+        $body = [
+            'a' => '1',
+            'b' => [2, true],
+        ];
+
         try {
-            $this->matcher->assertMatch($rules, 'a=1&b%5B0%5D=2&b%5B1%5D=3', 'application/x-www-form-urlencoded');
+            $this->matcher->assertMatch($rules, $body);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches['a']);
@@ -182,8 +207,13 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->notMatching(),
         ];
 
+        $body = [
+            'a' => '1',
+            'b' => [2, true],
+        ];
+
         try {
-            $this->matcher->assertMatch($rules, '{"a":1,"0":[2,"3"]}', 'application/json');
+            $this->matcher->assertMatch($rules, $body);
         } catch (Mismatches\MismatchCollection $mismatches) {
             self::assertCount(1, $mismatches);
             self::assertInstanceOf(Mismatches\ValueMismatch::class, $mismatches['a']);
@@ -204,8 +234,10 @@ class BodyMatcherTest extends TestCase
             'a' => $this->rule->matching(),
         ];
 
+        $body = 'a string';
+
         try {
-            $this->matcher->assertMatch($rules, 'a string', 'text/html');
+            $this->matcher->assertMatch($rules, $body);
         } catch (TypeMismatch $mismatch) {
             self::assertInstanceOf(Mismatches\TypeMismatch::class, $mismatch);
 
