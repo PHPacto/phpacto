@@ -39,16 +39,16 @@ class PHPacto
         $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
     }
 
-    public function createServerMock(): Guzzle\ServerMock
+    public function createServerMock(): Guzzle\ProviderMock
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
         if (version_compare($guzzleVersion, '6', '<')) {
-            return new Guzzle\ServerMock5();
+            return new Guzzle\ProviderMockGuzzle5();
         }
 
         if (version_compare($guzzleVersion, '7', '<')) {
-            return new Guzzle\ServerMock6();
+            return new Guzzle\ProviderMockGuzzle6();
         }
 
         throw new \Exception('No valid Guzzle version is found. Please install Guzzle version 6 or 5.');

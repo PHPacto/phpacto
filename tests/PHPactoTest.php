@@ -21,7 +21,7 @@
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Guzzle\ServerMock;
+use Bigfoot\PHPacto\Guzzle\ProviderMock;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +31,7 @@ class PHPactoTest extends TestCase
     {
         $phpacto = new PHPacto();
 
-        self::assertInstanceOf(ServerMock::class, $phpacto->createServerMock());
+        self::assertInstanceOf(ProviderMock::class, $phpacto->createServerMock());
     }
 
     public function test_it_returns_loader()

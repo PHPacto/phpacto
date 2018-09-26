@@ -29,7 +29,7 @@ use PHPUnit\Framework\Constraint\Constraint as PHPUnitConstraint;
 use PHPUnit\Util\InvalidArgumentHelper;
 use Psr\Http\Message\RequestInterface;
 
-class PactMatchesRequest extends PHPUnitConstraint
+class RequestMatchesPact extends PHPUnitConstraint
 {
     /**
      * @var PactInterface
@@ -75,7 +75,7 @@ class PactMatchesRequest extends PHPUnitConstraint
      */
     public function toString(): string
     {
-        return sprintf('Pact `%s` match request', $this->pact->getDescription());
+        return sprintf('request `%s` matches Pact', $this->pact->getDescription());
     }
 
     protected function failPactMatching(RequestInterface $request, Mismatch $mismatch, string $description = null)

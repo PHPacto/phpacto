@@ -22,8 +22,9 @@
 namespace Bigfoot\PHPacto\Test;
 
 use Bigfoot\PHPacto\PactInterface;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesRequest;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\PactMatchesResponse;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\RequestMatchesPact;
+use Bigfoot\PHPacto\Test\PHPUnit\Constraint\ResponseMatchesPact;
+use PHPUnit\Framework\Assert;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -36,11 +37,11 @@ trait PHPactoTestTrait
      * @param RequestInterface $request
      * @param string|null      $message
      */
-    public static function assertPactMatchesRequest(PactInterface $pact, RequestInterface $request, string $message = '')
+    public static function assertRequestMatchesPact(PactInterface $pact, RequestInterface $request, string $message = '')
     {
-        $constraint = new PactMatchesRequest($pact);
+        $constraint = new RequestMatchesPact($pact);
 
-        static::assertThat($request, $constraint, $message);
+        Assert::assertThat($request, $constraint, $message);
     }
 
     /**
@@ -50,10 +51,10 @@ trait PHPactoTestTrait
      * @param ResponseInterface $response
      * @param string|null       $message
      */
-    public static function assertPactMatchesResponse(PactInterface $pact, ResponseInterface $response, string $message = '')
+    public static function assertResponseMatchesPact(PactInterface $pact, ResponseInterface $response, string $message = '')
     {
-        $constraint = new PactMatchesResponse($pact);
+        $constraint = new ResponseMatchesPact($pact);
 
-        static::assertThat($response, $constraint, $message);
+        Assert::assertThat($response, $constraint, $message);
     }
 }

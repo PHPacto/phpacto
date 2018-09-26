@@ -22,14 +22,17 @@
 namespace Bigfoot\PHPacto\Guzzle;
 
 use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\Test\PHPactoTestTrait;
 use GuzzleHttp\Ring\Client\MockHandler;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Stream;
 
-class ServerMock5 implements ServerMock
+class ProviderMockGuzzle5 implements ProviderMock
 {
+    use PHPactoTestTrait;
+
     /**
      * @var MockHandler
      */
@@ -40,7 +43,7 @@ class ServerMock5 implements ServerMock
         $this->mock = new MockHandler(function (array $requestArray) use ($pact): array {
             $request = self::getRequestFromArray($requestArray);
 
-            $pact->getRequest()->assertMatch($request);
+            self::assertRequestMatchesPact($pact, $request);
 
             $response = $pact->getResponse()->getSample();
 

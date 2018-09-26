@@ -22,13 +22,16 @@
 namespace Bigfoot\PHPacto\Guzzle;
 
 use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\Test\PHPactoTestTrait;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class ServerMock6 implements ServerMock
+class ProviderMockGuzzle6 implements ProviderMock
 {
+    use PHPactoTestTrait;
+
     /**
      * @var MockHandler
      */
@@ -42,7 +45,7 @@ class ServerMock6 implements ServerMock
     public function handlePact(PactInterface $pact): void
     {
         $this->mock->append(function (RequestInterface $request) use ($pact): ResponseInterface {
-            $pact->getRequest()->assertMatch($request);
+            self::assertRequestMatchesPact($pact, $request);
 
             return $pact->getResponse()->getSample();
         });

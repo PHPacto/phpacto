@@ -21,36 +21,43 @@
 
 namespace Bigfoot\PHPacto;
 
-use Bigfoot\PHPacto\Guzzle\ServerMock5;
+use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle6;
+use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use GuzzleHttp\Client;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @group guzzle
  */
-class ServerMock5Test extends TestCase
+class ProviderMockGuzzle6Test extends TestCase
 {
     /**
-     * @var ServerMock5
+     * @var ProviderMockGuzzle6
      */
     private $server;
+
+    /**
+     * @var Client
+     */
+    private $client;
 
     public function setUp()
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, '5', '<') || version_compare($guzzleVersion, '6', '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 
-        $this->server = new ServerMock5();
+        $this->server = new ProviderMockGuzzle6();
+        $this->client = new Client(['handler' => $this->server->getHandler()]);
     }
 
     /**
-     * @group guzzle5
+     * @group guzzle6
      */
     public function test_it_throws_mismatch_if_request_not_match()
     {
@@ -62,27 +69,20 @@ class ServerMock5Test extends TestCase
 
         $pact = $this->createMock(PactInterface::class);
         $pact
-            ->expects(self::atLeastOnce())
+            ->expects(self::once())
             ->method('getRequest')
             ->willReturn($request);
 
         $this->server->handlePact($pact);
 
-        $client = new Client(['handler' => $this->server->getHandler()]);
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessageRegExp('/Failed asserting that request `.*` matches Pact/');
 
-        try {
-            $client->get('/');
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            self::assertInstanceOf(MismatchCollection::class, $e->getPrevious());
-
-            return;
-        }
-
-        self::fail('This test should end in the catch');
+        $this->client->request('GET', '/');
     }
 
     /**
-     * @group guzzle5
+     * @group guzzle6
      */
     public function test_it_match_request_and_respond_with_a_response_mock()
     {
@@ -103,21 +103,14 @@ class ServerMock5Test extends TestCase
             ->expects(self::once())
             ->method('assertMatch');
 
-        $responseBody = new Stream('php://memory', 'w');
-        $responseBody->write('mock');
-
         $response
             ->expects(self::once())
             ->method('getSample')
-            ->willReturn(new Response($responseBody, 123, []));
+            ->willReturn($psr7Response = $this->createMock(ResponseInterface::class));
 
         $this->server->handlePact($pact);
 
-        $client = new Client(['handler' => $this->server->getHandler()]);
-
-        $resp = $client->get('/');
-
-        self::assertEquals(123, $resp->getStatusCode());
-        self::assertEquals('mock', (string) $resp->getBody());
+        $resp = $this->client->request('GET', '/');
+        self::assertSame($psr7Response, $resp);
     }
 }

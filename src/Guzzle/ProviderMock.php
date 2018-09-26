@@ -23,7 +23,7 @@ namespace Bigfoot\PHPacto\Guzzle;
 
 use Bigfoot\PHPacto\PactInterface;
 
-interface ServerMock
+interface ProviderMock
 {
     public function handlePact(PactInterface $pact): void;
 }

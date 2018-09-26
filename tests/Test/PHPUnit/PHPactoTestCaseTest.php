@@ -51,7 +51,7 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(RequestInterface::class));
 
-        PHPactoTestCase::assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
+        PHPactoTestCase::assertRequestMatchesPact($pact, $this->createMock(RequestInterface::class));
     }
 
     public function test_it_asserts_that_pact_matches_response()
@@ -66,7 +66,7 @@ class PHPactoTestCaseTest extends TestCase
             ->method('assertMatch')
             ->with(self::isInstanceOf(ResponseInterface::class));
 
-        PHPactoTestCase::assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
+        PHPactoTestCase::assertResponseMatchesPact($pact, $this->createMock(ResponseInterface::class));
     }
 
     public function test_it_throws_assertion_error_if_request_not_match()
@@ -84,7 +84,7 @@ class PHPactoTestCaseTest extends TestCase
 
         $this->expectException(AssertionFailedError::class);
 
-        PHPactoTestCase::assertPactMatchesRequest($pact, $this->createMock(RequestInterface::class));
+        PHPactoTestCase::assertRequestMatchesPact($pact, $this->createMock(RequestInterface::class));
     }
 
     public function test_it_throws_assertion_error_if_response_not_match()
@@ -102,6 +102,6 @@ class PHPactoTestCaseTest extends TestCase
 
         $this->expectException(AssertionFailedError::class);
 
-        PHPactoTestCase::assertPactMatchesResponse($pact, $this->createMock(ResponseInterface::class));
+        PHPactoTestCase::assertResponseMatchesPact($pact, $this->createMock(ResponseInterface::class));
     }
 }
