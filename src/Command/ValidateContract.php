@@ -21,7 +21,7 @@
 
 namespace Bigfoot\PHPacto\Command;
 
-use Bigfoot\PHPacto\Loader\ContractLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Symfony\Component\Console\Helper\Table;
@@ -34,7 +34,7 @@ use Symfony\Component\Serializer\Serializer;
 class ValidateContract extends BaseCommand
 {
     /**
-     * @var ContractLoader
+     * @var PactLoader
      */
     protected $loader;
 
@@ -42,7 +42,7 @@ class ValidateContract extends BaseCommand
     {
         parent::__construct($serializer, $defaultContractsDir);
 
-        $this->loader = new ContractLoader($serializer);
+        $this->loader = new PactLoader($serializer);
     }
 
     protected function configure()
@@ -61,7 +61,7 @@ class ValidateContract extends BaseCommand
             $this->loadPact($output, $path, $this->defaultContractsDir);
         } elseif (is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', ContractLoader::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
                 throw new \Exception(sprintf('No files found in `%s`', $path));

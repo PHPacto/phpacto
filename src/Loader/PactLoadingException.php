@@ -21,6 +21,6 @@
 
 namespace Bigfoot\PHPacto\Loader;
 
-class ContractLoadingException extends \Exception
+class PactLoadingException extends \Exception
 {
 }

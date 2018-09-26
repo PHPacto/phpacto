@@ -22,7 +22,7 @@
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Guzzle\ServerMock;
-use Bigfoot\PHPacto\Loader\ContractLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use PHPUnit\Framework\TestCase;
 
 class PHPactoTest extends TestCase
@@ -45,18 +45,18 @@ class PHPactoTest extends TestCase
             }
         };
 
-        self::assertInstanceOf(ContractLoader::class, $phpacto->getLoaderPublic());
+        self::assertInstanceOf(PactLoader::class, $phpacto->getLoaderPublic());
     }
 
     public function test_it_calls_file_loader()
     {
         $base_path = 'base_path/';
 
-        $loader = $this->createMock(ContractLoader::class);
+        $loader = $this->createMock(PactLoader::class);
 
         // PHPacto mock
         $phpacto = new class($base_path, $loader) extends PHPacto {
-            public function __construct(string $contractsBasePath = null, ContractLoader $loader)
+            public function __construct(string $contractsBasePath = null, PactLoader $loader)
             {
                 parent::__construct($contractsBasePath);
 
@@ -64,8 +64,8 @@ class PHPactoTest extends TestCase
             }
 
             // Mock getLoader() protected method
-            // Return mocked ContractLoader
-            protected function getLoader(): ContractLoader
+            // Return mocked PactLoader
+            protected function getLoader(): PactLoader
             {
                 return $this->loader;
             }

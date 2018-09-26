@@ -21,7 +21,7 @@
 
 namespace Bigfoot\PHPacto\Command;
 
-use Bigfoot\PHPacto\Loader\ContractLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,7 +35,7 @@ class BuilderValidateContract extends BuilderWriteContract
         $this
             ->setName('builder:validate')
             ->setDescription('Check that all contracts are up to date with their contract builders')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>('.implode('|', ContractLoader::getSupportedFormats()).')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>('.implode('|', PactLoader::getSupportedFormats()).')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
