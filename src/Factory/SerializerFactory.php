@@ -48,6 +48,8 @@ abstract class SerializerFactory
      */
     private static $ruleMap;
 
+    final private function __construct() {}
+
     public static function getInstance(): Serializer
     {
         if (!self::$instance) {
