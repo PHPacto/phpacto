@@ -82,12 +82,12 @@ abstract class PactMessage implements PactMessageInterface
         }
     }
 
-    protected function getSampleHeaders(): array
+    public function getSampleHeaders(): array
     {
         return $this->getSampleRec($this->headers);
     }
 
-    protected function getSampleBody()
+    public function getSampleBody()
     {
         return $this->getSampleRec($this->body);
     }
