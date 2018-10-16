@@ -29,6 +29,7 @@ use Bigfoot\PHPacto\PactResponseInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
+use Zend\Diactoros\Response;
 
 class MockControllerTest extends TestCase
 {
@@ -76,9 +77,7 @@ class MockControllerTest extends TestCase
 
         $controller = new MockController($this->logger, [$notMatchingPact, $matchingPact]);
 
-        $request = new Request();
-
-        $response = $controller->action($request);
+        $response = $controller->action(new Request());
 
         self::assertSame($matchingResponsePsr7, $response);
     }
@@ -87,10 +86,28 @@ class MockControllerTest extends TestCase
     {
         $controller = new MockController($this->logger, []);
 
-        $request = new Request();
-
         self::expectExceptionMessage('Any contract found matching your request');
 
-        $controller->action($request);
+        $controller->action(new Request());
+    }
+
+    public function test_support_cqrs()
+    {
+        $matchingPact = $this->createMock(Pact::class);
+
+        $matchingResponse = $this->createMock(PactResponseInterface::class);
+        $matchingResponse->expects(self::once())
+            ->method('getSample')
+            ->willReturn(new Response());
+
+        $matchingPact->expects(self::once())
+            ->method('getResponse')
+            ->willReturn($matchingResponse);
+
+        $controller = new MockController($this->logger, [$matchingPact], '*.origin.it');
+
+        $response = $controller->action(new Request());
+
+        self::assertEquals('*.origin.it', $response->getHeaderLine('Access-Control-Allow-Origin'));
     }
 }

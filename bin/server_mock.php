@@ -29,6 +29,14 @@ use Zend\Diactoros\Stream;
 
 require __DIR__.'/bootstrap.php';
 
+if (false !== $allowOrigin = getenv('ALLOW_ORIGIN')) {
+    if ('all' === strtolower($allowOrigin)) {
+        $allowOrigin = '*';
+    }
+} else {
+    $allowOrigin = null;
+}
+
 $logger = new StdoutLogger();
 
 $logger->log(sprintf(
@@ -45,9 +53,9 @@ if (0 === count($pacts)) {
     throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
 }
 
-$handler = function (RequestInterface $request) use ($logger, $pacts) {
+$handler = function (RequestInterface $request) use ($logger, $pacts, $allowOrigin) {
     try {
-        $controller = new MockController($logger, $pacts);
+        $controller = new MockController($logger, $pacts, $allowOrigin);
 
         $response = $controller->action($request);
 

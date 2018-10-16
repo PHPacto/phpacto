@@ -40,10 +40,16 @@ class MockController
      */
     private $pacts;
 
-    public function __construct(Logger  $logger, array $pacts)
+    /**
+     * @var string|null
+     */
+    private $allowOrigin;
+
+    public function __construct(Logger  $logger, array $pacts, $allowOrigin = null)
     {
         $this->logger = $logger;
         $this->pacts = $pacts;
+        $this->allowOrigin = $allowOrigin;
     }
 
     public function action(RequestInterface $request): ResponseInterface
@@ -56,7 +62,13 @@ class MockController
 
         $pact = $this->findMatchingPact($request);
 
-        return $pact->getResponse()->getSample();
+        $response = $pact->getResponse()->getSample();
+
+        if (null !== $this->allowOrigin) {
+            return $response->withHeader('Access-Control-Allow-Origin', $this->allowOrigin);
+        }
+
+        return $response;
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
