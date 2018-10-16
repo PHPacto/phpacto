@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle6;
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\AssertionFailedError;

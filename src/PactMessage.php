@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,16 @@ abstract class PactMessage implements PactMessageInterface
         return $this->body;
     }
 
+    public function getSampleHeaders(): array
+    {
+        return $this->getSampleRecursive($this->headers);
+    }
+
+    public function getSampleBody()
+    {
+        return $this->getSampleRecursive($this->body);
+    }
+
     protected function assertMatchHeaders(MessageInterface $message)
     {
         if ($this->headers) {
@@ -80,16 +90,6 @@ abstract class PactMessage implements PactMessageInterface
 
             $this->getBodyMatcher()->assertMatch($this->body, $messageBody);
         }
-    }
-
-    public function getSampleHeaders(): array
-    {
-        return $this->getSampleRecursive($this->headers);
-    }
-
-    public function getSampleBody()
-    {
-        return $this->getSampleRecursive($this->body);
     }
 
     protected function getSampleRecursive($rule)

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 namespace Bigfoot\PHPacto\Matcher;
 
 use Bigfoot\PHPacto\BodyEncoder;
-use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
 use PHPUnit\Framework\TestCase;
 
@@ -52,7 +51,7 @@ class BodyEncoderTest extends TestCase
             'a' => '1',
             'b' => [2, 3],
             'c' => [
-                'd' => ' '
+                'd' => ' ',
             ],
         ];
 
@@ -66,7 +65,7 @@ class BodyEncoderTest extends TestCase
             'a' => '1',
             'b' => [2, 3],
             'c' => [
-                'd' => ' '
+                'd' => ' ',
             ],
         ];
 

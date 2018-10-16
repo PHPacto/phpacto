@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] a
 // Load environment
 $_root_dir = getenv('PWD');
 if ($_env_contracts_dir = getenv('CONTRACTS_DIR')) {
-    if ($_env_contracts_dir[0] !== \DIRECTORY_SEPARATOR) {
-        $_env_contracts_dir = $_root_dir . \DIRECTORY_SEPARATOR . $_env_contracts_dir;
+    if (\DIRECTORY_SEPARATOR !== $_env_contracts_dir[0]) {
+        $_env_contracts_dir = $_root_dir.\DIRECTORY_SEPARATOR.$_env_contracts_dir;
     }
     define('CONTRACTS_DIR', realpath($_env_contracts_dir));
 } else {

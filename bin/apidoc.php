@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ foreach ($pacts as $pact) {
                         'example' => $request->getSampleBody(),
                     ],
                 ],
-            ]
+            ],
         ],
     ]);
 
@@ -86,10 +86,11 @@ foreach ($pacts as $pact) {
     ]);
 
     foreach ($response->getSampleHeaders() as $key => $value) {
-        if (strtolower($key) === 'c') continue;
-
+        if ('c' === strtolower($key)) {
+            continue;
+        }
         $header = new Swagger\Header([
-            'type' => gettype($value)
+            'type' => gettype($value),
         ]);
         $swResponse->getHeaders()->set($key, $header);
     }

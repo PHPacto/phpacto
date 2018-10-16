@@ -19,19 +19,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace Bigfoot\PHPacto\Factory;
 
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use PHPUnit\Framework\TestCase;
 
-interface PactMessageInterface
+class PactoTest extends TestCase
 {
-    /**
-     * @return Rule[]
-     */
-    public function getHeaders(): array;
+    public function test_it_not_fails()
+    {
+        exec('bin/phpacto', $output, $exitCode);
 
-    /**
-     * @return Rule|Rule[]|null
-     */
-    public function getBody();
+        self::assertEquals(0, $exitCode);
+        self::assertContains('PHPacto', $output[0]);
+    }
+
+    public function test_it_has_copyright()
+    {
+        $output = `bin/phpacto 2>&1`;
+
+        $currentYear = (new \DateTime())->format('Y');
+
+        self::assertContains('Copyright (c) '.$currentYear, $output);
+    }
 }

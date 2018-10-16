@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2017  Damian Długosz
+ * Copyright (c) 2018  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
      */
     protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
     {
-        if (in_array($attribute, ['sample', 'sampleHeaders', 'sampleBody'])) {
+        if (in_array($attribute, ['sample', 'sampleHeaders', 'sampleBody'], true)) {
             return false;
         }
 
