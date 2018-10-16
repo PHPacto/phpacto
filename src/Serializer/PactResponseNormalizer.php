@@ -79,7 +79,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
      */
     protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
     {
-        if ('sample' === $attribute) {
+        if (in_array($attribute, ['sample', 'sampleHeaders', 'sampleBody'])) {
             return false;
         }
 

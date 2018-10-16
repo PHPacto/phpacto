@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.1",
+        "exsyst/swagger": "^0.4.1",
         "namshi/cuzzle": "^1|^2",
         "psr/http-message": "^1",
         "symfony/console": "^2.8|^3|^4",

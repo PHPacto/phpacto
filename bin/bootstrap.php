@@ -40,7 +40,7 @@ if ($_env_contracts_dir = getenv('CONTRACTS_DIR')) {
     if ($_env_contracts_dir[0] !== \DIRECTORY_SEPARATOR) {
         $_env_contracts_dir = $_root_dir . \DIRECTORY_SEPARATOR . $_env_contracts_dir;
     }
-    define('CONTRACTS_DIR', $_env_contracts_dir);
+    define('CONTRACTS_DIR', realpath($_env_contracts_dir));
 } else {
     define('CONTRACTS_DIR', $_root_dir);
 }
