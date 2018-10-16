@@ -85,7 +85,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
             $uri = urldecode((string) $request->getUri());
             $this->path->assertMatch($uri);
         } catch (Mismatch $mismatch) {
-            $mismatches['URI'] = $mismatch;
+            $mismatches['PATH'] = $mismatch;
         }
 
         try {

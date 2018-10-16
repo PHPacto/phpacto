@@ -84,22 +84,22 @@ abstract class PactMessage implements PactMessageInterface
 
     public function getSampleHeaders(): array
     {
-        return $this->getSampleRec($this->headers);
+        return $this->getSampleRecursive($this->headers);
     }
 
     public function getSampleBody()
     {
-        return $this->getSampleRec($this->body);
+        return $this->getSampleRecursive($this->body);
     }
 
-    protected function getSampleRec($rule)
+    protected function getSampleRecursive($rule)
     {
         if ($rule instanceof Rule) {
             $sample = $rule->getSample();
 
             if (null === $sample) {
                 if ($rule instanceof EachItemRule) {
-                    $sample = [$this->getSampleRec($rule->getRules())];
+                    $sample = [$this->getSampleRecursive($rule->getRules())];
                 } elseif ($rule instanceof OrRule) {
                     $childRules = $rule->getRules();
 
@@ -114,7 +114,7 @@ abstract class PactMessage implements PactMessageInterface
             $result = [];
 
             foreach ($rule as $key => $value) {
-                $result[$key] = $this->getSampleRec($value);
+                $result[$key] = $this->getSampleRecursive($value);
             }
 
             return $result;
