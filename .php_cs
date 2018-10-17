@@ -23,9 +23,9 @@ return PhpCsFixer\Config::create()
         '@Symfony:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'combine_consecutive_unsets' => true,
+        'concat_space' => ['spacing' => 'one'],
         // one should use PHPUnit methods to set up expected exception instead of annotations
         'header_comment' => ['header' => $header],
-        'heredoc_to_nowdoc' => true,
         'list_syntax' => ['syntax' => 'short'],
         'no_extra_consecutive_blank_lines' => ['break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block'],
         'no_short_echo_tag' => true,
