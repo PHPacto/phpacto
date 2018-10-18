@@ -36,7 +36,7 @@ class BuilderWriteContract extends BaseCommand
         $this
             ->setName('builder:write')
             ->setDescription('Run contract builders and write or update all contracts')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>('.implode('|', PactLoader::getSupportedFormats()).')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
@@ -56,7 +56,7 @@ class BuilderWriteContract extends BaseCommand
             $finder->files()->in($path)->name('*.php');
 
             if (0 === $finder->count()) {
-                throw new \Exception('No contract builders found in '.$path);
+                throw new \Exception('No contract builders found in ' . $path);
             }
 
             foreach ($finder->files() as $file) {
@@ -73,7 +73,7 @@ class BuilderWriteContract extends BaseCommand
 
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = rtrim($path, '.php').'.'.$format;
+        $pactPath = rtrim($path, '.php') . '.' . $format;
         $this->writeContractFile($pactPath, $pact, $format);
     }
 
@@ -85,7 +85,7 @@ class BuilderWriteContract extends BaseCommand
         $pact = require $path;
 
         if (!$pact instanceof Pact) {
-            throw new \Exception('Must return an instance of '.Pact::class);
+            throw new \Exception('Must return an instance of ' . Pact::class);
         }
 
         return $pact;

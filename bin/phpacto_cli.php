@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require __DIR__.'/bootstrap.php';
+require __DIR__ . '/bootstrap.php';
 
 use Bigfoot\PHPacto\Command;
 use Bigfoot\PHPacto\Factory\SerializerFactory;

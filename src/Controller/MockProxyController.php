@@ -74,7 +74,7 @@ class MockProxyController
 
         $dateStr = date('Y-m-d H:i:s');
 
-        $pact = new Pact($pactRequest, $pactResponse, 'Created automatically - '.$dateStr);
+        $pact = new Pact($pactRequest, $pactResponse, 'Created automatically - ' . $dateStr);
 
         $this->createContractFile($pact, $dateStr);
 
@@ -111,7 +111,7 @@ class MockProxyController
         $serializer = SerializerFactory::getInstance();
         file_put_contents($filename, $serializer->serialize($pact, 'yaml'));
 
-        $this->logger->log('Contract wrote to '.realpath($filename));
+        $this->logger->log('Contract wrote to ' . realpath($filename));
     }
 
     private function getProxiedUri(UriInterface $uri): UriInterface
@@ -120,7 +120,7 @@ class MockProxyController
             ->withScheme($this->proxyTo['scheme'] ?? 'http')
             ->withHost($this->proxyTo['host'] ?? 'localhost')
             ->withPort($this->proxyTo['port'] ?? ('https' === @$this->proxyTo['scheme'] ? 443 : 80))
-            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/').$uri->getPath())
+            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/') . $uri->getPath())
             ->withQuery($uri->getQuery())
             ->withFragment($uri->getFragment());
     }

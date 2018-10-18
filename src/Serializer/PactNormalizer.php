@@ -162,7 +162,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return md5($format.serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

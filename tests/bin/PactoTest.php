@@ -39,6 +39,6 @@ class PactoTest extends TestCase
 
         $currentYear = (new \DateTime())->format('Y');
 
-        self::assertContains('Copyright (c) '.$currentYear, $output);
+        self::assertContains('Copyright (c) ' . $currentYear, $output);
     }
 }

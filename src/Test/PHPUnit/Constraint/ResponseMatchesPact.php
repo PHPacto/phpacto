@@ -88,11 +88,11 @@ class ResponseMatchesPact extends PHPUnitConstraint
         $additionalFailureDescription = $this->additionalFailureDescription($response);
 
         if ($additionalFailureDescription) {
-            $failureDescription .= "\n".$additionalFailureDescription;
+            $failureDescription .= "\n" . $additionalFailureDescription;
         }
 
         if (!empty($description)) {
-            $failureDescription = $description."\n".$failureDescription;
+            $failureDescription = $description . "\n" . $failureDescription;
         }
 
         throw new AssertionFailedError(trim($failureDescription));
@@ -103,12 +103,12 @@ class ResponseMatchesPact extends PHPUnitConstraint
      */
     protected function failureDescription($other, Mismatch $mismatch = null): string
     {
-        $array_map_assoc = function (callable $f, array $a) {
+        $array_map_assoc = function(callable $f, array $a) {
             return array_column(array_map($f, array_keys($a), $a), 1, 0);
         };
 
-        $func = function ($k, $v) {
-            return [$k, $k.":\n".$v];
+        $func = function($k, $v) {
+            return [$k, $k . ":\n" . $v];
         };
 
         if ($mismatch instanceof MismatchCollection) {
@@ -122,6 +122,6 @@ class ResponseMatchesPact extends PHPUnitConstraint
             );
         }
 
-        return $this->toString().' '.$mismatch->getMessage();
+        return $this->toString() . ' ' . $mismatch->getMessage();
     }
 }

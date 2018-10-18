@@ -66,7 +66,7 @@ class ValueMismatch extends Mismatch
      */
     protected static function strJoin(array $values, string $glue = ' or '): string
     {
-        $callback = function ($value) {
+        $callback = function($value) {
             return self::wrap((string) $value);
         };
 

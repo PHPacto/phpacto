@@ -52,7 +52,7 @@ class CountItemsRule extends AbstractRule
             $this->rule->assertMatch(count($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
-                'The items count in array {{ actual }} should match the rule:'."\n".
+                'The items count in array {{ actual }} should match the rule:' . "\n" .
                 '    {{ expected }}',
                 $mismatch->getMessage(),
                 count($test)

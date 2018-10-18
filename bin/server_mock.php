@@ -27,7 +27,7 @@ use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
-require __DIR__.'/bootstrap.php';
+require __DIR__ . '/bootstrap.php';
 
 if (false !== $allowOrigin = getenv('ALLOW_ORIGIN')) {
     if ('all' === strtolower($allowOrigin)) {
@@ -53,7 +53,7 @@ if (0 === count($pacts)) {
     throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
 }
 
-$handler = function (RequestInterface $request) use ($logger, $pacts, $allowOrigin) {
+$handler = function(RequestInterface $request) use ($logger, $pacts, $allowOrigin) {
     try {
         $controller = new MockController($logger, $pacts, $allowOrigin);
 

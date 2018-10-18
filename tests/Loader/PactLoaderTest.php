@@ -77,7 +77,7 @@ class PactLoaderTest extends TestCase
 
         $this->expectExceptionMessage('not exist');
 
-        $loader->loadFromFile($this->fs->url().'/not-exist.json');
+        $loader->loadFromFile($this->fs->url() . '/not-exist.json');
     }
 
     public function test_it_throws_exception_if_is_not_a_valid_contract()
@@ -86,14 +86,14 @@ class PactLoaderTest extends TestCase
 
         $this->expectExceptionMessage('does not contain a valid pact');
 
-        $loader->loadFromFile($this->fs->url().'/empty.json');
+        $loader->loadFromFile($this->fs->url() . '/empty.json');
     }
 
     public function test_it_reads_file_and_returns_a_pact()
     {
         $loader = new PactLoader($this->serializer);
 
-        $pact = $loader->loadFromFile($this->fs->url().'/contracts/pact.json');
+        $pact = $loader->loadFromFile($this->fs->url() . '/contracts/pact.json');
 
         self::assertInstanceOf(PactInterface::class, $pact);
     }
@@ -110,7 +110,7 @@ class PactLoaderTest extends TestCase
             ->method('loadFromFile')
             ->willReturn($this->createMock(PactInterface::class));
 
-        $pacts = $loader->loadFromDirectory($this->fs->url().'/contracts');
+        $pacts = $loader->loadFromDirectory($this->fs->url() . '/contracts');
 
         self::assertCount(1, $pacts);
         self::assertInstanceOf(PactInterface::class, current($pacts));
@@ -125,7 +125,7 @@ class PactLoaderTest extends TestCase
 
         $this->expectExceptionMessageRegExp('/^Directory .* does not exist$/');
 
-        $pacts = $loader->loadFromDirectory($this->fs->url().'/not-a-directory');
+        $pacts = $loader->loadFromDirectory($this->fs->url() . '/not-a-directory');
 
         self::assertCount(1, $pacts);
         self::assertInstanceOf(PactInterface::class, current($pacts));
@@ -140,6 +140,6 @@ class PactLoaderTest extends TestCase
 
         $this->expectExceptionMessage('No contracts found');
 
-        $pacts = $loader->loadFromDirectory($this->fs->url().'/empty-directory');
+        $pacts = $loader->loadFromDirectory($this->fs->url() . '/empty-directory');
     }
 }

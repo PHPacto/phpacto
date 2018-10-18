@@ -44,7 +44,7 @@ class ProviderMockGuzzle6 implements ProviderMock
 
     public function handlePact(PactInterface $pact): void
     {
-        $this->mock->append(function (RequestInterface $request) use ($pact): ResponseInterface {
+        $this->mock->append(function(RequestInterface $request) use ($pact): ResponseInterface {
             self::assertRequestMatchesPact($pact, $request);
 
             return $pact->getResponse()->getSample();

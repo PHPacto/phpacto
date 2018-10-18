@@ -52,7 +52,7 @@ class StringLengthRule extends AbstractRule
             $this->length->assertMatch(strlen($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
-                'The length of string {{ actual }} should match the rule:'."\n".
+                'The length of string {{ actual }} should match the rule:' . "\n" .
                 '    {{ expected }}',
                 $mismatch->getMessage(),
                 $test

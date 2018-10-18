@@ -36,7 +36,7 @@ class PHPacto
      */
     public function __construct(string $contractsBasePath = '')
     {
-        $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
+        $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
     }
 
     public function createServerMock(): Guzzle\ProviderMock
@@ -63,7 +63,7 @@ class PHPacto
      */
     public function getPact(string $path): PactInterface
     {
-        return $this->getLoader()->loadFromFile($this->contractsBasePath.$path);
+        return $this->getLoader()->loadFromFile($this->contractsBasePath . $path);
     }
 
     /**

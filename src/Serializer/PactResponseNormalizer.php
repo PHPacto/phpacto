@@ -134,7 +134,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
 
         if (array_key_exists('headers', $data) && is_array($data['headers'])) {
             foreach ($data['headers'] as $headerKey => $headerValue) {
-                $data['headers'][$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.'.$headerKey));
+                $data['headers'][$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
             }
         } else {
             $data['headers'] = [];
@@ -203,7 +203,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
     private function getCacheKey($format, array $context)
     {
         try {
-            return md5($format.serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

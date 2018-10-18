@@ -73,7 +73,7 @@ class CurlCommandTest extends TestCase
     public function test_it_generates_curl_command_for_single_file()
     {
         $this->commandTester->execute([
-            'path' => $this->fs->url().'/single.json',
+            'path' => $this->fs->url() . '/single.json',
         ]);
 
         $output = $this->commandTester->getDisplay();
@@ -84,7 +84,7 @@ class CurlCommandTest extends TestCase
     public function test_it_generates_curl_command_for_all_files_in_directory()
     {
         $this->commandTester->execute([
-            'path' => $this->fs->url().'/directory',
+            'path' => $this->fs->url() . '/directory',
         ]);
 
         $output = $this->commandTester->getDisplay();

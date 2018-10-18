@@ -21,12 +21,12 @@
 
 function print_banner()
 {
-    $banner = file_get_contents(__DIR__.'/../BANNER');
+    $banner = file_get_contents(__DIR__ . '/../BANNER');
 
-    echo str_replace("\n\n", PHP_EOL, $banner).PHP_EOL;
+    echo str_replace("\n\n", PHP_EOL, $banner) . PHP_EOL;
 }
 
-foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $autoloader) {
+foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $autoloader) {
     if (file_exists($autoloader)) {
         require $autoloader;
 
@@ -38,7 +38,7 @@ foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] a
 $_root_dir = getenv('PWD');
 if ($_env_contracts_dir = getenv('CONTRACTS_DIR')) {
     if (\DIRECTORY_SEPARATOR !== $_env_contracts_dir[0]) {
-        $_env_contracts_dir = $_root_dir.\DIRECTORY_SEPARATOR.$_env_contracts_dir;
+        $_env_contracts_dir = $_root_dir . \DIRECTORY_SEPARATOR . $_env_contracts_dir;
     }
     define('CONTRACTS_DIR', realpath($_env_contracts_dir));
 } else {

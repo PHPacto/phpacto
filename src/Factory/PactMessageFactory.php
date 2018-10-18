@@ -75,14 +75,14 @@ abstract class PactMessageFactory
             'transfer-encoding',
         ];
 
-        return array_filter($headers, function ($key) use ($array) {
+        return array_filter($headers, function($key) use ($array) {
             return !in_array(strtolower($key), $array, true);
         }, ARRAY_FILTER_USE_KEY);
     }
 
     protected static function getHeaderRulesFromArray(array $headers): array
     {
-        $map = function ($value) {
+        $map = function($value) {
             if (1 === count($value)) {
                 $value = $value[0];
             }

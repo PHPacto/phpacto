@@ -116,7 +116,7 @@ class ValidateContract extends BaseCommand
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
-            return str_replace($rootDir.'/', '', $filePath);
+            return str_replace($rootDir . '/', '', $filePath);
         }
 
         return $filePath;

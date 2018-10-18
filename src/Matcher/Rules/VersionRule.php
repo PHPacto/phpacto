@@ -71,7 +71,7 @@ class VersionRule extends AbstractRule
                 default: $operatorString = '';
             }
 
-            throw new Mismatches\ValueMismatch('Version {{ actual }} should be '.$operatorString.' {{ expected }}', $this->value, $test);
+            throw new Mismatches\ValueMismatch('Version {{ actual }} should be ' . $operatorString . ' {{ expected }}', $this->value, $test);
         }
     }
 

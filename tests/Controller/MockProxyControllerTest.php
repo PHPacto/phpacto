@@ -181,6 +181,6 @@ class MockProxyControllerTest extends TestCase
 
     private static function assertStringContains(string $needle, string $haystack, string $message = '')
     {
-        self::assertRegexp('/'.preg_quote($needle, '/').'/', $haystack, $message);
+        self::assertRegexp('/' . preg_quote($needle, '/') . '/', $haystack, $message);
     }
 }

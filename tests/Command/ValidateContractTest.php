@@ -117,7 +117,7 @@ class ValidateContractTest extends TestCase
     public function test_it_reads_contracts_and_check_that_contracts_are_still_valid()
     {
         $this->commandTester->execute([
-            'path' => $this->fs->url().'/contracts',
+            'path' => $this->fs->url() . '/contracts',
         ]);
 
         $output = $this->commandTester->getDisplay();

@@ -43,7 +43,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
     {
         $mismatches = $this->toArrayFlat();
 
-        $map = function ($k, $v) {
+        $map = function($k, $v) {
             return sprintf('%s: %s', $k, $v);
         };
 
@@ -88,9 +88,9 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
 
         foreach ($mismatches as $key => $mismatch) {
             if (is_array($mismatch)) {
-                $result = array_merge($result, $this->toArrayFlat($prefix.$key, $mismatch));
+                $result = array_merge($result, $this->toArrayFlat($prefix . $key, $mismatch));
             } else {
-                $result[$prefix.$key] = $mismatch;
+                $result[$prefix . $key] = $mismatch;
             }
         }
 

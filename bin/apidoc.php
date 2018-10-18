@@ -23,7 +23,7 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use EXSyst\Component\Swagger;
 
-require __DIR__.'/bootstrap.php';
+require __DIR__ . '/bootstrap.php';
 
 $pacts = (new PactLoader(SerializerFactory::getInstance()))
     ->loadFromDirectory(CONTRACTS_DIR);
@@ -106,4 +106,4 @@ foreach ($pacts as $pact) {
 }
 
 header('Content-Type: application/json');
-echo json_encode($swagger->toArray())."\n";
+echo json_encode($swagger->toArray()) . "\n";

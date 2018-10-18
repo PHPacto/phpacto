@@ -24,6 +24,7 @@ return PhpCsFixer\Config::create()
         'array_syntax' => ['syntax' => 'short'],
         'combine_consecutive_unsets' => true,
         'concat_space' => ['spacing' => 'one'],
+        'function_declaration' => ['closure_function_spacing' => 'none'],
         // one should use PHPUnit methods to set up expected exception instead of annotations
         'header_comment' => ['header' => $header],
         'list_syntax' => ['syntax' => 'short'],
@@ -43,7 +44,6 @@ return PhpCsFixer\Config::create()
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
-            ->exclude('tests/Fixtures')
             ->exclude('vendor')
             ->in(__DIR__)
     )

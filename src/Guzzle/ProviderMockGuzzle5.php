@@ -40,7 +40,7 @@ class ProviderMockGuzzle5 implements ProviderMock
 
     public function handlePact(PactInterface $pact): void
     {
-        $this->mock = new MockHandler(function (array $requestArray) use ($pact): array {
+        $this->mock = new MockHandler(function(array $requestArray) use ($pact): array {
             $request = self::getRequestFromArray($requestArray);
 
             self::assertRequestMatchesPact($pact, $request);

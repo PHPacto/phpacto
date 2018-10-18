@@ -173,7 +173,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if (array_key_exists('rules', $data) && is_array($data['rules'])) {
-            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class.'[]', $format, $this->createChildContext($context, 'rules'));
+            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class . '[]', $format, $this->createChildContext($context, 'rules'));
         }
 
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
@@ -235,7 +235,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return md5($format.serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;
