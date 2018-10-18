@@ -20,12 +20,12 @@
  */
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\ContractLoader;
+use Bigfoot\PHPacto\Loader\PactLoader;
 use EXSyst\Component\Swagger;
 
 require __DIR__.'/bootstrap.php';
 
-$pacts = (new ContractLoader(SerializerFactory::getInstance()))
+$pacts = (new PactLoader(SerializerFactory::getInstance()))
     ->loadFromDirectory(CONTRACTS_DIR);
 
 if (0 === count($pacts)) {
