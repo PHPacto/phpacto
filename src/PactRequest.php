@@ -113,10 +113,11 @@ class PactRequest extends PactMessage implements PactRequestInterface
         $headers = $this->getSampleHeaders();
         $body = $this->getSampleBody();
 
-        $contentType = $this->getContentType();
-
         $stream = new Stream('php://memory', 'w');
-        $stream->write(BodyEncoder::encode($body, $contentType));
+
+        if (null !== $body) {
+            $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+        }
 
         $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], is_array($body) ? $body : []);
 

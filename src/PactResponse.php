@@ -55,23 +55,6 @@ class PactResponse extends PactMessage implements PactResponseInterface
         return $this->statusCode;
     }
 
-    public function getSample(): ResponseInterface
-    {
-        $statusCode = $this->statusCode->getSample();
-
-        $headers = $this->getSampleHeaders();
-        $body = $this->getSampleBody();
-
-        $contentType = $this->getContentType();
-
-        $stream = new Stream('php://memory', 'w');
-        $stream->write(BodyEncoder::encode($body, $contentType));
-
-        $response = new Response($stream, $statusCode, $headers);
-
-        return $response;
-    }
-
     public function assertMatch(ResponseInterface $request)
     {
         $mismatches = [];
@@ -97,5 +80,23 @@ class PactResponse extends PactMessage implements PactResponseInterface
         if ($mismatches) {
             throw new MismatchCollection($mismatches, 'Response does not match');
         }
+    }
+
+    public function getSample(): ResponseInterface
+    {
+        $statusCode = $this->statusCode->getSample();
+
+        $headers = $this->getSampleHeaders();
+        $body = $this->getSampleBody();
+
+        $stream = new Stream('php://memory', 'w');
+
+        if (null !== $body) {
+            $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+        }
+
+        $response = new Response($stream, $statusCode, $headers);
+
+        return $response;
     }
 }
