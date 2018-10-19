@@ -47,6 +47,7 @@ Server Mock
 -----------
 You can use this server mock to provide mocked responses to your clients.
 ```bash
+export ALLOW_ORIGIN=all # This adds CORS headers to the response
 export CONTRACTS_DIR='where-are/your-contracts/stored'
 php -S 0.0.0.0:8000 bin/server_mock.php
 ```
@@ -91,6 +92,7 @@ You can use this server mock to provide mocked responses to your clients.
 ```bash
 docker run -it --rm \
     -v $PWD/contracts:/srv/data \
+    -e ALLOW_ORIGIN=all \
     -e CONTRACTS_DIR=data \
     -p 8000:8000 \
     90bigfoot/phpacto \
