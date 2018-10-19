@@ -23,47 +23,16 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringEndsRule extends StringRule
+class StringEndsRule extends StringComparisonRule
 {
-    /**
-     * @var string
-     */
-    protected $value;
-
-    public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
-    {
-        $this->assertSupport($this->value = $caseSensitive ? $value : strtolower($value));
-
-        parent::__construct($sample, $caseSensitive);
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
     public function assertMatch($test): void
     {
         parent::assertMatch($test);
-
-        if ('' === $test) {
-            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot search for an ampty string');
-        }
 
         $function = $this->caseSensitive ? 'strpos' : 'stripos';
 
         if (0 !== $function(strrev($test), strrev($this->value))) {
             throw new Mismatches\ValueMismatch('String {{ actual }} should end with {{ expected }}', $this->value, $test);
-        }
-    }
-
-    protected function assertSupport(string $value): void
-    {
-        if ('' === $value) {
-            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
         }
     }
 }

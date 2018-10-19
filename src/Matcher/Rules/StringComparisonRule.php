@@ -23,11 +23,45 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringRule extends AbstractRule
+abstract class StringComparisonRule extends StringRule
 {
-    public function __construct(string $sample = null)
+    /**
+     * @var bool
+     */
+    protected $caseSensitive;
+
+    /**
+     * @var string
+     */
+    protected $value;
+
+    public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
     {
+        $this->assertSupport($value);
+
         parent::__construct($sample);
+
+        $this->caseSensitive = $caseSensitive;
+        $this->value = !$caseSensitive ? strtolower($value) : $value;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function isCaseSensitive(): bool
+    {
+        return $this->caseSensitive;
+    }
+
+    protected function assertSupport(string $value): void
+    {
+        parent::assertMatch($value);
+
+        if ('' === $value) {
+            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
+        }
     }
 
     public function assertMatch($test): void
@@ -35,5 +69,10 @@ class StringRule extends AbstractRule
         if (!is_string($test)) {
             throw new Mismatches\TypeMismatch('string', gettype($test));
         }
+    }
+
+    public function getSample()
+    {
+        return $this->sample;
     }
 }

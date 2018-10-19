@@ -23,18 +23,20 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class StringEqualsRule extends StringRule
+class StringEqualsRule extends StringComparisonRule
 {
     public function assertMatch($test): void
     {
         parent::assertMatch($test);
 
-        if (!$this->caseSensitive) {
-            $test = strtolower($test);
-        }
-
-        if ($this->sample !== $test) {
-            throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
+        if ($this->caseSensitive) {
+            if ($this->value !== $test) {
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
+            }
+        } else {
+            if ($this->value !== $test) {
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
+            }
         }
     }
 }

@@ -127,7 +127,6 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'string',
             'sample' => 'string',
-            'case_sensitive' => false,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

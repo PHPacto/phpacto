@@ -34,7 +34,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
             '@rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
-            'case_sensitive' => false,
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

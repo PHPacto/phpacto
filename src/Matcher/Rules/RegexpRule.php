@@ -33,11 +33,17 @@ class RegexpRule extends StringRule
     /**
      * @var bool
      */
+    protected $caseSensitive;
+
+    /**
+     * @var bool
+     */
     protected $multiLine;
 
     public function __construct($pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
     {
         $this->assertSupport($this->pattern = $pattern);
+        $this->caseSensitive = $caseSensitive;
         $this->multiLine = $multiLine;
 
         parent::__construct($sample);
@@ -46,6 +52,11 @@ class RegexpRule extends StringRule
     public function getPattern(): string
     {
         return $this->pattern;
+    }
+
+    public function isCaseSensitive(): bool
+    {
+        return $this->caseSensitive;
     }
 
     public function assertMatch($test): void
@@ -71,9 +82,7 @@ class RegexpRule extends StringRule
 
     protected function assertSupport($value): void
     {
-        if (!is_string($value)) {
-            throw new Mismatches\TypeMismatch('string', gettype($value), 'Regex pattern should be a {{ expected }}, but {{ actual }} was given');
-        }
+        parent::assertMatch($value);
 
         if (false === @preg_match('/' . $value . '/', '')) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');

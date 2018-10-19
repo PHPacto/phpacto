@@ -115,7 +115,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if (is_string($data) && '' !== $data) {
-            return new StringEqualsRule($data, true);
+            return new StringEqualsRule($data, $data, true);
         }
 
         return new EqualsRule($data);
