@@ -75,18 +75,22 @@ class PactLoaderTest extends TestCase
     {
         $loader = new PactLoader($this->serializer);
 
-        $this->expectExceptionMessage('not exist');
+        self::expectExceptionMessage('not exist');
 
         $loader->loadFromFile($this->fs->url() . '/not-exist.json');
+
+        self::fail('An exception should be thrown');
     }
 
     public function test_it_throws_exception_if_is_not_a_valid_contract()
     {
         $loader = new PactLoader($this->serializer);
 
-        $this->expectExceptionMessage('does not contain a valid pact');
+        self::expectExceptionMessage('does not contain a valid pact');
 
         $loader->loadFromFile($this->fs->url() . '/empty.json');
+
+        self::fail('An exception should be thrown');
     }
 
     public function test_it_reads_file_and_returns_a_pact()
@@ -123,12 +127,15 @@ class PactLoaderTest extends TestCase
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
 
-        $this->expectExceptionMessageRegExp('/^Directory .* does not exist$/');
+        # This line is for PhpUnit:6 back-compatibility
+        self::expectException(\Exception::class);
+
+        # This method doesn't work on PhpUnit:6 without calling `expectException` before. (Dont'ask my why?!)
+        self::expectExceptionMessageRegExp('/^Directory .* does not exist$/');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/not-a-directory');
 
-        self::assertCount(1, $pacts);
-        self::assertInstanceOf(PactInterface::class, current($pacts));
+        self::fail('An exception should be thrown');
     }
 
     public function test_it_throws_exception_if_any_pact_was_fount_in_directory()
@@ -138,8 +145,10 @@ class PactLoaderTest extends TestCase
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
 
-        $this->expectExceptionMessage('No contracts found');
+        self::expectExceptionMessage('No contracts found');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/empty-directory');
+
+        self::fail('An exception should be thrown');
     }
 }
