@@ -34,7 +34,7 @@ class StringEndsRuleTest extends SerializerAwareTestCase
             '@rule' => 'stringEnds',
             'value' => 'ple',
             'sample' => 'sample',
-            'case_sensitive' => false,
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

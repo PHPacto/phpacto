@@ -25,42 +25,33 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class StringComparisonRuleTest extends SerializerAwareTestCase
 {
-    public function test_it_is_not_case_sensitive_by_default()
+    public function test_it_is_case_sensitive_by_default()
     {
         $rule = $this->getMockBuilder(StringComparisonRule::class)
             ->setConstructorArgs(['sample'])
             ->setMethodsExcept(['isCaseSensitive'])
             ->getMock();
 
-        self::assertFalse($rule->isCaseSensitive());
+        self::assertTrue($rule->isCaseSensitive());
     }
 
-    public function test_it_is_can_be_case_sensitive()
+    public function test_it_can_be_case_insensitive()
     {
         $rule = $this->getMockBuilder(StringComparisonRule::class)
-            ->setConstructorArgs(['value', 'sample', true])
+            ->setConstructorArgs(['value', 'sample', false])
             ->setMethodsExcept(['isCaseSensitive'])
             ->getMock();
 
-        self::assertTrue($rule->isCaseSensitive());
+        self::assertFalse($rule->isCaseSensitive());
     }
 
     public function test_value_is_lower_cased_if_case_insensitive()
     {
         $rule = $this->getMockBuilder(StringComparisonRule::class)
-            ->setConstructorArgs(['SAMPLE'])
+            ->setConstructorArgs(['SAMPLE', 'SAMPLE', false])
             ->setMethodsExcept(['getValue'])
             ->getMock();
 
         self::assertEquals('sample', $rule->getValue());
-    }
-
-    public function test_it_has_a_default_sample()
-    {
-        $rule = $this->getMockBuilder(StringComparisonRule::class)
-            ->setMethodsExcept(['getSample'])
-            ->getMock();
-
-        self::assertEquals('', $rule->getSample());
     }
 }

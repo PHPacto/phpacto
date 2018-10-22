@@ -33,7 +33,6 @@ class LowerOrEqualRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'lowerEqual',
             'value' => 5,
-            'sample' => 5,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

@@ -34,7 +34,7 @@ class StringContainsRuleTest extends SerializerAwareTestCase
             '@rule' => 'stringContains',
             'value' => 'amp',
             'sample' => 'sample',
-            'case_sensitive' => false,
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

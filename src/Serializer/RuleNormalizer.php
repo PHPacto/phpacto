@@ -37,10 +37,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
-     * @var array
-     */
-    protected $ignoredAttributes = ['alias'];
-    /**
      * @var RuleMap
      */
     private $ruleMap;
@@ -81,7 +77,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $this->handleCircularReference($object);
         }
 
-        if ($object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive())) {
+        if ($object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive() && $object->getValue() === $object->getSample())) {
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
@@ -115,7 +111,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if (is_string($data) && '' !== $data) {
-            return new StringEqualsRule($data, $data, true);
+            return new StringEqualsRule($data, true);
         }
 
         return new EqualsRule($data);
@@ -204,6 +200,15 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $object;
+    }
+
+    protected function isAllowedAttribute($object, $attribute, $format = null, array $context = array())
+    {
+        if (is_object($object) && 'sample' === $attribute && method_exists($object, 'getValue')) {
+            if ($object->getValue() === $object->getSample()) return false;
+        }
+
+        return parent::isAllowedAttribute($object, $attribute, $format, $context);
     }
 
     private function recursiveNormalization($data, $format = null, array $context = [])

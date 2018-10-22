@@ -25,6 +25,23 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class StringEqualsRule extends StringComparisonRule
 {
+    public function __construct($value, $caseSensitive = true)
+    {
+        $this->assertSupport($value);
+
+        $this->caseSensitive = $caseSensitive;
+        $this->value = $value;
+    }
+
+    protected function assertSupport(string $value): void
+    {
+    }
+
+    public function getSample()
+    {
+        return $this->value;
+    }
+
     public function assertMatch($test): void
     {
         parent::assertMatch($test);
@@ -34,7 +51,7 @@ class StringEqualsRule extends StringComparisonRule
                 throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         } else {
-            if ($this->value !== $test) {
+            if (strtolower($this->value) !== strtolower($test)) {
                 throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         }

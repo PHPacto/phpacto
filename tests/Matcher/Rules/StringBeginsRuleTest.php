@@ -34,7 +34,7 @@ class StringBeginsRuleTest extends SerializerAwareTestCase
             '@rule' => 'stringBegins',
             'value' => 'sam',
             'sample' => 'sample',
-            'case_sensitive' => false,
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

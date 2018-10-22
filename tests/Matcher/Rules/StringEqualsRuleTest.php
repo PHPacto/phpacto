@@ -26,35 +26,7 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class StringEqualsRuleTest extends SerializerAwareTestCase
 {
-    public function test_it_is_normalizable()
-    {
-        $rule = new StringEqualsRule('');
-
-        $expected = [
-            '@rule' => 'stringEquals',
-            'case_sensitive' => false,
-            'sample' => '',
-        ];
-
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function test_it_is_denormalizable()
-    {
-        $data = [
-            '@rule' => 'stringEquals',
-            'case_sensitive' => false,
-            'sample' => '',
-        ];
-
-        $rule = $this->normalizer->denormalize($data, Rule::class);
-
-        self::assertInstanceOf(StringEqualsRule::class, $rule);
-        self::assertSame('', $rule->getSample());
-        self::assertFalse($rule->isCaseSensitive());
-    }
-
-    public function test_normalize_string_equals_case_sensitive()
+    public function test_it_is_normalizable_case_sensitive()
     {
         $rule = new StringEqualsRule('S', true);
 
@@ -63,7 +35,20 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
         self::assertSame('S', $data);
     }
 
-    public function test_denormalize_string_equals_case_sensitive()
+    public function test_it_is_normalizable_case_insensitive()
+    {
+        $rule = new StringEqualsRule('string', false);
+
+        $expected = [
+            '@rule' => 'stringEquals',
+            'case_sensitive' => false,
+            'value' => 'string',
+        ];
+
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_it_is_denormalizable_equals_case_sensitive()
     {
         $data = 'S';
 
@@ -71,7 +56,23 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
 
         self::assertInstanceOf(StringEqualsRule::class, $rule);
         self::assertSame('S', $rule->getSample());
+        self::assertSame('S', $rule->getValue());
         self::assertTrue($rule->isCaseSensitive());
+    }
+
+    public function test_it_is_denormalizable_case_insensitive()
+    {
+        $data = [
+            '@rule' => 'stringEquals',
+            'case_sensitive' => false,
+            'value' => 'string',
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertSame('string', $rule->getValue());
+        self::assertFalse($rule->isCaseSensitive());
     }
 
     public function matchesTrueProvider()

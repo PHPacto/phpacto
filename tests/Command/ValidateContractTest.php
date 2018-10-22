@@ -78,6 +78,7 @@ class ValidateContractTest extends TestCase
                     'request' => [
                         'method' => [
                             '@rule' => 'regex',
+                            'case_sensitive' => false,
                             'pattern' => '(get|post)',
                             'sample' => 'get',
                         ],
@@ -94,6 +95,7 @@ class ValidateContractTest extends TestCase
                     'request' => [
                         'method' => [
                             '@rule' => 'regex',
+                            'case_sensitive' => false,
                             'pattern' => '(get|post)',
                             'sample' => 'put',
                         ],

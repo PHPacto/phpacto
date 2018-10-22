@@ -35,14 +35,14 @@ abstract class StringComparisonRule extends StringRule
      */
     protected $value;
 
-    public function __construct(string $value, string $sample = null, bool $caseSensitive = false)
+    public function __construct(string $value, string $sample = null, bool $caseSensitive = true)
     {
         $this->assertSupport($value);
 
-        parent::__construct($sample);
-
         $this->caseSensitive = $caseSensitive;
         $this->value = !$caseSensitive ? strtolower($value) : $value;
+
+        parent::__construct($sample);
     }
 
     public function getValue(): string
@@ -57,8 +57,6 @@ abstract class StringComparisonRule extends StringRule
 
     protected function assertSupport(string $value): void
     {
-        parent::assertMatch($value);
-
         if ('' === $value) {
             throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
         }
