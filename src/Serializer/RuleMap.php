@@ -35,6 +35,7 @@ final class RuleMap
         'exists' => Rules\ExistsRule::class,
         'greaterEqual' => Rules\GreaterOrEqualRule::class,
         'greater' => Rules\GreaterRule::class,
+        'ifNotNull' => Rules\IfIsSetRule::class,
         'integer' => Rules\IntegerRule::class,
         'lowerEqual' => Rules\LowerOrEqualRule::class,
         'lower' => Rules\LowerRule::class,

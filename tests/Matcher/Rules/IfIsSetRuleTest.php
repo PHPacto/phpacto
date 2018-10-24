@@ -24,17 +24,18 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
-class EachItemRuleTest extends SerializerAwareTestCase
+class IfIsSetRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
-        $rule = new EachItemRule($childRule, []);
+        $rule = new IfIsSetRule($childRule);
 
         $expected = [
-            '@rule' => 'each',
-            'rules' => ['@rule' => get_class($childRule)],
-            'sample' => [],
+            '@rule' => 'ifNotNull',
+            'rules' => [
+                '@rule' => get_class($childRule),
+            ],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -62,16 +63,16 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'each',
+            '@rule' => 'ifNotNull',
             'rules' => ['@rule' => get_class($childRule)],
-            'sample' => [],
+            'sample' => 'any',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(EachItemRule::class, $rule);
+        self::assertInstanceOf(IfIsSetRule::class, $rule);
         self::assertInstanceOf(Rule::class, $rule->getRules());
-        self::assertSame([], $rule->getSample());
+        self::assertSame('any', $rule->getSample());
     }
 
     public function test_it_is_denormalizable_with_rules_array()
@@ -111,7 +112,6 @@ class EachItemRuleTest extends SerializerAwareTestCase
             }],
             [false, new \stdClass()],
             [true, $rule],
-            [false, [[]]],
             [false, [100]],
             [false, [1.0]],
             [false, ['string']],
@@ -122,6 +122,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
             }]],
             [false, [new \stdClass()]],
             [true, [$rule]],
+            [true, [['key' => $rule]]],
         ];
     }
 
@@ -132,45 +133,30 @@ class EachItemRuleTest extends SerializerAwareTestCase
      */
     public function testSupportedValues(bool $shouldBeSupported, $value)
     {
-        $rule = self::getMockBuilder(EachItemRule::class)
+        $rule = self::getMockBuilder(IfIsSetRule::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['assertSupport'])
             ->getMock();
 
         if (!$shouldBeSupported) {
-            $this->expectException(Mismatches\Mismatch::class);
+            $this->expectException(\Throwable::class);
         }
 
-        $method = new \ReflectionMethod(EachItemRule::class, 'assertSupport');
+        $method = new \ReflectionMethod(IfIsSetRule::class, 'assertSupport');
         $method->setAccessible(true);
         $method->invoke($rule, $value);
 
         self::assertTrue(true, 'No exceptions should be thrown');
     }
 
-    public function testExpectingArrayButGotString()
+    public function testMatch()
     {
         $matching = $this->rule->matching();
 
-        $rule = new EachItemRule($matching);
+        $rule = new IfIsSetRule($matching);
 
-        $this->expectException(Mismatches\TypeMismatch::class);
-
-        $rule->assertMatch('This value is a string');
-    }
-
-    public function testMatch()
-    {
-        $childRule = $this->rule->matching();
-        $childRule->method('assertMatch')
-            ->withConsecutive([4], [5], [6]);
-
-        $childRule = new IntegerRule();
-        $childRule = new OrRule([$childRule]);
-
-        $rule = new EachItemRule($childRule);
-
-        $rule->assertMatch([4, 5, 6]);
+        $rule->assertMatch('No Mismatch is thrown');
+        $rule->assertMatch(null);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
@@ -179,53 +165,32 @@ class EachItemRuleTest extends SerializerAwareTestCase
     {
         $matching = $this->rule->matching();
 
-        $rule = new EachItemRule(['key' => $matching]);
+        $rule = new IfIsSetRule([$matching]);
 
-        $rule->assertMatch([['key' => 'No Mismatch is thrown']]);
+        $rule->assertMatch(['This value is matching the first Rule', 'Another value']);
+
+        self::assertTrue(true, 'No exceptions should be thrown if matching');
+    }
+
+    public function testMatchArrayObject()
+    {
+        $matching = $this->rule->matching();
+
+        $rule = new IfIsSetRule(['key1' => $matching, 'key2' => $matching]);
+
+        $rule->assertMatch(['key1' => 'Value 1', 'key2' => 'Value 2']);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 
     public function testMismatch()
     {
-        $childRule = new EqualsRule(5);
+        $mismatching = $this->rule->notMatching();
 
-        $rule = new EachItemRule($childRule);
+        $rule = new IfIsSetRule($mismatching);
 
-        try {
-            $rule->assertMatch([4, 5, 6]);
-        } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, count($mismatches));
-
-            return;
-        }
-
-        self::fail('An MismatchCollection should been thrown');
-    }
-
-    public function testMatchArrayButMissingKeys()
-    {
-        $matching = $this->rule->matching();
-
-        $rule = new EachItemRule([
-            'A' => $matching,
-            'B' => $matching,
-            'C' => $matching,
-        ]);
-
-        try {
-            $rule->assertMatch([
-                ['B' => 'Y', 'C' => 'Z'],
-                ['A' => 'X', 'C' => 'Z'],
-                ['A' => 'X', 'B' => 'Y'],
-            ]);
-        } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.A', '1.B', '2.C'], array_keys($mismatches->toArrayFlat()));
-
-            return;
-        }
-
-        self::fail('An MismatchCollection should been thrown');
+        self::expectException(Mismatches\Mismatch::class);
+        $rule->assertMatch('A Mismatch should be thrown');
     }
 
     public function testMismatchArray()
@@ -233,22 +198,39 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $matching = $this->rule->matching();
         $mismatching = $this->rule->notMatching();
 
-        $rule = new EachItemRule([
-            'A' => $matching,
-            'B' => $mismatching,
-            'C' => $matching,
-        ]);
+        $rule = new IfIsSetRule([[$matching, $mismatching]]);
 
         try {
-            $rule->assertMatch([
-                ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
-            ]);
+            $rule->assertMatch(['A Mismatch should be thrown']);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(1, count($mismatches));
 
             return;
         }
 
         self::fail('An MismatchCollection should been thrown');
+    }
+
+    public function testMismatchArrayMissingKey()
+    {
+        $matching = $this->rule->matching();
+
+        $rule = new IfIsSetRule([
+            'A' => $matching,
+            'B' => $matching,
+            'C' => $matching,
+        ]);
+
+        try {
+            $rule->assertMatch([
+                'A' => 'X',
+                'B' => 'Y'
+            ]);
+        } catch (Mismatches\MismatchCollection $mismatches) {
+            self::assertEquals(['C'], array_keys($mismatches->toArrayFlat()));
+            self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['C']);
+
+            return;
+        }
     }
 }
