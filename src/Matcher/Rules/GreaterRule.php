@@ -60,8 +60,8 @@ class GreaterRule extends AbstractRule implements ComparisonRule
 
     public function assertMatch($test): void
     {
-        if (is_string($this->value) && !is_string($test)) {
-            throw new Mismatches\TypeMismatch(gettype($this->value), gettype($test), 'Cannot compare different data types. A {{ expected }} was expected, but got {{ actual }} instead');
+        if (\is_string($this->value) && !\is_string($test)) {
+            throw new Mismatches\TypeMismatch(\gettype($this->value), \gettype($test), 'Cannot compare different data types. A {{ expected }} was expected, but got {{ actual }} instead');
         }
 
         if (!($test > $this->value)) {
@@ -71,8 +71,8 @@ class GreaterRule extends AbstractRule implements ComparisonRule
 
     protected function assertSupport($value): void
     {
-        if (!(is_numeric($value) || is_string($value))) {
-            throw new Mismatches\TypeMismatch(['number', 'string'], gettype($value), 'Only {{ expected }} types are supported, {{ actual }} was provided');
+        if (!(\is_numeric($value) || \is_string($value))) {
+            throw new Mismatches\TypeMismatch(['number', 'string'], \gettype($value), 'Only {{ expected }} types are supported, {{ actual }} was provided');
         }
     }
 }

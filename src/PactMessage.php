@@ -103,14 +103,14 @@ abstract class PactMessage implements PactMessageInterface
                 } elseif ($rule instanceof OrRule) {
                     $childRules = $rule->getRules();
 
-                    $sample = $childRules[array_rand($childRules)];
-                } elseif (method_exists($rule, 'getRule')) {
+                    $sample = $childRules[\array_rand($childRules)];
+                } elseif (\method_exists($rule, 'getRule')) {
                     $sample = $rule->getRule();
                 }
             }
 
             return $sample;
-        } elseif (is_array($rule)) {
+        } elseif (\is_array($rule)) {
             $result = [];
 
             foreach ($rule as $key => $value) {
@@ -125,7 +125,7 @@ abstract class PactMessage implements PactMessageInterface
 
     protected function getContentType(): ?string
     {
-        $val = @array_change_key_case($this->headers, CASE_LOWER)['content-type'];
+        $val = @\array_change_key_case($this->headers, CASE_LOWER)['content-type'];
 
         if ($val instanceof Rule) {
             return (string) $val->getSample();

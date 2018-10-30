@@ -44,8 +44,8 @@ class PactLoader
 
     public function loadFromFile(string $path): PactInterface
     {
-        if (!(file_exists($path) && is_readable($path))) {
-            throw new \Exception(sprintf('File `%s` does not exist or is not readable', $path));
+        if (!(\file_exists($path) && \is_readable($path))) {
+            throw new \Exception(\sprintf('File `%s` does not exist or is not readable', $path));
         }
 
 //        PHP >= 7.2
@@ -55,13 +55,13 @@ class PactLoader
 
         try {
             /** @var PactInterface $pact */
-            $pact = $this->serializer->deserialize(file_get_contents($path), PactInterface::class, $format);
+            $pact = $this->serializer->deserialize(\file_get_contents($path), PactInterface::class, $format);
 
             return $pact;
         } catch (Mismatch $mismatch) {
             throw $mismatch;
         } catch (\Throwable $e) {
-            throw new PactLoadingException(sprintf('File `%s` does not contain a valid pact', $path), 0, $e);
+            throw new PactLoadingException(\sprintf('File `%s` does not contain a valid pact', $path), 0, $e);
         }
     }
 
@@ -76,12 +76,12 @@ class PactLoader
     {
         $pacts = [];
 
-        if (is_dir($path)) {
+        if (\is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', self::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(sprintf('No contracts found in `%s`', $path));
+                throw new \Exception(\sprintf('No contracts found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {
@@ -89,7 +89,7 @@ class PactLoader
                 $pacts[$filePath] = $this->loadFromFile($filePath);
             }
         } else {
-            throw new \Exception(sprintf('Directory `%s` does not exist', $path));
+            throw new \Exception(\sprintf('Directory `%s` does not exist', $path));
         }
 
         return $pacts;
@@ -121,6 +121,6 @@ class PactLoader
 
     final public static function isFormatSupported(string $format): bool
     {
-        return in_array($format, self::CONFIG_FORMATS, true);
+        return \in_array($format, self::CONFIG_FORMATS, true);
     }
 }

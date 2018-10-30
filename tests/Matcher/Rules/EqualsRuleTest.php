@@ -58,10 +58,10 @@ class EqualsRuleTest extends SerializerAwareTestCase
         ]);
 
         $expected = [
-            ['@rule' => get_class($childRule)],
-            'key' => ['@rule' => get_class($childRule)],
+            ['@rule' => \get_class($childRule)],
+            'key' => ['@rule' => \get_class($childRule)],
             'nested' => [
-                'key' => ['@rule' => get_class($childRule)],
+                'key' => ['@rule' => \get_class($childRule)],
             ],
         ];
 

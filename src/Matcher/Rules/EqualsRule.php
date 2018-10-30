@@ -35,8 +35,8 @@ class EqualsRule extends AbstractRule implements ComparisonRule
     public function assertMatch($test): void
     {
         $types = [
-            gettype($this->sample),
-            gettype($test),
+            \gettype($this->sample),
+            \gettype($test),
         ];
 
         if ($types[0] !== $types[1]) {
@@ -55,10 +55,10 @@ class EqualsRule extends AbstractRule implements ComparisonRule
 
     protected function assertSupport($value): void
     {
-        if (is_object($value)) {
-            throw new Mismatches\TypeMismatch(['null', 'boolean', 'number', 'string', 'array'], gettype($value), 'Objects are not supported');
-        } elseif (is_array($value)) {
-            array_walk_recursive($value, function($value) {
+        if (\is_object($value)) {
+            throw new Mismatches\TypeMismatch(['null', 'boolean', 'number', 'string', 'array'], \gettype($value), 'Objects are not supported');
+        } elseif (\is_array($value)) {
+            \array_walk_recursive($value, function($value) {
                 if ($value instanceof Rule) {
                     return;
                 }

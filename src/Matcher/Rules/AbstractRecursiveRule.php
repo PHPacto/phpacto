@@ -57,11 +57,11 @@ abstract class AbstractRecursiveRule extends AbstractRule
             return;
         }
 
-        if (is_array($rules) && !is_array($test)) {
-            throw new Mismatches\TypeMismatch('array', gettype($test));
+        if (\is_array($rules) && !\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
-        if (!count($test)) {
+        if (!\count($test)) {
             return;
         }
 
@@ -69,7 +69,7 @@ abstract class AbstractRecursiveRule extends AbstractRule
 
         foreach ($rules as $key => $rule) {
             try {
-                if (!array_key_exists($key, $test)) {
+                if (!\array_key_exists($key, $test)) {
                     throw new Mismatches\KeyNotFoundMismatch($key);
                 }
 
@@ -91,8 +91,8 @@ abstract class AbstractRecursiveRule extends AbstractRule
      */
     protected function assertSupport($rule): void
     {
-        if (is_array($rule)) {
-            if (0 === count($rule)) {
+        if (\is_array($rule)) {
+            if (0 === \count($rule)) {
                 throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
             }
 
@@ -100,7 +100,7 @@ abstract class AbstractRecursiveRule extends AbstractRule
                 $this->assertSupport($item);
             }
         } elseif (!$rule instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($rule), 'Should be an instance of {{ expected }}');
+            throw new Mismatches\TypeMismatch('Rule', \gettype($rule), 'Should be an instance of {{ expected }}');
         }
     }
 }

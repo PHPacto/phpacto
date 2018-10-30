@@ -36,7 +36,7 @@ class BuilderWriteContract extends BaseCommand
         $this
             ->setName('builder:write')
             ->setDescription('Run contract builders and write or update all contracts')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . \implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
@@ -49,9 +49,9 @@ class BuilderWriteContract extends BaseCommand
             throw new \Exception('Unsupported file format');
         }
 
-        if (is_file($path) && is_readable($path)) {
+        if (\is_file($path) && \is_readable($path)) {
             $this->processFile($output, $path, $format);
-        } elseif (is_dir($path)) {
+        } elseif (\is_dir($path)) {
             $finder = new Finder();
             $finder->files()->in($path)->name('*.php');
 
@@ -63,17 +63,17 @@ class BuilderWriteContract extends BaseCommand
                 $this->processFile($output, (string) $file, $format);
             }
         } else {
-            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
+            throw new \Exception(\sprintf('Path "%s" must be a readable file or directory', $path));
         }
     }
 
     protected function processFile(OutputInterface $output, string $path, string $format): void
     {
-        $output->writeln(sprintf('Executing <fg=cyan>%s</>', $path));
+        $output->writeln(\sprintf('Executing <fg=cyan>%s</>', $path));
 
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = rtrim($path, '.php') . '.' . $format;
+        $pactPath = \rtrim($path, '.php') . '.' . $format;
         $this->writeContractFile($pactPath, $pact, $format);
     }
 
@@ -93,6 +93,6 @@ class BuilderWriteContract extends BaseCommand
 
     final protected function writeContractFile(string $path, PactInterface $pact, string $format): void
     {
-        file_put_contents($path, $this->serializer->serialize($pact, $format));
+        \file_put_contents($path, $this->serializer->serialize($pact, $format));
     }
 }

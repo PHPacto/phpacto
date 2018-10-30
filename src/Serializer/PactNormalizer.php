@@ -46,7 +46,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_array($data) && PactInterface::class === $type && self::isFormatSupported($format);
+        return \is_array($data) && PactInterface::class === $type && self::isFormatSupported($format);
     }
 
     /**
@@ -55,7 +55,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof PactInterface) {
-            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', get_class($object), PactInterface::class));
+            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), PactInterface::class));
         }
 
         return $this->normalizePactObject($object, $format, $context);
@@ -66,8 +66,8 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if (!(is_array($data) && PactInterface::class === $class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactInterface::class));
+        if (!(\is_array($data) && PactInterface::class === $class)) {
+            throw new InvalidArgumentException(\sprintf('Data must be array type and class equal to "%s".', $class, PactInterface::class));
         }
 
         return $this->denormalizeArray($data, Pact::class, $format, $context);
@@ -75,7 +75,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     private static function isFormatSupported(?string $format): bool
     {
-        return in_array($format, [null, 'json', 'yaml'], true);
+        return \in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizePactObject(PactInterface $object, $format = null, array $context = [])
@@ -96,7 +96,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (null !== $attributeValue && !is_scalar($attributeValue)) {
+            if (null !== $attributeValue && !\is_scalar($attributeValue)) {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
             } else {
                 $data[$attribute] = $attributeValue;
@@ -122,7 +122,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->denormalize($attribute);
             }
 
-            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
+            if ((false !== $allowedAttributes && !\in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
                 $extraAttributes[] = $attribute;
 
                 continue;
@@ -162,7 +162,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return md5($format . serialize($context));
+            return \md5($format . \serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

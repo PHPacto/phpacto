@@ -63,8 +63,8 @@ class OrRule extends AbstractRule
         }
 
         if ($isMatchingArray) {
-            if (!is_array($test)) {
-                throw new Mismatches\TypeMismatch('array', gettype($test));
+            if (!\is_array($test)) {
+                throw new Mismatches\TypeMismatch('array', \gettype($test));
             }
         }
 
@@ -73,7 +73,7 @@ class OrRule extends AbstractRule
         foreach ($rules as $key => $rule) {
             try {
                 if ($isMatchingArray) {
-                    if (!array_key_exists($key, $test)) {
+                    if (!\array_key_exists($key, $test)) {
                         throw new Mismatches\KeyNotFoundMismatch((string) $key);
                     }
 
@@ -82,7 +82,7 @@ class OrRule extends AbstractRule
                     $testValue = $test;
                 }
 
-                $this->assertMatch($testValue, $rule, @$exitOnMatch && is_array($rule));
+                $this->assertMatch($testValue, $rule, @$exitOnMatch && \is_array($rule));
 
                 if (@$exitOnMatch) {
                     // If at least one Rule match the value, its OK
@@ -93,7 +93,7 @@ class OrRule extends AbstractRule
             }
         }
 
-        if (@$exitOnMatch && count($mismatches) === count($this->rules) || count($mismatches)) {
+        if (@$exitOnMatch && \count($mismatches) === \count($this->rules) || \count($mismatches)) {
             throw new Mismatches\MismatchCollection($mismatches, 'None of the {{ count }} rules is matching');
         }
     }
@@ -110,15 +110,15 @@ class OrRule extends AbstractRule
      */
     protected function assertSupport(array $rules): void
     {
-        if (!count($rules)) {
+        if (!\count($rules)) {
             throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
         }
 
         foreach ($rules as $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $this->assertSupport($item);
             } elseif (!$item instanceof Rule) {
-                throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Each item should be an instance of {{ expected }}');
+                throw new Mismatches\TypeMismatch('Rule', \gettype($rules), 'Each item should be an instance of {{ expected }}');
             }
         }
     }

@@ -82,7 +82,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
         }
 
         try {
-            $uri = urldecode((string) $request->getUri());
+            $uri = \urldecode((string) $request->getUri());
             $this->path->assertMatch($uri);
         } catch (Mismatch $mismatch) {
             $mismatches['PATH'] = $mismatch;
@@ -107,7 +107,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
 
     public function getSample(): ServerRequestInterface
     {
-        $method = strtoupper($this->method->getSample());
+        $method = \strtoupper($this->method->getSample());
         $uri = $this->path->getSample();
 
         $headers = $this->getSampleHeaders();
@@ -119,7 +119,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
             $stream->write(BodyEncoder::encode($body, $this->getContentType()));
         }
 
-        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], is_array($body) ? $body : []);
+        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], \is_array($body) ? $body : []);
 
         return $response;
     }

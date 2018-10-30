@@ -64,10 +64,10 @@ final class RuleMap
 
     public function getAlias(string $className): string
     {
-        $inverse = array_flip($this->map);
+        $inverse = \array_flip($this->map);
 
-        if (!array_key_exists($className, $inverse)) {
-            throw new \RuntimeException(sprintf('The class `%s` isn\'t registered', $className));
+        if (!\array_key_exists($className, $inverse)) {
+            throw new \RuntimeException(\sprintf('The class `%s` isn\'t registered', $className));
         }
 
         return $inverse[$className];
@@ -75,8 +75,8 @@ final class RuleMap
 
     public function getClassName(string $alias): string
     {
-        if (!array_key_exists($alias, $this->map)) {
-            throw new \RuntimeException(sprintf('The alias `%s` isn\'t registered', $alias));
+        if (!\array_key_exists($alias, $this->map)) {
+            throw new \RuntimeException(\sprintf('The alias `%s` isn\'t registered', $alias));
         }
 
         return $this->map[$alias];

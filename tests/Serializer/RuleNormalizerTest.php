@@ -104,7 +104,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         $rule = $this->rule->hasSample(5);
 
         $expected = [
-            '@rule' => get_class($rule),
+            '@rule' => \get_class($rule),
             'sample' => 5,
         ];
 

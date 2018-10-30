@@ -66,7 +66,7 @@ class CurlCommand extends BaseCommand
 
         $curlFormatter = new CurlFormatter(INF);
 
-        if (is_file($path) && is_readable($path)) {
+        if (\is_file($path) && \is_readable($path)) {
 //            try {
             $pact = $this->loadPact((string) $path);
             $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path, false);
@@ -77,12 +77,12 @@ class CurlCommand extends BaseCommand
 //                    self::outputResult($output, $path, '<fg=red>✖ Syntax error</>');
 //                }
 //            }
-        } elseif (is_dir($path)) {
+        } elseif (\is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', PactLoader::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(sprintf('No files found in `%s`', $path));
+                throw new \Exception(\sprintf('No files found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {
@@ -104,7 +104,7 @@ class CurlCommand extends BaseCommand
 
             self::getTable($output)->render();
         } else {
-            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
+            throw new \Exception(\sprintf('Path "%s" must be a readable file or directory', $path));
         }
     }
 
@@ -137,7 +137,7 @@ class CurlCommand extends BaseCommand
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
         // For Guzzle 5 compatibility
-        if (version_compare($guzzleVersion, '6', '<')) {
+        if (\version_compare($guzzleVersion, '6', '<')) {
             $bodyStream = \GuzzleHttp\Stream\Stream::factory($request->getBody()->getContents());
 
             $request = new \GuzzleHttp\Message\Request($request->getMethod(), (string) $request->getUri(), $request->getHeaders(), $bodyStream);
@@ -165,7 +165,7 @@ class CurlCommand extends BaseCommand
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
-            return str_replace($rootDir . '/', '', $filePath);
+            return \str_replace($rootDir . '/', '', $filePath);
         }
 
         return $filePath;

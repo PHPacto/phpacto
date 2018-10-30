@@ -34,7 +34,7 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'ifNotNull',
             'rules' => [
-                '@rule' => get_class($childRule),
+                '@rule' => \get_class($childRule),
             ],
         ];
 
@@ -49,8 +49,8 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'each',
             'rules' => [
-                'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)],
+                'key1' => ['@rule' => \get_class($childRule)],
+                'key2' => ['@rule' => \get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -64,7 +64,7 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
 
         $data = [
             '@rule' => 'ifNotNull',
-            'rules' => ['@rule' => get_class($childRule)],
+            'rules' => ['@rule' => \get_class($childRule)],
             'sample' => 'any',
         ];
 
@@ -82,8 +82,8 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $data = [
             '@rule' => 'each',
             'rules' => [
-                'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)],
+                'key1' => ['@rule' => \get_class($childRule)],
+                'key2' => ['@rule' => \get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -203,7 +203,7 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch(['A Mismatch should be thrown']);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(1, count($mismatches));
+            self::assertEquals(1, \count($mismatches));
 
             return;
         }
@@ -224,10 +224,10 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch([
                 'A' => 'X',
-                'B' => 'Y'
+                'B' => 'Y',
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['C'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['C'], \array_keys($mismatches->toArrayFlat()));
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['C']);
 
             return;

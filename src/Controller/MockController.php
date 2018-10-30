@@ -77,7 +77,7 @@ class MockController
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(sprintf('Found contract matching request %s', $contractLocation));
+                $this->logger->log(\sprintf('Found contract matching request %s', $contractLocation));
 
                 return $pact;
             } catch (Mismatch $e) {

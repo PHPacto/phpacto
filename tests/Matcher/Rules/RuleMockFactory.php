@@ -26,9 +26,9 @@ use Bigfoot\PHPacto\Serializer\RuleMap;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-# For PhpUnit:6 back-compatibility
-if (!interface_exists(MockObject::class)) {
-    class_alias('PHPUnit_Framework_MockObject_MockObject', MockObject::class);
+// For PhpUnit:6 back-compatibility
+if (!\interface_exists(MockObject::class)) {
+    \class_alias('PHPUnit_Framework_MockObject_MockObject', MockObject::class);
 }
 
 final class RuleMockFactory extends TestCase
@@ -49,7 +49,7 @@ final class RuleMockFactory extends TestCase
         var_dump($refl->getName());
         var_dump($refl->getInterfaces());
         var_dump($refl->getParentClass());*/
-        $this->ruleMap->addRule(get_class($mock), get_class($mock));
+        $this->ruleMap->addRule(\get_class($mock), \get_class($mock));
     }
 
     public function empty(string $type = Rule::class): Rule

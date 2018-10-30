@@ -34,7 +34,7 @@ class OrRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'or',
             'rules' => [
-                ['@rule' => get_class($childRule)],
+                ['@rule' => \get_class($childRule)],
             ],
         ];
 
@@ -132,7 +132,7 @@ class OrRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch('A Mismatch should be thrown');
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, count($mismatches));
+            self::assertEquals(2, \count($mismatches));
 
             return;
         }
@@ -149,7 +149,7 @@ class OrRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch('This value is a string');
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, count($mismatches->toArrayFlat()));
+            self::assertEquals(2, \count($mismatches->toArrayFlat()));
 
             return;
         }
@@ -178,7 +178,7 @@ class OrRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch([]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(3, count($mismatches->toArrayFlat()));
+            self::assertEquals(3, \count($mismatches->toArrayFlat()));
 
             return;
         }
@@ -196,7 +196,7 @@ class OrRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch(['A Mismatch should be thrown']);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(1, count($mismatches));
+            self::assertEquals(1, \count($mismatches));
 
             return;
         }

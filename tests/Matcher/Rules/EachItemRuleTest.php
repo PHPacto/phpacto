@@ -33,7 +33,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '@rule' => 'each',
-            'rules' => ['@rule' => get_class($childRule)],
+            'rules' => ['@rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -48,8 +48,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'each',
             'rules' => [
-                'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)],
+                'key1' => ['@rule' => \get_class($childRule)],
+                'key2' => ['@rule' => \get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -63,7 +63,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
 
         $data = [
             '@rule' => 'each',
-            'rules' => ['@rule' => get_class($childRule)],
+            'rules' => ['@rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -81,8 +81,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $data = [
             '@rule' => 'each',
             'rules' => [
-                'key1' => ['@rule' => get_class($childRule)],
-                'key2' => ['@rule' => get_class($childRule)],
+                'key1' => ['@rule' => \get_class($childRule)],
+                'key2' => ['@rule' => \get_class($childRule)],
             ],
             'sample' => [],
         ];
@@ -195,7 +195,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch([4, 5, 6]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, count($mismatches));
+            self::assertEquals(2, \count($mismatches));
 
             return;
         }
@@ -220,7 +220,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.A', '1.B', '2.C'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.A', '1.B', '2.C'], \array_keys($mismatches->toArrayFlat()));
 
             return;
         }
@@ -244,7 +244,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.B'], \array_keys($mismatches->toArrayFlat()));
 
             return;
         }

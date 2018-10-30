@@ -127,7 +127,7 @@ class PactResponseTest extends SerializerAwareTestCase
 
         $expected = [
             'status_code' => [
-                '@rule' => get_class($mockStatusCode),
+                '@rule' => \get_class($mockStatusCode),
                 'sample' => 200,
             ],
         ];
@@ -148,17 +148,17 @@ class PactResponseTest extends SerializerAwareTestCase
 
         $expected = [
             'status_code' => [
-                '@rule' => get_class($mockStatusCode),
+                '@rule' => \get_class($mockStatusCode),
                 'sample' => 201,
             ],
             'headers' => [
                 'Y' => [
-                    '@rule' => get_class($mockHeaderValue),
+                    '@rule' => \get_class($mockHeaderValue),
                     'sample' => 'X',
                 ],
             ],
             'body' => [
-                '@rule' => get_class($mockBody),
+                '@rule' => \get_class($mockBody),
                 'sample' => 'Body',
             ],
         ];

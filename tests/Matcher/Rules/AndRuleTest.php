@@ -34,8 +34,8 @@ class AndRuleTest extends SerializerAwareTestCase
         $expected = [
             '@rule' => 'and',
             'rules' => [
-                ['@rule' => get_class($childRule)],
-                ['@rule' => get_class($childRule)],
+                ['@rule' => \get_class($childRule)],
+                ['@rule' => \get_class($childRule)],
             ],
             'sample' => 'sample',
         ];
@@ -50,8 +50,8 @@ class AndRuleTest extends SerializerAwareTestCase
         $data = [
             '@rule' => 'and',
             'rules' => [
-                ['@rule' => get_class($childRule)],
-                ['@rule' => get_class($childRule)],
+                ['@rule' => \get_class($childRule)],
+                ['@rule' => \get_class($childRule)],
             ],
             'sample' => 5,
         ];

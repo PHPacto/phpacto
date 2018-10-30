@@ -33,10 +33,6 @@ class StringEqualsRule extends StringComparisonRule
         $this->value = $value;
     }
 
-    protected function assertSupport(string $value): void
-    {
-    }
-
     public function getSample()
     {
         return $this->value;
@@ -51,9 +47,13 @@ class StringEqualsRule extends StringComparisonRule
                 throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         } else {
-            if (strtolower($this->value) !== strtolower($test)) {
+            if (\strtolower($this->value) !== \strtolower($test)) {
                 throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         }
+    }
+
+    protected function assertSupport(string $value): void
+    {
     }
 }

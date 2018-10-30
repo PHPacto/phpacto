@@ -44,18 +44,18 @@ class CountItemsRule extends AbstractRule
 
     public function assertMatch($test): void
     {
-        if (!is_array($test)) {
-            throw new Mismatches\TypeMismatch('array', gettype($test));
+        if (!\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
         try {
-            $this->rule->assertMatch(count($test));
+            $this->rule->assertMatch(\count($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
                 'The items count in array {{ actual }} should match the rule:' . "\n" .
                 '    {{ expected }}',
                 $mismatch->getMessage(),
-                count($test)
+                \count($test)
             );
         }
     }

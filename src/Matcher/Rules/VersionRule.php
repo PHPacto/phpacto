@@ -61,7 +61,7 @@ class VersionRule extends AbstractRule
     {
         $this->assertSupport($test);
 
-        if (!version_compare($test, $this->value, $this->operator)) {
+        if (!\version_compare($test, $this->value, $this->operator)) {
             switch ($this->operator) {
                 case '<': $operatorString = 'lower than'; break;
                 case '<=': $operatorString = 'lower than or equal to'; break;
@@ -77,8 +77,8 @@ class VersionRule extends AbstractRule
 
     protected function assertSupport($value): void
     {
-        if (!is_string($value)) {
-            throw new Mismatches\TypeMismatch('string', gettype($value));
+        if (!\is_string($value)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($value));
         }
 
         if ('' === $value) {
@@ -90,7 +90,7 @@ class VersionRule extends AbstractRule
     {
         $allowedOperators = ['<', '<=', '=', '>=', '>'];
 
-        if (!in_array($operator, $allowedOperators, true)) {
+        if (!\in_array($operator, $allowedOperators, true)) {
             throw new Mismatches\ValueMismatch('Only one operator of {{ expected }} is supported, but given {{ actual }}', $allowedOperators, $operator);
         }
     }

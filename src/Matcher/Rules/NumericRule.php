@@ -27,8 +27,8 @@ class NumericRule extends AbstractRule
 {
     public function assertMatch($test): void
     {
-        if (!is_numeric($test)) {
-            throw new Mismatches\TypeMismatch('number', gettype($test));
+        if (!\is_numeric($test)) {
+            throw new Mismatches\TypeMismatch('number', \gettype($test));
         }
     }
 

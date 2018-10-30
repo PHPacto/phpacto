@@ -43,8 +43,8 @@ class ProviderMockGuzzle5Test extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, '5', '<') || version_compare($guzzleVersion, '6', '>=')) {
-            self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
+        if (\version_compare($guzzleVersion, '5', '<') || \version_compare($guzzleVersion, '6', '>=')) {
+            self::markTestSkipped(\sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 
         $this->server = new ProviderMockGuzzle5();

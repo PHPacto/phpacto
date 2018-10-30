@@ -34,11 +34,11 @@ class UuidRule extends AbstractRule
 
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
+        if (!\is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
 
-        if (!preg_match(self::PATTERN, $test)) {
+        if (!\preg_match(self::PATTERN, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not a valid UUID, expecting a string like {{ expected }}', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', $test);
         }
     }
