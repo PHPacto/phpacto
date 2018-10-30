@@ -1,6 +1,8 @@
 Mastering with PHPacto contract Rules
 =====================================
 
+There are many rules you can use in your contracts to make asserts
+
 and
 ---
 ```yaml
