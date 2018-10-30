@@ -26,7 +26,8 @@ sample:
 ```
 
 - count
-Asserts array length
+  -----
+  Asserts array length
 ```yaml
 '@rule': count
 rule:
