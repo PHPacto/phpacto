@@ -28,13 +28,14 @@ class RegexpRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
-        $rule = new RegexpRule('^$', '');
+        $rule = new RegexpRule('^$', true, false, '');
 
         $expected = [
             '@rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => true,
+            'multi_line' => false,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -47,6 +48,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => false,
+            'multi_line' => true,
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
@@ -55,6 +57,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
         self::assertSame('^$', $rule->getPattern());
         self::assertSame('', $rule->getSample());
         self::assertFalse($rule->isCaseSensitive());
+        self::assertTrue($rule->isMultiLine());
     }
 
     public function supportedValuesProvider()
@@ -99,7 +102,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
             ->method('assertMatch')
             ->with('content');
 
-        $rule->__construct('pattern', 'content');
+        $rule->__construct('pattern', true, false, 'content');
     }
 
     public function testExceptionIsTrhownIfSampleIsNotMatching()
