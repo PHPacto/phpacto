@@ -44,11 +44,7 @@ final class RuleMockFactory extends TestCase
     }
 
     public function map(MockObject $mock): void
-    {/*
-        $refl = new \ReflectionClass($mock);
-        var_dump($refl->getName());
-        var_dump($refl->getInterfaces());
-        var_dump($refl->getParentClass());*/
+    {
         $this->ruleMap->addRule(get_class($mock), get_class($mock));
     }
 
