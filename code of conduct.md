@@ -18,5 +18,3 @@ While kindness can be generally understood, we recognize that kindness in a prof
 - **Be careful in the words that we choose**: We are a community of learning professionals and we conduct ourselves professionally. Be kind to others both within the community and beyond the community. Do not insult, minimize, marginalize, or put down other participants, cultures, or sub-cultures. Contribute positively to the learning environment. 
 - **Try to understand why we disagree**: Disagreements, both social and technical, happen all the time. It is important that we resolve disagreements and differing views constructively. Remember that we’re different. The strength of our community comes from its diversity&mdash;people from a wide range of backgrounds. Different people have different perspectives on issues. Being unable to understand why someone holds a viewpoint doesn’t mean that they’re wrong. Don’t forget that it is human to err and blaming each other doesn’t get us anywhere. Instead, focus on helping to resolve issues and learning from mistakes.
 - **Harassment and exclusionary behavior aren’t acceptable.**
-
-## Definitions
