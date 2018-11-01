@@ -53,8 +53,8 @@ class DateTimeRule extends AbstractRule
 
     protected function assertSupport($value): void
     {
-        if (!is_string($value)) {
-            throw new Mismatches\TypeMismatch('string', gettype($value));
+        if (!\is_string($value)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($value));
         }
 
         if ('' === $value) {

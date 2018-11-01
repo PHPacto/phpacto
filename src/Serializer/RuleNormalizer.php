@@ -53,7 +53,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsNormalization($data, $format = null)
     {
-        return is_object($data) && self::isRule(get_class($data)) && self::isFormatSupported($format);
+        return \is_object($data) && self::isRule(\get_class($data)) && self::isFormatSupported($format);
     }
 
     /**
@@ -61,7 +61,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || is_array($data) || is_scalar($data));
+        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || \is_scalar($data));
     }
 
     /**
@@ -70,7 +70,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof Rule) {
-            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', get_class($object), Rule::class));
+            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), Rule::class));
         }
 
         if ($this->isCircularReference($object, $context)) {
@@ -89,14 +89,14 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $class = rtrim($class, '[]');
+        $class = \rtrim($class, '[]');
 
-        if (!(Rule::class === $class || (interface_exists($class) && is_subclass_of($class, Rule::class)))) {
-            throw new InvalidArgumentException(sprintf('Interface "%s" should extends "%s"', $class, Rule::class));
+        if (!(Rule::class === $class || (\interface_exists($class) && \is_subclass_of($class, Rule::class)))) {
+            throw new InvalidArgumentException(\sprintf('Interface "%s" should extends "%s"', $class, Rule::class));
         }
 
-        if (is_array($data)) {
-            if (array_key_exists('@rule', $data)) {
+        if (\is_array($data)) {
+            if (\array_key_exists('@rule', $data)) {
                 $class = $this->ruleMap->getClassName($data['@rule']);
                 unset($data['@rule']);
 
@@ -110,23 +110,34 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $data;
         }
 
-        if (is_string($data) && '' !== $data) {
+        if (\is_string($data) && '' !== $data) {
             return new StringEqualsRule($data, true);
         }
 
         return new EqualsRule($data);
     }
 
+    protected function isAllowedAttribute($object, $attribute, $format = null, array $context = [])
+    {
+        if (\is_object($object) && 'sample' === $attribute && \method_exists($object, 'getValue')) {
+            if ($object->getValue() === $object->getSample()) {
+                return false;
+            }
+        }
+
+        return parent::isAllowedAttribute($object, $attribute, $format, $context);
+    }
+
     private static function isRule(string $class): bool
     {
-        $class = rtrim($class, '[]');
+        $class = \rtrim($class, '[]');
 
-        return Rule::class === $class || is_subclass_of($class, Rule::class);
+        return Rule::class === $class || \is_subclass_of($class, Rule::class);
     }
 
     private static function isFormatSupported(?string $format): bool
     {
-        return in_array($format, [null, 'json', 'yaml'], true);
+        return \in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizeRuleObject(Rule $rule, $format = null, array $context = [])
@@ -136,7 +147,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         $data = [
-            '@rule' => $this->ruleMap->getAlias(get_class($rule)),
+            '@rule' => $this->ruleMap->getAlias(\get_class($rule)),
         ];
 
         $attributes = $this->getAttributes($rule, $format, $context);
@@ -152,7 +163,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (is_scalar($attributeValue)) {
+            if (\is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
             } else {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
@@ -168,7 +179,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
-        if (array_key_exists('rules', $data) && is_array($data['rules'])) {
+        if (\array_key_exists('rules', $data) && \is_array($data['rules'])) {
             $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class . '[]', $format, $this->createChildContext($context, 'rules'));
         }
 
@@ -182,7 +193,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->denormalize($attribute);
             }
 
-            if ((false !== $allowedAttributes && !in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
+            if ((false !== $allowedAttributes && !\in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
                 $extraAttributes[] = $attribute;
 
                 continue;
@@ -200,15 +211,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $object;
-    }
-
-    protected function isAllowedAttribute($object, $attribute, $format = null, array $context = array())
-    {
-        if (is_object($object) && 'sample' === $attribute && method_exists($object, 'getValue')) {
-            if ($object->getValue() === $object->getSample()) return false;
-        }
-
-        return parent::isAllowedAttribute($object, $attribute, $format, $context);
     }
 
     private function recursiveNormalization($data, $format = null, array $context = [])
@@ -240,7 +242,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return md5($format . serialize($context));
+            return \md5($format . \serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

@@ -40,7 +40,7 @@ abstract class StringComparisonRule extends StringRule
         $this->assertSupport($value);
 
         $this->caseSensitive = $caseSensitive;
-        $this->value = !$caseSensitive ? strtolower($value) : $value;
+        $this->value = !$caseSensitive ? \strtolower($value) : $value;
 
         parent::__construct($sample);
     }
@@ -55,22 +55,22 @@ abstract class StringComparisonRule extends StringRule
         return $this->caseSensitive;
     }
 
-    protected function assertSupport(string $value): void
-    {
-        if ('' === $value) {
-            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
-        }
-    }
-
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
+        if (!\is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
     }
 
     public function getSample()
     {
         return $this->sample;
+    }
+
+    protected function assertSupport(string $value): void
+    {
+        if ('' === $value) {
+            throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
+        }
     }
 }

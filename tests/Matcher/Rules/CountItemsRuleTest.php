@@ -33,7 +33,7 @@ class CountItemsRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '@rule' => 'count',
-            'rule' => ['@rule' => get_class($childRule)],
+            'rule' => ['@rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -46,7 +46,7 @@ class CountItemsRuleTest extends SerializerAwareTestCase
 
         $data = [
             '@rule' => 'count',
-            'rule' => ['@rule' => get_class($childRule)],
+            'rule' => ['@rule' => \get_class($childRule)],
             'sample' => [],
         ];
 

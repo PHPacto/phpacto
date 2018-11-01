@@ -27,8 +27,8 @@ class IntegerRule extends AbstractRule
 {
     public function assertMatch($test): void
     {
-        if (!is_int($test)) {
-            throw new Mismatches\TypeMismatch('integer', gettype($test));
+        if (!\is_int($test)) {
+            throw new Mismatches\TypeMismatch('integer', \gettype($test));
         }
     }
 

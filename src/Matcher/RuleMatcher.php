@@ -29,7 +29,7 @@ class RuleMatcher
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($value);
-        } elseif (is_array($rules)) {
+        } elseif (\is_array($rules)) {
         } else {
             throw new \Exception('$rules parameter should be an instance of Rule or an array of Rules');
         }
@@ -39,7 +39,7 @@ class RuleMatcher
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($value);
-        } elseif (is_array($rules)) {
+        } elseif (\is_array($rules)) {
             $mismatches = [];
 
             /** @var Rule $rule */
@@ -61,12 +61,12 @@ class RuleMatcher
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($values);
-        } elseif (is_array($rules)) {
+        } elseif (\is_array($rules)) {
             $mismatches = [];
 
             /** @var Rule|Rule[] $rule */
             foreach ($rules as $key => $rule) {
-                if (!array_key_exists($key, $values)) {
+                if (!\array_key_exists($key, $values)) {
                     $mismatches[$key] = new Mismatches\KeyNotFoundMismatch($key);
                     continue;
                 }
@@ -74,7 +74,7 @@ class RuleMatcher
                 try {
                     if ($rule instanceof Rule) {
                         $rule->assertMatch($values[$key]);
-                    } elseif (is_array($rule)) {
+                    } elseif (\is_array($rule)) {
                         $this->matchArray($rule, $values[$key]);
                     } else {
                         throw new \Exception('Body should be a Rule or an array of Rules');

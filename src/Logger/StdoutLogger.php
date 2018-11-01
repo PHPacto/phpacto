@@ -53,6 +53,6 @@ class StdoutLogger implements Logger
 
     public function flush(): void
     {
-        file_put_contents('php://stdout', implode("\n", $this->messages));
+        \file_put_contents('php://stdout', \implode("\n", $this->messages));
     }
 }

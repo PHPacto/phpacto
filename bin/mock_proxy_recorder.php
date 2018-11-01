@@ -31,29 +31,29 @@ require __DIR__ . '/bootstrap.php';
 
 $logger = new StdoutLogger();
 
-$logger->log(sprintf(
+$logger->log(\sprintf(
     '[%s] %s: %s',
-    date('Y-m-d H:i:s'),
+    \date('Y-m-d H:i:s'),
     $_SERVER['REQUEST_METHOD'],
     $_SERVER['REQUEST_URI']
 ));
 
-if (!is_dir(CONTRACTS_DIR)) {
-    mkdir(CONTRACTS_DIR, 0777, true);
+if (!\is_dir(CONTRACTS_DIR)) {
+    \mkdir(CONTRACTS_DIR, 0777, true);
 }
 
-if (!getenv('RECORDER_PROXY_TO')) {
-    throw new \Exception(sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
+if (!\getenv('RECORDER_PROXY_TO')) {
+    throw new \Exception(\sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
+$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
 $handler = function(RequestInterface $request) use ($logger, $controller): ResponseInterface {
     try {
         $response = $controller->action($request);
 
-        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         return $response;
     } catch (\Throwable $e) {

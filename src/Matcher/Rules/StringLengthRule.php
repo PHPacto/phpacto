@@ -44,12 +44,12 @@ class StringLengthRule extends AbstractRule
 
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
+        if (!\is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
 
         try {
-            $this->length->assertMatch(strlen($test));
+            $this->length->assertMatch(\strlen($test));
         } catch (Mismatches\Mismatch $mismatch) {
             throw new Mismatches\ValueMismatch(
                 'The length of string {{ actual }} should match the rule:' . "\n" .

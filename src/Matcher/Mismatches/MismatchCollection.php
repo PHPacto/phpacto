@@ -34,7 +34,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
      */
     public function __construct(array $mismatches, string $message = null)
     {
-        parent::__construct(str_replace('{{ count }}', count($mismatches), $message ?: '{{ count }} rules are failed'));
+        parent::__construct(\str_replace('{{ count }}', \count($mismatches), $message ?: '{{ count }} rules are failed'));
 
         $this->mismatches = $mismatches;
     }
@@ -44,10 +44,10 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         $mismatches = $this->toArrayFlat();
 
         $map = function($k, $v) {
-            return sprintf('%s: %s', $k, $v);
+            return \sprintf('%s: %s', $k, $v);
         };
 
-        return implode("\n", array_map($map, array_keys($mismatches), $mismatches));
+        return \implode("\n", \array_map($map, \array_keys($mismatches), $mismatches));
     }
 
     /**
@@ -87,8 +87,8 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         }
 
         foreach ($mismatches as $key => $mismatch) {
-            if (is_array($mismatch)) {
-                $result = array_merge($result, $this->toArrayFlat($prefix . $key, $mismatch));
+            if (\is_array($mismatch)) {
+                $result = \array_merge($result, $this->toArrayFlat($prefix . $key, $mismatch));
             } else {
                 $result[$prefix . $key] = $mismatch;
             }
@@ -99,12 +99,12 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
 
     public function count()
     {
-        return count($this->mismatches);
+        return \count($this->mismatches);
     }
 
     public function countAll()
     {
-        return count($this->toArrayFlat());
+        return \count($this->toArrayFlat());
     }
 
     public function getIterator()

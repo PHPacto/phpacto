@@ -41,7 +41,7 @@ class AbstractRuleTest extends SerializerAwareTestCase implements RuleTestCase
         $rule = $this->rule->hasSample('sample');
 
         $expected = [
-            '@rule' => get_class($rule),
+            '@rule' => \get_class($rule),
             'sample' => 'sample',
         ];
 

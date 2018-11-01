@@ -47,11 +47,11 @@ class ContainsItemRule extends AbstractRule
 
     public function assertMatch($test): void
     {
-        if (!is_array($test)) {
-            throw new Mismatches\TypeMismatch('array', gettype($test));
+        if (!\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
-        if (!count($test)) {
+        if (!\count($test)) {
             throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
         }
 
@@ -76,14 +76,14 @@ class ContainsItemRule extends AbstractRule
      */
     protected function assertSupport($rules): void
     {
-        if (is_array($rules)) {
+        if (\is_array($rules)) {
             foreach ($rules as $rule) {
                 if (!$rule instanceof Rule) {
-                    throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Each item should be an instance of {{ expected }}');
+                    throw new Mismatches\TypeMismatch('Rule', \gettype($rules), 'Each item should be an instance of {{ expected }}');
                 }
             }
         } elseif (!$rules instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', gettype($rules), 'Should be an instance of {{ expected }}');
+            throw new Mismatches\TypeMismatch('Rule', \gettype($rules), 'Should be an instance of {{ expected }}');
         }
     }
 }

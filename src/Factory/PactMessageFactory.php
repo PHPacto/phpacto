@@ -32,7 +32,7 @@ abstract class PactMessageFactory
 {
     protected static function getMethodRule(RequestInterface $request): Rule
     {
-        return new EqualsRule(strtoupper($request->getMethod()));
+        return new EqualsRule(\strtoupper($request->getMethod()));
     }
 
     protected static function getUriRule(RequestInterface $request): Rule
@@ -75,21 +75,21 @@ abstract class PactMessageFactory
             'transfer-encoding',
         ];
 
-        return array_filter($headers, function($key) use ($array) {
-            return !in_array(strtolower($key), $array, true);
+        return \array_filter($headers, function($key) use ($array) {
+            return !\in_array(\strtolower($key), $array, true);
         }, ARRAY_FILTER_USE_KEY);
     }
 
     protected static function getHeaderRulesFromArray(array $headers): array
     {
         $map = function($value) {
-            if (1 === count($value)) {
+            if (1 === \count($value)) {
                 $value = $value[0];
             }
 
             return new EqualsRule($value);
         };
 
-        return array_map($map, $headers);
+        return \array_map($map, $headers);
     }
 }

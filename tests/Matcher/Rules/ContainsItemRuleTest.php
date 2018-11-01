@@ -33,7 +33,7 @@ class ContainsItemRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '@rule' => 'contains',
-            'rule' => ['@rule' => get_class($childRule)],
+            'rule' => ['@rule' => \get_class($childRule)],
             'sample' => [
                 'value',
             ],
@@ -48,7 +48,7 @@ class ContainsItemRuleTest extends SerializerAwareTestCase
 
         $data = [
             '@rule' => 'contains',
-            'rule' => ['@rule' => get_class($childRule)],
+            'rule' => ['@rule' => \get_class($childRule)],
             'sample' => [
                 'value',
             ],

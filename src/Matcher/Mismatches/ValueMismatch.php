@@ -33,7 +33,7 @@ class ValueMismatch extends Mismatch
      */
     public function __construct(string $message, $expected, $actual)
     {
-        $this->message = str_replace(
+        $this->message = \str_replace(
             ['{{ expected }}', '{{ actual }}'],
             [self::strJoin((array) $expected), self::wrap($actual)],
             $message
@@ -70,7 +70,7 @@ class ValueMismatch extends Mismatch
             return self::wrap((string) $value);
         };
 
-        return implode($glue, array_map($callback, $values));
+        return \implode($glue, \array_map($callback, $values));
     }
 
     /**
@@ -89,10 +89,10 @@ class ValueMismatch extends Mismatch
         if (true === $value) {
             return 'TRUE';
         }
-        if (is_float($value)) {
-            return sprintf('%G', $value);
+        if (\is_float($value)) {
+            return \sprintf('%G', $value);
         }
-        if (is_int($value)) {
+        if (\is_int($value)) {
             return (string) $value;
         }
         switch ($value) {
@@ -104,9 +104,9 @@ class ValueMismatch extends Mismatch
             case 'object':
             case 'integer':
             case 'string':
-                return sprintf('`%s`', $value);
+                return \sprintf('`%s`', $value);
         }
 
-        return sprintf('"%s"', (string) $value);
+        return \sprintf('"%s"', (string) $value);
     }
 }

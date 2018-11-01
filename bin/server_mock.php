@@ -29,8 +29,8 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== $allowOrigin = getenv('ALLOW_ORIGIN')) {
-    if ('all' === strtolower($allowOrigin)) {
+if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+    if ('all' === \strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
 } else {
@@ -39,9 +39,9 @@ if (false !== $allowOrigin = getenv('ALLOW_ORIGIN')) {
 
 $logger = new StdoutLogger();
 
-$logger->log(sprintf(
+$logger->log(\sprintf(
     '[%s] %s: %s',
-    date('Y-m-d H:i:s'),
+    \date('Y-m-d H:i:s'),
     $_SERVER['REQUEST_METHOD'],
     $_SERVER['REQUEST_URI']
 ));
@@ -49,8 +49,8 @@ $logger->log(sprintf(
 $pacts = (new PactLoader(SerializerFactory::getInstance()))
     ->loadFromDirectory(CONTRACTS_DIR);
 
-if (0 === count($pacts)) {
-    throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
+if (0 === \count($pacts)) {
+    throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
 }
 
 $handler = function(RequestInterface $request) use ($logger, $pacts, $allowOrigin) {
@@ -59,7 +59,7 @@ $handler = function(RequestInterface $request) use ($logger, $pacts, $allowOrigi
 
         $response = $controller->action($request);
 
-        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         return $response;
     } catch (\Throwable $e) {
