@@ -29,14 +29,15 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-$logger = new StdoutLogger();
+if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+    if ('all' === \strtolower($allowOrigin)) {
+        $allowOrigin = '*';
+    }
+} else {
+    $allowOrigin = null;
+}
 
-$logger->log(\sprintf(
-    '[%s] %s: %s',
-    \date('Y-m-d H:i:s'),
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['REQUEST_URI']
-));
+$logger = new StdoutLogger();
 
 if (!\is_dir(CONTRACTS_DIR)) {
     \mkdir(CONTRACTS_DIR, 0777, true);
@@ -47,9 +48,30 @@ if (!\getenv('RECORDER_PROXY_TO')) {
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
+$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR, $allowOrigin);
 
 $handler = function(RequestInterface $request) use ($logger, $controller): ResponseInterface {
+    if (
+        isset($allowOrigin)
+        && $request->getMethod() === 'OPTIONS'
+        && $request->hasHeader('Access-Control-Request-Method')
+    ) {
+        $stream = new Stream('php://memory', 'r');
+
+        return new Response($stream, 201, [
+            'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Headers' => '*',
+            'Access-Control-Allow-Origin' => '*',
+        ]);
+    }
+
+    $logger->log(\sprintf(
+        '[%s] %s: %s',
+        \date('Y-m-d H:i:s'),
+        $_SERVER['REQUEST_METHOD'],
+        $_SERVER['REQUEST_URI']
+    ));
+
     try {
         $response = $controller->action($request);
 

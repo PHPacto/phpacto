@@ -65,7 +65,10 @@ class MockController
         $response = $pact->getResponse()->getSample();
 
         if (null !== $this->allowOrigin) {
-            return $response->withHeader('Access-Control-Allow-Origin', $this->allowOrigin);
+            return $response
+                ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Headers', '*')
+                ->withHeader('Access-Control-Allow-Origin', $this->allowOrigin);
         }
 
         return $response;

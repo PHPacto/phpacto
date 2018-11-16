@@ -109,5 +109,7 @@ class MockControllerTest extends TestCase
         $response = $controller->action(new Request());
 
         self::assertEquals('*.origin.it', $response->getHeaderLine('Access-Control-Allow-Origin'));
+        self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        self::assertEquals('True', $response->getHeaderLine('Access-Control-Allow-Credentials'));
     }
 }

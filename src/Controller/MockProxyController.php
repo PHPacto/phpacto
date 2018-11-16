@@ -56,12 +56,18 @@ class MockProxyController
      */
     private $contractsDir;
 
-    public function __construct(ClientInterface $client, Logger $logger, string $proxyTo, string $contractsDir)
+    /**
+     * @var string|null
+     */
+    private $allowOrigin;
+
+    public function __construct(ClientInterface $client, Logger $logger, string $proxyTo, string $contractsDir, $allowOrigin = null)
     {
         $this->client = $client;
         $this->logger = $logger;
         $this->proxyTo = \parse_url($proxyTo);
         $this->contractsDir = $contractsDir;
+        $this->allowOrigin = $allowOrigin;
     }
 
     public function action(RequestInterface $request): ResponseInterface
@@ -78,7 +84,16 @@ class MockProxyController
 
         $this->createContractFile($pact, $dateStr);
 
-        return $pactResponse->getSample();
+        $response = $pactResponse->getSample();
+
+        if (null !== $this->allowOrigin) {
+            return $response
+                ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Headers', '*')
+                ->withHeader('Access-Control-Allow-Origin', $this->allowOrigin);
+        }
+
+        return $response;
     }
 
     private function makeProxyCall(RequestInterface $request): ResponseInterface

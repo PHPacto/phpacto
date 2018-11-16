@@ -39,22 +39,36 @@ if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
 
 $logger = new StdoutLogger();
 
-$logger->log(\sprintf(
-    '[%s] %s: %s',
-    \date('Y-m-d H:i:s'),
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['REQUEST_URI']
-));
+$handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
+    if (
+        isset($allowOrigin)
+        && $request->getMethod() === 'OPTIONS'
+        && $request->hasHeader('Access-Control-Request-Method')
+    ) {
+        $stream = new Stream('php://memory', 'r');
 
-$pacts = (new PactLoader(SerializerFactory::getInstance()))
-    ->loadFromDirectory(CONTRACTS_DIR);
+        return new Response($stream, 201, [
+            'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Headers' => '*',
+            'Access-Control-Allow-Origin' => '*',
+        ]);
+    }
 
-if (0 === \count($pacts)) {
-    throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
-}
+    $logger->log(\sprintf(
+        '[%s] %s: %s',
+        \date('Y-m-d H:i:s'),
+        $_SERVER['REQUEST_METHOD'],
+        $_SERVER['REQUEST_URI']
+    ));
 
-$handler = function(RequestInterface $request) use ($logger, $pacts, $allowOrigin) {
     try {
+        $pacts = (new PactLoader(SerializerFactory::getInstance()))
+            ->loadFromDirectory(CONTRACTS_DIR);
+
+        if (0 === \count($pacts)) {
+            throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
+        }
+
         $controller = new MockController($logger, $pacts, $allowOrigin);
 
         $response = $controller->action($request);
