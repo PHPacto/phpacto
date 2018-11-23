@@ -88,6 +88,6 @@ class MockController
             }
         }
 
-        throw new \Exception('Any contract found matching your request');
+        throw new \Exception('No contract found matching your request');
     }
 }

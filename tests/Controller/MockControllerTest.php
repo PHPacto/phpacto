@@ -86,7 +86,7 @@ class MockControllerTest extends TestCase
     {
         $controller = new MockController($this->logger, []);
 
-        self::expectExceptionMessage('Any contract found matching your request');
+        self::expectExceptionMessage('No contract found matching your request');
 
         $controller->action(new Request());
     }

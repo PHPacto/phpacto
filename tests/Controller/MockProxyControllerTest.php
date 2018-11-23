@@ -116,7 +116,7 @@ class MockProxyControllerTest extends TestCase
         self::assertEquals('Response Body', (string) $response->getBody());
 
         // Assert that a cantract is generated
-        self::assertTrue($this->fs->hasChildren(), 'Any contract has been recorded');
+        self::assertTrue($this->fs->hasChildren(), 'No contract has been recorded');
 
         // Assertions on recorded contract
         $contract = $this->fs->getChildren()[0]->getContent();
@@ -162,7 +162,7 @@ class MockProxyControllerTest extends TestCase
         self::assertEquals('Response Body', (string) $response->getBody());
 
         // Assert that a cantract is generated
-        self::assertTrue($this->fs->hasChildren(), 'Any contract has been recorded');
+        self::assertTrue($this->fs->hasChildren(), 'No contract has been recorded');
 
         // Assertions on recorded contract
         $contract = $this->fs->getChildren()[0]->getContent();
