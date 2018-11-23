@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
+use Bigfoot\PHPacto\Matcher\Rules\BooleanRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
@@ -77,7 +78,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $this->handleCircularReference($object);
         }
 
-        if ($object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive() && $object->getValue() === $object->getSample())) {
+        if ($object instanceof BooleanRule || $object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive() && $object->getValue() === $object->getSample())) {
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
@@ -108,6 +109,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             }
 
             return $data;
+        }
+
+        if (\is_bool($data)) {
+            return new BooleanRule($data);
         }
 
         if (\is_string($data) && '' !== $data) {

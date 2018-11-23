@@ -27,6 +27,7 @@ final class RuleMap
 {
     private $map = [
         'and' => Rules\AndRule::class,
+        'boolean' => Rules\BooleanRule::class,
         'contains' => Rules\ContainsItemRule::class,
         'count' => Rules\CountItemsRule::class,
         'datetime' => Rules\DateTimeRule::class,
