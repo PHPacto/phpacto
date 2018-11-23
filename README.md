@@ -126,9 +126,8 @@ If your test ends with so much verbose tracelog maybe your TestCase is not exten
 PHPUnit\Util\Blacklist\Blacklist::$blacklistedClassNames[__CLASS__] = 1;
 ```
 
-# Integration with Guzzle
-
-Need to write ...
+See this Gist https://gist.github.com/bigfoot90/d4f146bacad359329d219a804f6cd12a
+There are two different test files `ConsumerTest.php` and `ProviderTest.php`
 
 # Mastering with PHPacto contract Rules
 
