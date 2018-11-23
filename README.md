@@ -27,7 +27,8 @@ You can find some contract examples in `examples` directory.
 # Usage standalone CLI
 
 First of all clone this repository `git clone git@github.com:bigfoot90/phpacto.git`
-and install vendors with composer `composer install` 
+and install vendors with composer `composer install`.
+Can use [phpdotenv](https://github.com/vlucas/phpdotenv) to load environment variables from file.
 
 Validate
 --------
@@ -40,7 +41,7 @@ cURL command generator
 --------
 Generate cURL commands from contracts with
 ```bash
-bin/phpacto validate path-to/directory-or-single-file
+bin/phpacto curl path-to/directory-or-single-file
 ```
 
 Server Mock
@@ -51,6 +52,8 @@ export ALLOW_ORIGIN=all # This adds CORS headers to the response
 export CONTRACTS_DIR='where-are/your-contracts/stored'
 php -S 0.0.0.0:8000 bin/server_mock.php
 ```
+If there are not a Contract matching your request, the server cannot generate a response.
+So a special Response with status code `418` will be returned.
 
 Mock Proxy Recorder
 ---------------------
@@ -98,6 +101,8 @@ docker run -it --rm \
     90bigfoot/phpacto \
     server_mock
 ```
+If there are not a Contract matching your request, the server cannot generate a response.
+So a special Response with status code `418` will be returned.
 
 Mock Proxy Recorder
 -------------------
