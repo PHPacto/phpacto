@@ -40,7 +40,7 @@ class RegexpRule extends StringRule
      */
     protected $multiLine;
 
-    public function __construct($pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
+    public function __construct($pattern, bool $caseSensitive = true, bool $multiLine = false, $sample = null)
     {
         $this->assertSupport($this->pattern = $pattern);
         $this->caseSensitive = $caseSensitive;
@@ -57,6 +57,11 @@ class RegexpRule extends StringRule
     public function isCaseSensitive(): bool
     {
         return $this->caseSensitive;
+    }
+
+    public function isMultiLine(): bool
+    {
+        return $this->multiLine;
     }
 
     public function assertMatch($test): void
