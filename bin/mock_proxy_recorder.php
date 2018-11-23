@@ -48,9 +48,9 @@ if (!\getenv('RECORDER_PROXY_TO')) {
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR, $allowOrigin);
+$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
-$handler = function(RequestInterface $request) use ($logger, $controller): ResponseInterface {
+$handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
     if (
         isset($allowOrigin)
         && $request->getMethod() === 'OPTIONS'
@@ -77,14 +77,32 @@ $handler = function(RequestInterface $request) use ($logger, $controller): Respo
 
         $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
+        if (null !== $this->allowOrigin) {
+            $response = $response
+                ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Headers', '*')
+                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
+        }
+
         return $response;
-    } catch (\Throwable $e) {
+    } catch (\Throwable $t) {
+        function throwableToArray(\Throwable $t): array {
+            return [
+                'message' => $t->getMessage(),
+                'trace' => $t->getTrace(),
+                'line' => $t->getLine(),
+                'file' => $t->getFile(),
+                'code' => $t->getCode(),
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+            ];
+        };
+
         $stream = new Stream('php://memory', 'rw');
-        $stream->write($e->getMessage());
+        $stream->write(json_encode(throwableToArray($t)));
 
-        $logger->log($e->getMessage());
+        $logger->log($t->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'text/plain']);
+        return new Response($stream, 418, ['Content-type' => 'application/json']);
     }
 };
 

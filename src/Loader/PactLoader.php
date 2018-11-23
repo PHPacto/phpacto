@@ -86,7 +86,7 @@ class PactLoader
 
             foreach ($finder->files() as $file) {
                 $filePath = (string) $file;
-                $pacts[$filePath] = $this->loadFromFile($filePath);
+                $pacts[str_replace($path, '', $filePath)] = $this->loadFromFile($filePath);
             }
         } else {
             throw new \Exception(\sprintf('Directory `%s` does not exist', $path));

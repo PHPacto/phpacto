@@ -23,6 +23,7 @@ use Bigfoot\PHPacto\Controller\MockController;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
+use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
@@ -69,20 +70,48 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
             throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
         }
 
-        $controller = new MockController($logger, $pacts, $allowOrigin);
+        $controller = new MockController($logger, $pacts);
 
         $response = $controller->action($request);
 
         $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
+        if (null !== $this->allowOrigin) {
+            $response = $response
+                ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Headers', '*')
+                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
+        }
+
         return $response;
-    } catch (\Throwable $e) {
+    } catch (MismatchCollection $mismatches) {
         $stream = new Stream('php://memory', 'rw');
-        $stream->write($e->getMessage());
+        $stream->write(json_encode([
+            'message' => $mismatches->getMessage(),
+            'contracts' => $mismatches->toArray()
+        ]));
 
-        $logger->log($e->getMessage());
+        $logger->log($mismatches->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'text/plain']);
+        return new Response($stream, 418, ['Content-type' => 'application/json']);
+    } catch (\Throwable $t) {
+        function throwableToArray(\Throwable $t): array {
+            return [
+                'message' => $t->getMessage(),
+                'trace' => $t->getTrace(),
+                'line' => $t->getLine(),
+                'file' => $t->getFile(),
+                'code' => $t->getCode(),
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+            ];
+        };
+
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write(json_encode(throwableToArray($t)));
+
+        $logger->log($t->getMessage());
+
+        return new Response($stream, 418, ['Content-type' => 'application/json']);
     }
 };
 

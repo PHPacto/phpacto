@@ -179,31 +179,8 @@ class MockProxyControllerTest extends TestCase
         self::assertStringContains("body: 'Response Body'", $contract);
     }
 
-    public function test_support_cqrs()
-    {
-        $this->client->expects(self::once())
-            ->method('request')
-            ->willReturn(new Response());
-
-        self::setControllerAllowOrigin($this->controller, '*.origin.it');
-
-        $response = $this->controller->action(new Request(null, 'GET'));
-
-        self::assertEquals('*.origin.it', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Headers'));
-        self::assertEquals('True', $response->getHeaderLine('Access-Control-Allow-Credentials'));
-    }
-
     private static function assertStringContains(string $needle, string $haystack, string $message = '')
     {
         self::assertRegexp('/' . \preg_quote($needle, '/') . '/', $haystack, $message);
-    }
-
-    private static function setControllerAllowOrigin(MockProxyController $controller, ?string $value)
-    {
-        $reflection = new \ReflectionClass($controller);
-        $property = $reflection->getProperty('allowOrigin');
-        $property->setAccessible(true);
-        $property->setValue($controller, $value);
     }
 }

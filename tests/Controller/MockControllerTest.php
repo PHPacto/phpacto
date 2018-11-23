@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto\Controller;
 
 use Bigfoot\PHPacto\Logger\Logger;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
+use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactRequestInterface;
 use Bigfoot\PHPacto\PactResponseInterface;
@@ -82,34 +83,13 @@ class MockControllerTest extends TestCase
         self::assertSame($matchingResponsePsr7, $response);
     }
 
-    public function test_it_throws_exception_if_any_pact_is_matching()
+    public function test_it_throws_exception_if_no_pact_is_matching()
     {
         $controller = new MockController($this->logger, []);
 
-        self::expectExceptionMessage('No contract found matching your request');
+        self::expectException(MismatchCollection::class);
+        self::expectExceptionMessage('No matching contract found for your request');
 
         $controller->action(new Request());
-    }
-
-    public function test_support_cqrs()
-    {
-        $matchingPact = $this->createMock(Pact::class);
-
-        $matchingResponse = $this->createMock(PactResponseInterface::class);
-        $matchingResponse->expects(self::once())
-            ->method('getSample')
-            ->willReturn(new Response());
-
-        $matchingPact->expects(self::once())
-            ->method('getResponse')
-            ->willReturn($matchingResponse);
-
-        $controller = new MockController($this->logger, [$matchingPact], '*.origin.it');
-
-        $response = $controller->action(new Request());
-
-        self::assertEquals('*.origin.it', $response->getHeaderLine('Access-Control-Allow-Origin'));
-        self::assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Headers'));
-        self::assertEquals('True', $response->getHeaderLine('Access-Control-Allow-Credentials'));
     }
 }
