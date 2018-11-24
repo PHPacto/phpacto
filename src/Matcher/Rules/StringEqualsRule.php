@@ -44,11 +44,11 @@ class StringEqualsRule extends StringComparisonRule
 
         if ($this->caseSensitive) {
             if ($this->value !== $test) {
-                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->value, $test);
             }
         } else {
             if (\strtolower($this->value) !== \strtolower($test)) {
-                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->value, $test);
             }
         }
     }

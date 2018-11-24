@@ -76,7 +76,7 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
 
         $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
-        if (null !== $this->allowOrigin) {
+        if (null !== $allowOrigin) {
             $response = $response
                 ->withHeader('Access-Control-Allow-Credentials', 'True')
                 ->withHeader('Access-Control-Allow-Headers', '*')
