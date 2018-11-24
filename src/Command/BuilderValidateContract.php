@@ -35,7 +35,7 @@ class BuilderValidateContract extends BuilderWriteContract
         $this
             ->setName('builder:validate')
             ->setDescription('Check that all contracts are up to date with their contract builders')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . \implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
@@ -50,9 +50,9 @@ class BuilderValidateContract extends BuilderWriteContract
     {
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = rtrim($path, '.php') . '.' . $format;
+        $pactPath = \rtrim($path, '.php') . '.' . $format;
 
-        if (!file_exists($pactPath)) {
+        if (!\file_exists($pactPath)) {
             self::outputResult($output, $pactPath, '<fg=red>✖ Pact missing</>');
 
             return;
@@ -69,7 +69,7 @@ class BuilderValidateContract extends BuilderWriteContract
 
     final protected function decodeContractFile(string $path, string $format): array
     {
-        return $this->serializer->decode(file_get_contents($path), $format);
+        return $this->serializer->decode(\file_get_contents($path), $format);
     }
 
     final protected function normalizePact(PactInterface $pact, string $format): array

@@ -31,7 +31,7 @@ class StringEndsRule extends StringComparisonRule
 
         $function = $this->caseSensitive ? 'strpos' : 'stripos';
 
-        if (0 !== $function(strrev($test), strrev($this->value))) {
+        if (0 !== $function(\strrev($test), \strrev($this->value))) {
             throw new Mismatches\ValueMismatch('String {{ actual }} should end with {{ expected }}', $this->value, $test);
         }
     }

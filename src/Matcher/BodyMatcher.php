@@ -29,10 +29,10 @@ class BodyMatcher
     public function assertMatch($rules, $body): void
     {
         switch (true) {
-            case is_string($body):
+            case \is_string($body):
                 $this->matchBodySting($rules, $body);
                 break;
-            case is_array($body):
+            case \is_array($body):
                 $this->matchBodyArray($rules, $body);
                 break;
             default:
@@ -44,12 +44,12 @@ class BodyMatcher
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($body);
-        } elseif (is_array($rules)) {
+        } elseif (\is_array($rules)) {
             $mismatches = [];
 
             /** @var Rule $rule */
             foreach ($rules as $i => $rule) {
-                if (!is_numeric($i)) {
+                if (!\is_numeric($i)) {
                     throw new TypeMismatch('array', 'string');
                 }
 
@@ -72,12 +72,12 @@ class BodyMatcher
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($body);
-        } elseif (is_array($rules)) {
+        } elseif (\is_array($rules)) {
             $mismatches = [];
 
             /** @var Rule|Rule[] $rule */
             foreach ($rules as $key => $rule) {
-                if (!array_key_exists($key, $body)) {
+                if (!\array_key_exists($key, $body)) {
                     $mismatches[$key] = new Mismatches\KeyNotFoundMismatch($key);
                     continue;
                 }
@@ -85,7 +85,7 @@ class BodyMatcher
                 try {
                     if ($rule instanceof Rule) {
                         $rule->assertMatch($body[$key]);
-                    } elseif (is_array($rule)) {
+                    } elseif (\is_array($rule)) {
                         $this->matchBodyArray($rule, $body[$key]);
                     } else {
                         throw new \Exception('Body should be a Rule or an array of Rules');

@@ -29,40 +29,80 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-$logger = new StdoutLogger();
-
-$logger->log(sprintf(
-    '[%s] %s: %s',
-    date('Y-m-d H:i:s'),
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['REQUEST_URI']
-));
-
-if (!is_dir(CONTRACTS_DIR)) {
-    mkdir(CONTRACTS_DIR, 0777, true);
+if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+    if ('all' === \strtolower($allowOrigin)) {
+        $allowOrigin = '*';
+    }
+} else {
+    $allowOrigin = null;
 }
 
-if (!getenv('RECORDER_PROXY_TO')) {
-    throw new \Exception(sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
+$logger = new StdoutLogger();
+
+if (!\is_dir(CONTRACTS_DIR)) {
+    \mkdir(CONTRACTS_DIR, 0777, true);
+}
+
+if (!\getenv('RECORDER_PROXY_TO')) {
+    throw new \Exception(\sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
+$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
-$handler = function(RequestInterface $request) use ($logger, $controller): ResponseInterface {
+$handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
+    if (
+        isset($allowOrigin)
+        && $request->getMethod() === 'OPTIONS'
+        && $request->hasHeader('Access-Control-Request-Method')
+    ) {
+        $stream = new Stream('php://memory', 'r');
+
+        return new Response($stream, 201, [
+            'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Headers' => '*',
+            'Access-Control-Allow-Origin' => '*',
+        ]);
+    }
+
+    $logger->log(\sprintf(
+        '[%s] %s: %s',
+        \date('Y-m-d H:i:s'),
+        $_SERVER['REQUEST_METHOD'],
+        $_SERVER['REQUEST_URI']
+    ));
+
     try {
         $response = $controller->action($request);
 
-        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+
+        if (null !== $this->allowOrigin) {
+            $response = $response
+                ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Headers', '*')
+                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
+        }
 
         return $response;
-    } catch (\Throwable $e) {
+    } catch (\Throwable $t) {
+        function throwableToArray(\Throwable $t): array {
+            return [
+                'message' => $t->getMessage(),
+                'trace' => $t->getTrace(),
+                'line' => $t->getLine(),
+                'file' => $t->getFile(),
+                'code' => $t->getCode(),
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+            ];
+        };
+
         $stream = new Stream('php://memory', 'rw');
-        $stream->write($e->getMessage());
+        $stream->write(json_encode(throwableToArray($t)));
 
-        $logger->log($e->getMessage());
+        $logger->log($t->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'text/plain']);
+        return new Response($stream, 418, ['Content-type' => 'application/json']);
     }
 };
 

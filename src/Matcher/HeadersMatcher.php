@@ -35,7 +35,7 @@ class HeadersMatcher
 
     private function normalizeKeys($headers)
     {
-        return array_change_key_case($headers, CASE_LOWER);
+        return \array_change_key_case($headers, CASE_LOWER);
     }
 
     private function compareHeaders($rules, array $headers): void
@@ -44,19 +44,19 @@ class HeadersMatcher
 
         /** @var Rule $rule */
         foreach ($rules as $key => $rule) {
-            if (!array_key_exists($key, $headers)) {
+            if (!\array_key_exists($key, $headers)) {
                 $mismatches[$key] = new Mismatches\KeyNotFoundMismatch($key);
                 continue;
             }
 
-            if (is_array($headers[$key]) && 1 === count($headers[$key])) {
+            if (\is_array($headers[$key]) && 1 === \count($headers[$key])) {
                 $headers[$key] = $headers[$key][0];
             }
 
             try {
                 if ($rule instanceof Rule) {
                     $rule->assertMatch($headers[$key]);
-                } elseif (is_array($rule)) {
+                } elseif (\is_array($rule)) {
                     $this->compareHeaders($rule, $headers[$key]);
                 } else {
                     throw new \Exception('Headers should be a Rule or an array of Rules');

@@ -27,11 +27,11 @@ class EachItemRule extends AbstractRecursiveRule
 {
     public function assertMatch($test): void
     {
-        if (!is_array($test)) {
-            throw new Mismatches\TypeMismatch('array', gettype($test));
+        if (!\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
-        if (!count($test)) {
+        if (!\count($test)) {
             return;
         }
 

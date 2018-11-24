@@ -49,7 +49,7 @@ class PactLoaderTest extends TestCase
             'empty.json' => '',
             'empty-directory' => [],
             'contracts' => [
-                'pact.json' => json_encode([
+                'pact.json' => \json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -117,7 +117,7 @@ class PactLoaderTest extends TestCase
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/contracts');
 
         self::assertCount(1, $pacts);
-        self::assertInstanceOf(PactInterface::class, current($pacts));
+        self::assertInstanceOf(PactInterface::class, \current($pacts));
     }
 
     public function test_it_throws_exception_if_directory_does_not_exists()
@@ -127,10 +127,10 @@ class PactLoaderTest extends TestCase
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
 
-        # This line is for PhpUnit:6 back-compatibility
+        // This line is for PhpUnit:6 back-compatibility
         self::expectException(\Exception::class);
 
-        # This method doesn't work on PhpUnit:6 without calling `expectException` before. (Dont'ask my why?!)
+        // This method doesn't work on PhpUnit:6 without calling `expectException` before. (Dont'ask my why?!)
         self::expectExceptionMessageRegExp('/^Directory .* does not exist$/');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/not-a-directory');

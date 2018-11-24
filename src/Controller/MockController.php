@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto\Controller;
 
 use Bigfoot\PHPacto\Logger\Logger;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
+use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\PactInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -40,16 +41,10 @@ class MockController
      */
     private $pacts;
 
-    /**
-     * @var string|null
-     */
-    private $allowOrigin;
-
-    public function __construct(Logger  $logger, array $pacts, $allowOrigin = null)
+    public function __construct(Logger  $logger, array $pacts)
     {
         $this->logger = $logger;
         $this->pacts = $pacts;
-        $this->allowOrigin = $allowOrigin;
     }
 
     public function action(RequestInterface $request): ResponseInterface
@@ -64,27 +59,26 @@ class MockController
 
         $response = $pact->getResponse()->getSample();
 
-        if (null !== $this->allowOrigin) {
-            return $response->withHeader('Access-Control-Allow-Origin', $this->allowOrigin);
-        }
-
         return $response;
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
     {
+        $mismatches = [];
+
         foreach ($this->pacts as $contractLocation => $pact) {
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(sprintf('Found contract matching request %s', $contractLocation));
+                $this->logger->log(\sprintf('Found matching contract %s', $contractLocation));
 
                 return $pact;
-            } catch (Mismatch $e) {
+            } catch (Mismatch $mismatch) {
                 // This Pact isn't matching, try next.
+                $mismatches[$contractLocation] = $mismatch;
             }
         }
 
-        throw new \Exception('Any contract found matching your request');
+        throw new MismatchCollection($mismatches,'No matching contract found for your request');
     }
 }

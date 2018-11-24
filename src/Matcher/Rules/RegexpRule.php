@@ -40,7 +40,7 @@ class RegexpRule extends StringRule
      */
     protected $multiLine;
 
-    public function __construct($pattern, $sample = null, bool $caseSensitive = true, bool $multiLine = false)
+    public function __construct($pattern, bool $caseSensitive = true, bool $multiLine = false, $sample = null)
     {
         $this->assertSupport($this->pattern = $pattern);
         $this->caseSensitive = $caseSensitive;
@@ -59,10 +59,15 @@ class RegexpRule extends StringRule
         return $this->caseSensitive;
     }
 
+    public function isMultiLine(): bool
+    {
+        return $this->multiLine;
+    }
+
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test), 'Cannot match a Regex over a {{ actual }} type. A {{ expected }} is expected');
+        if (!\is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($test), 'Cannot match a Regex over a {{ actual }} type. A {{ expected }} is expected');
         }
 
         $modifiers = '';
@@ -75,7 +80,7 @@ class RegexpRule extends StringRule
             $modifiers .= 'm';
         }
 
-        if (!preg_match('/' . $this->pattern . '/' . $modifiers, $test)) {
+        if (!\preg_match('/' . $this->pattern . '/' . $modifiers, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $this->pattern, $test);
         }
     }
@@ -84,7 +89,7 @@ class RegexpRule extends StringRule
     {
         parent::assertMatch($value);
 
-        if (false === @preg_match('/' . $value . '/', '')) {
+        if (false === @\preg_match('/' . $value . '/', '')) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');
         }
     }

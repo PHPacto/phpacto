@@ -21,30 +21,34 @@
 
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
-use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class AbstractRuleTest extends SerializerAwareTestCase implements RuleTestCase
+class BooleanRule extends AbstractRule
 {
-    public function test_it_has_a_sample()
-    {
-        /** @var Rule $rule */
-        $rule = $this->getMockBuilder(AbstractRule::class)
-            ->setConstructorArgs(['sample'])
-            ->setMethodsExcept(['getSample'])
-            ->getMock();
+    /**
+     * @var Rule
+     */
+    protected $rule;
 
-        self::assertEquals('sample', $rule->getSample());
+    public function __construct($sample = null)
+    {
+        parent::__construct($sample);
     }
 
-    public function test_it_is_normalizable()
+    public function assertMatch($test): void
     {
-        $rule = $this->rule->hasSample('sample');
+        if (!\is_bool($test)) {
+            throw new Mismatches\TypeMismatch('boolean', \gettype($test));
+        }
+    }
 
-        $expected = [
-            '@rule' => \get_class($rule),
-            'sample' => 'sample',
-        ];
-
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+    /**
+     * @param Rule|Rule[] $rules
+     */
+    protected function assertSupport($value): void
+    {
+        if (!\is_bool($value)) {
+            throw new Mismatches\TypeMismatch('boolean', \gettype($value), 'Should be an instance of {{ expected }}');
+        }
     }
 }

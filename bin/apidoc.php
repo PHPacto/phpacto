@@ -28,15 +28,15 @@ require __DIR__ . '/bootstrap.php';
 $pacts = (new PactLoader(SerializerFactory::getInstance()))
     ->loadFromDirectory(CONTRACTS_DIR);
 
-if (0 === count($pacts)) {
-    throw new \Exception(sprintf('No Pacts found in %s', CONTRACTS_DIR));
+if (0 === \count($pacts)) {
+    throw new \Exception(\sprintf('No Pacts found in %s', CONTRACTS_DIR));
 }
 
 $swagger = new Swagger\Swagger();
 $swPaths = $swagger->getPaths();
 
 $swagger->getInfo()->setTitle('PHPacto Swagger generator');
-$swagger->getInfo()->setVersion(reset($pacts)->getVersion());
+$swagger->getInfo()->setVersion(\reset($pacts)->getVersion());
 
 foreach ($pacts as $pact) {
     $request = $pact->getRequest();
@@ -86,24 +86,24 @@ foreach ($pacts as $pact) {
     ]);
 
     foreach ($response->getSampleHeaders() as $key => $value) {
-        if ('c' === strtolower($key)) {
+        if ('c' === \strtolower($key)) {
             continue;
         }
         $header = new Swagger\Header([
-            'type' => gettype($value),
+            'type' => \gettype($value),
         ]);
         $swResponse->getHeaders()->set($key, $header);
     }
 
     $operation->getResponses()->set($response->getStatusCode()->getSample(), $swResponse);
 
-    $method = strtolower($request->getMethod()->getSample());
-    $path = strtolower($request->getPath()->getSample());
+    $method = \strtolower($request->getMethod()->getSample());
+    $path = \strtolower($request->getPath()->getSample());
 
     $swPath = new Swagger\Path();
     $swPath->setOperation($method, $operation);
     $swPaths->set($path, $swPath);
 }
 
-header('Content-Type: application/json');
-echo json_encode($swagger->toArray()) . "\n";
+\header('Content-Type: application/json');
+echo \json_encode($swagger->toArray()) . "\n";

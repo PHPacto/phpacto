@@ -27,7 +27,7 @@ class PactoTest extends TestCase
 {
     public function test_it_not_fails()
     {
-        exec('bin/phpacto', $output, $exitCode);
+        \exec('bin/phpacto', $output, $exitCode);
 
         self::assertEquals(0, $exitCode);
         self::assertContains('PHPacto', $output[0]);

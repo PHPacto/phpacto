@@ -75,7 +75,7 @@ class ResponseMatchesPact extends PHPUnitConstraint
      */
     public function toString(): string
     {
-        return sprintf('response `%s` matches Pact', $this->pact->getDescription());
+        return \sprintf('response `%s` matches Pact', $this->pact->getDescription());
     }
 
     protected function failPactMatching(ResponseInterface $response, Mismatch $mismatch, string $description = null)
@@ -95,7 +95,7 @@ class ResponseMatchesPact extends PHPUnitConstraint
             $failureDescription = $description . "\n" . $failureDescription;
         }
 
-        throw new AssertionFailedError(trim($failureDescription));
+        throw new AssertionFailedError(\trim($failureDescription));
     }
 
     /**
@@ -104,7 +104,7 @@ class ResponseMatchesPact extends PHPUnitConstraint
     protected function failureDescription($other, Mismatch $mismatch = null): string
     {
         $array_map_assoc = function(callable $f, array $a) {
-            return array_column(array_map($f, array_keys($a), $a), 1, 0);
+            return \array_column(\array_map($f, \array_keys($a), $a), 1, 0);
         };
 
         $func = function($k, $v) {
@@ -114,11 +114,11 @@ class ResponseMatchesPact extends PHPUnitConstraint
         if ($mismatch instanceof MismatchCollection) {
             $mismatchesArray = $mismatch->toArrayFlat();
 
-            return sprintf(
+            return \sprintf(
                 "%s (%d rules failed)\n%s",
                 $this->toString(),
-                count($mismatchesArray),
-                implode("\n", $array_map_assoc($func, $mismatchesArray))
+                \count($mismatchesArray),
+                \implode("\n", $array_map_assoc($func, $mismatchesArray))
             );
         }
 

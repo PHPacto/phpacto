@@ -29,18 +29,19 @@ class IfIsSetRule extends AbstractRecursiveRule
     {
         // If you are here, the key exists
         // If the key exists, and is not NULL, the test must match the rules
-        if (null === $test) return;
-
+        if (null === $test) {
+            return;
+        }
         if ($this->rules instanceof Rule) {
             $this->rules->assertMatch($test);
 
             return;
         }
-        if (!is_array($test)) {
-            throw new Mismatches\TypeMismatch('array', gettype($test));
+        if (!\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
-        if (!count($test)) {
+        if (!\count($test)) {
             return;
         }
 
@@ -48,7 +49,7 @@ class IfIsSetRule extends AbstractRecursiveRule
 
         foreach ($this->rules as $key => $rule) {
             try {
-                if (!array_key_exists($key, $test)) {
+                if (!\array_key_exists($key, $test)) {
                     throw new Mismatches\KeyNotFoundMismatch($key);
                 }
 

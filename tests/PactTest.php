@@ -65,11 +65,11 @@ class PactTest extends SerializerAwareTestCase
             'version' => 'ver',
             'description' => 'desc',
             'request' => [
-                'method' => ['@rule' => get_class($request->getMethod())],
-                'path' => ['@rule' => get_class($request->getPath())],
+                'method' => ['@rule' => \get_class($request->getMethod())],
+                'path' => ['@rule' => \get_class($request->getPath())],
             ],
             'response' => [
-                'status_code' => ['@rule' => get_class($response->getStatusCode())],
+                'status_code' => ['@rule' => \get_class($response->getStatusCode())],
             ],
         ];
 

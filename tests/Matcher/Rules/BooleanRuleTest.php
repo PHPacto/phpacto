@@ -24,48 +24,25 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
-class EqualsRuleTest extends SerializerAwareTestCase
+class BooleanRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
-        $rule = new EqualsRule(5);
+        $rule = new BooleanRule(true);
 
-        $expected = 5;
+        $expected = true;
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()
     {
-        $data = 5;
+        $data = true;
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(EqualsRule::class, $rule);
-        self::assertSame(5, $rule->getSample());
-    }
-
-    public function test_it_is_normalizable_recursive()
-    {
-        $childRule = $this->rule->empty();
-
-        $rule = new EqualsRule([
-            $childRule,
-            'key' => $childRule,
-            'nested' => [
-                'key' => $childRule,
-            ],
-        ]);
-
-        $expected = [
-            ['@rule' => \get_class($childRule)],
-            'key' => ['@rule' => \get_class($childRule)],
-            'nested' => [
-                'key' => ['@rule' => \get_class($childRule)],
-            ],
-        ];
-
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertInstanceOf(BooleanRule::class, $rule);
+        self::assertSame(true, $rule->getSample());
     }
 
     public function supportedValuesProvider()
@@ -74,15 +51,15 @@ class EqualsRuleTest extends SerializerAwareTestCase
         $rule = $this->rule->empty();
 
         return [
-            [true, 100],
-            [true, 1.0],
-            [true, 'string'],
+            [false, 100],
+            [false, 1.0],
+            [false, 'string'],
             [true, true],
             [true, false],
-            [true, null],
-            [true, []],
-            [true, [[1]]],
-            [true, [$rule]],
+            [false, null],
+            [false, []],
+            [false, [[1]]],
+            [false, [$rule]],
             [false, new class() {
             }],
             [false, new \stdClass()],
@@ -97,7 +74,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
      */
     public function testSupportedValues(bool $shouldBeSupported, $value)
     {
-        $rule = self::getMockBuilder(EqualsRule::class)
+        $rule = self::getMockBuilder(BooleanRule::class)
             ->disableOriginalConstructor()
             ->setMethodsExcept(['assertSupport'])
             ->getMock();
@@ -106,7 +83,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
             $this->expectException(Mismatches\TypeMismatch::class);
         }
 
-        $method = new \ReflectionMethod(EqualsRule::class, 'assertSupport');
+        $method = new \ReflectionMethod(BooleanRule::class, 'assertSupport');
         $method->setAccessible(true);
         $method->invoke($rule, $value);
 
@@ -116,25 +93,20 @@ class EqualsRuleTest extends SerializerAwareTestCase
     public function matchesTrueProvider()
     {
         return [
-            [true, 5, 5],
-            [true, 1, 1.0],
-            [true, 'a', 'a'],
-            [true, '', ''],
             [true, true, true],
             [true, false, false],
-            [true, null, null],
+            [true, true, false],
+            [true, false, true],
         ];
     }
 
     public function matchesFalseProvider()
     {
         return [
-            [false, 5, '5'],
-            [false, '', 0],
-            [false, 0, []],
-            [false, 1, true],
-            [false, 0, false],
-            [false, false, null],
+            [false, true, 1],
+            [false, false, 0],
+            [false, true, 0],
+            [false, false, 1],
         ];
     }
 
@@ -147,10 +119,10 @@ class EqualsRuleTest extends SerializerAwareTestCase
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
-        $rule = new EqualsRule($ruleValue);
+        $rule = new BooleanRule($ruleValue);
 
         if (!$shouldMatch) {
-            $this->expectException(Mismatches\ValueMismatch::class);
+            $this->expectException(Mismatches\Mismatch::class);
         }
 
         $rule->assertMatch($testValue);

@@ -68,7 +68,7 @@ class MockProxyControllerTest extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
+        if (\version_compare($guzzleVersion, '6', '<') || \version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped('MockProxyController works with Guzzle 6 or newer');
         }
 
@@ -94,7 +94,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client wiil make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-path-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -105,7 +105,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', 'http://proxied-host:8888/proxied-dir/my-path-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', $this->proxyTo.'/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willReturn($response);
 
         $response = $this->controller->action($request);
@@ -116,21 +116,21 @@ class MockProxyControllerTest extends TestCase
         self::assertEquals('Response Body', (string) $response->getBody());
 
         // Assert that a cantract is generated
-        self::assertTrue($this->fs->hasChildren(), 'Any contract has been recorded');
+        self::assertTrue($this->fs->hasChildren(), 'No contract has been recorded');
 
         // Assertions on recorded contract
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-path-test', $contract);
-        self::assertStringContains('X: \'REQUEST HEADERS\'', $contract);
-        self::assertStringContains('body: \'Request Body\'', $contract);
+        self::assertStringContains("method: METHOD", $contract);
+        self::assertStringContains("path: /my-test-path", $contract);
+        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertStringContains("body: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains('\'Y\': \'RESPONSE HEADERS\'', $contract);
-        self::assertStringContains('body: \'Response Body\'', $contract);
+        self::assertStringContains("status_code: 418", $contract);
+        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertStringContains("body: 'Response Body'", $contract);
     }
 
     /**
@@ -138,9 +138,9 @@ class MockProxyControllerTest extends TestCase
      */
     public function test_it_proxies_request_and_records_contract_when_server_respond_with_error()
     {
-        // A client wiil make a request like this
+        // A client will make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-path-test', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -151,7 +151,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', 'http://proxied-host:8888/proxied-dir/my-path-test', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', $this->proxyTo.'/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willThrowException(new BadResponseException('Server respond with a BAD status code', $request, $response));
 
         $response = $this->controller->action($request);
@@ -162,25 +162,25 @@ class MockProxyControllerTest extends TestCase
         self::assertEquals('Response Body', (string) $response->getBody());
 
         // Assert that a cantract is generated
-        self::assertTrue($this->fs->hasChildren(), 'Any contract has been recorded');
+        self::assertTrue($this->fs->hasChildren(), 'No contract has been recorded');
 
         // Assertions on recorded contract
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-path-test', $contract);
-        self::assertStringContains('X: \'REQUEST HEADERS\'', $contract);
-        self::assertStringContains('body: \'Request Body\'', $contract);
+        self::assertStringContains("method: METHOD", $contract);
+        self::assertStringContains("path: /my-test-path", $contract);
+        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertStringContains("body: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains('\'Y\': \'RESPONSE HEADERS\'', $contract);
-        self::assertStringContains('body: \'Response Body\'', $contract);
+        self::assertStringContains("status_code: 418", $contract);
+        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertStringContains("body: 'Response Body'", $contract);
     }
 
     private static function assertStringContains(string $needle, string $haystack, string $message = '')
     {
-        self::assertRegexp('/' . preg_quote($needle, '/') . '/', $haystack, $message);
+        self::assertRegexp('/' . \preg_quote($needle, '/') . '/', $haystack, $message);
     }
 }

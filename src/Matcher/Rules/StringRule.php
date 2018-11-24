@@ -32,8 +32,8 @@ class StringRule extends AbstractRule
 
     public function assertMatch($test): void
     {
-        if (!is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', gettype($test));
+        if (!\is_string($test)) {
+            throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
     }
 }

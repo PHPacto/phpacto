@@ -57,21 +57,21 @@ class ValidateContract extends BaseCommand
     {
         $path = $input->getArgument('path');
 
-        if (is_file($path) && is_readable($path)) {
+        if (\is_file($path) && \is_readable($path)) {
             $this->loadPact($output, $path, $this->defaultContractsDir);
-        } elseif (is_dir($path)) {
+        } elseif (\is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', PactLoader::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(sprintf('No files found in `%s`', $path));
+                throw new \Exception(\sprintf('No files found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {
                 $this->loadPact($output, (string) $file, $path);
             }
         } else {
-            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
+            throw new \Exception(\sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
         self::getTable($output)->render();
@@ -116,7 +116,7 @@ class ValidateContract extends BaseCommand
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
-            return str_replace($rootDir . '/', '', $filePath);
+            return \str_replace($rootDir . '/', '', $filePath);
         }
 
         return $filePath;
@@ -130,7 +130,7 @@ class ValidateContract extends BaseCommand
             if ($error instanceof MismatchCollection) {
                 $row[] = (string) $error;
             } else {
-                $row[] = sprintf('<options=bold>%s</>', $error->getMessage());
+                $row[] = \sprintf('<options=bold>%s</>', $error->getMessage());
             }
         }
 
