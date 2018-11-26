@@ -175,7 +175,19 @@ or
 --
 Asserts that a value is matching al least one of the children rules `greater` and `lower`
 ```yaml
-'@rule': and
+'@rule': or
+rules:
+  - Male
+  - Female
+sample: Male
+```
+```yaml
+'@rule': or
+rules: [Male, Female]
+sample: Male
+```
+```yaml
+'@rule': or
 rules:
   - '@rule': greater
     value: 5
