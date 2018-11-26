@@ -48,8 +48,8 @@ class HeadersMatcherTest extends TestCase
         ];
 
         $headers = [
-            'key1' => 'a matching value',
-            'KEY-2' => ['a matching value', 'another matching value'],
+            'Key1' => 'a matching value',
+            'key-2' => ['a matching value', 'another matching value'],
             'other' => 'an extra value',
         ];
 

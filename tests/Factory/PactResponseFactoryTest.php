@@ -45,11 +45,11 @@ class PactResponseFactoryTest extends TestCase
      */
     public function test_it_returns_pact_response_with_headers()
     {
-        $response = new Response('php://memory', 200, ['X-CUSTOM' => 'a custom header']);
+        $response = new Response('php://memory', 200, ['x-CUSTOM' => 'a custom header']);
 
         $pactResponse = PactResponseFactory::createFromPSR7($response);
 
-        self::assertContains('custom header', $pactResponse->getHeaders()['X-CUSTOM']->getSample());
+        self::assertContains('custom header', $pactResponse->getHeaders()['X-Custom']->getSample());
     }
 
     /**

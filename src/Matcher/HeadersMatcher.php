@@ -27,15 +27,7 @@ class HeadersMatcher
 {
     public function assertMatch($rules, array $headers): void
     {
-        $expectedHeaders = $this->normalizeKeys($rules);
-        $actualHeaders = $this->normalizeKeys($headers);
-
-        $this->compareHeaders($expectedHeaders, $actualHeaders);
-    }
-
-    private function normalizeKeys($headers)
-    {
-        return \array_change_key_case($headers, CASE_LOWER);
+        $this->compareHeaders($rules, $headers);
     }
 
     private function compareHeaders($rules, array $headers): void
