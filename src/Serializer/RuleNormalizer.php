@@ -87,8 +87,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     /**
      * {@inheritdoc}
-     *
-     * @return Rule|Rule[]
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {

@@ -42,7 +42,7 @@ foreach ($pacts as $pact) {
     $request = $pact->getRequest();
     $requestContentType = @$request->getHeaders()['Content-Type'];
 
-    $swRequestContentType = $requestContentType ? $responseContentType->getSample() : '*';
+    $swRequestContentType = $requestContentType ? $requestContentType->getSample() : '*';
 
     $response = $pact->getResponse();
     $responseContentType = @$response->getHeaders()['Content-Type'];
