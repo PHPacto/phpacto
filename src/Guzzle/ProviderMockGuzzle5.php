@@ -24,7 +24,6 @@ namespace Bigfoot\PHPacto\Guzzle;
 use Bigfoot\PHPacto\PactInterface;
 use Bigfoot\PHPacto\Test\PHPactoTestTrait;
 use GuzzleHttp\Ring\Client\MockHandler;
-use Http\Discovery\HttpClientDiscovery;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;

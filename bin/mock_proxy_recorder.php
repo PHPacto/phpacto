@@ -29,7 +29,7 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
     if ('all' === \strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
@@ -53,7 +53,7 @@ $controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PR
 $handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
     if (
         isset($allowOrigin)
-        && $request->getMethod() === 'OPTIONS'
+        && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
         $stream = new Stream('php://memory', 'r');
@@ -86,14 +86,15 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
 
         return $response;
     } catch (\Throwable $t) {
-        function throwableToArray(\Throwable $t): array {
+        function throwableToArray(\Throwable $t): array
+        {
             return [
                 'message' => $t->getMessage(),
                 'trace' => $t->getTrace(),
                 'line' => $t->getLine(),
                 'file' => $t->getFile(),
                 'code' => $t->getCode(),
-                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
         };
 

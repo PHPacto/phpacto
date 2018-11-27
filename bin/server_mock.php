@@ -30,7 +30,7 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
     if ('all' === \strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
@@ -43,7 +43,7 @@ $logger = new StdoutLogger();
 $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
     if (
         isset($allowOrigin)
-        && $request->getMethod() === 'OPTIONS'
+        && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
         $stream = new Stream('php://memory', 'r');
@@ -88,21 +88,22 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
         $stream = new Stream('php://memory', 'rw');
         $stream->write(json_encode([
             'message' => $mismatches->getMessage(),
-            'contracts' => $mismatches->toArray()
+            'contracts' => $mismatches->toArray(),
         ]));
 
         $logger->log($mismatches->getMessage());
 
         return new Response($stream, 418, ['Content-type' => 'application/json']);
     } catch (\Throwable $t) {
-        function throwableToArray(\Throwable $t): array {
+        function throwableToArray(\Throwable $t): array
+        {
             return [
                 'message' => $t->getMessage(),
                 'trace' => $t->getTrace(),
                 'line' => $t->getLine(),
                 'file' => $t->getFile(),
                 'code' => $t->getCode(),
-                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
         };
 

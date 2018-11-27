@@ -105,7 +105,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', $this->proxyTo.'/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willReturn($response);
 
         $response = $this->controller->action($request);
@@ -122,13 +122,13 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains("method: METHOD", $contract);
-        self::assertStringContains("path: /my-test-path", $contract);
+        self::assertStringContains('method: METHOD', $contract);
+        self::assertStringContains('path: /my-test-path', $contract);
         self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
         self::assertStringContains("body: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains("status_code: 418", $contract);
+        self::assertStringContains('status_code: 418', $contract);
         self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
         self::assertStringContains("body: 'Response Body'", $contract);
     }
@@ -151,7 +151,7 @@ class MockProxyControllerTest extends TestCase
         $this->client->expects(self::once())
             ->method('request')
         // Assertions on Request to being send to proxied server
-            ->with('method', $this->proxyTo.'/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
+            ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willThrowException(new BadResponseException('Server respond with a BAD status code', $request, $response));
 
         $response = $this->controller->action($request);
@@ -168,13 +168,13 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains("method: METHOD", $contract);
-        self::assertStringContains("path: /my-test-path", $contract);
+        self::assertStringContains('method: METHOD', $contract);
+        self::assertStringContains('path: /my-test-path', $contract);
         self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
         self::assertStringContains("body: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains("status_code: 418", $contract);
+        self::assertStringContains('status_code: 418', $contract);
         self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
         self::assertStringContains("body: 'Response Body'", $contract);
     }

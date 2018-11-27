@@ -79,6 +79,6 @@ class MockController
             }
         }
 
-        throw new MismatchCollection($mismatches,'No matching contract found for your request');
+        throw new MismatchCollection($mismatches, 'No matching contract found for your request');
     }
 }
