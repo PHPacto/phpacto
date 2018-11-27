@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Matcher;
 
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -104,5 +105,38 @@ class HeadersMatcherTest extends TestCase
         }
 
         self::fail('This test should end in the catch');
+    }
+
+    public function test_it_match_rule_with_multiple_values()
+    {
+        $rules = [
+            'key' => new EqualsRule('B'),
+        ];
+
+        $headers = [
+            'key' => ['A', 'B'],
+        ];
+
+        $this->matcher->assertMatch($rules, $headers);
+
+        self::assertTrue(true, 'No exceptions should be thrown');
+    }
+
+    public function test_it_match_multiple_values_with_multiple_values()
+    {
+        $rules = [
+            'key' => [
+                new EqualsRule('A'),
+                new EqualsRule('B'),
+            ]
+        ];
+
+        $headers = [
+            'key' => ['B', 'A'],
+        ];
+
+        $this->matcher->assertMatch($rules, $headers);
+
+        self::assertTrue(true, 'No exceptions should be thrown');
     }
 }
