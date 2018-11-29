@@ -27,6 +27,9 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class ValidateContractTest extends TestCase
 {
     /**
@@ -37,7 +40,7 @@ class ValidateContractTest extends TestCase
     /**
      * @var CommandTester
      */
-    private $commandTester;
+    private $tester;
 
     public function setUp()
     {
@@ -113,16 +116,16 @@ class ValidateContractTest extends TestCase
 
         $command = new ValidateContract(SerializerFactory::getInstance());
 
-        $this->commandTester = new CommandTester($command);
+        $this->tester = new CommandTester($command);
     }
 
-    public function test_it_reads_contracts_and_check_that_contracts_are_still_valid()
+    public function test_it_reads_contracts_and_returns_contracts_states()
     {
-        $this->commandTester->execute([
+        $this->tester->execute([
             'path' => $this->fs->url() . '/contracts',
         ]);
 
-        $output = $this->commandTester->getDisplay();
+        $output = $this->tester->getDisplay();
 
         self::assertContains('not-a-json.json     ✖ Syntax error', $output);
         self::assertContains('malformed.json      ✖ Error', $output);
@@ -130,5 +133,29 @@ class ValidateContractTest extends TestCase
         self::assertContains('valid.json          ✔ Valid', $output);
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);
+
+        self::assertEquals(1, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
+    }
+
+    public function test_it_has_correct_exit_code_if_all_contracts_are_valid()
+    {
+        $path = $this->fs->url() . '/contracts';
+
+        // Remove invalid contracts from test
+        unlink($path . '/not-a-json.json');
+        unlink($path . '/malformed.json');
+        unlink($path . '/invalid.json');
+        unlink($path . '/not-matching.json');
+
+        $this->tester->execute([
+            'path' => $path,
+        ]);
+
+        $output = $this->tester->getDisplay();
+
+        self::assertContains('valid.json      ✔ Valid', $output);
+        self::assertContains('matching.json   ✔ Valid', $output);
+
+        self::assertEquals(0, $this->tester->getStatusCode(), 'Exit code should be 0 since all contracts are valid');
     }
 }
