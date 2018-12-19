@@ -25,6 +25,7 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -44,7 +45,7 @@ abstract class PactMessageFactory
             $uri .= $request->getUri()->getQuery();
         }
 
-        return new EqualsRule($uri);
+        return new StringEqualsRule($uri);
     }
 
     protected static function getStatusCodeRule(ResponseInterface $response): Rule
