@@ -60,6 +60,7 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
 
         return new Response($stream, 201, [
             'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
             'Access-Control-Allow-Headers' => '*',
             'Access-Control-Allow-Origin' => '*',
         ]);
@@ -80,6 +81,7 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
         if (null !== $this->allowOrigin) {
             $response = $response
                 ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
                 ->withHeader('Access-Control-Allow-Headers', '*')
                 ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
         }
