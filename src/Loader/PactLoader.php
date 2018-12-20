@@ -42,20 +42,39 @@ class PactLoader
         $this->serializer = $serializer;
     }
 
-    public function loadFromFile(string $path): PactInterface
+    public function loadFromPath(string $path): array
     {
-        if (!(\file_exists($path) && \is_readable($path))) {
-            throw new \Exception(\sprintf('File `%s` does not exist or is not readable', $path));
+        if (!\is_readable($path)) {
+            throw new \Exception(\sprintf('Path `%s` does not exist or is not readable', $path));
         }
 
+        if (\is_file($path)) {
+            return [$path => $this->loadFromFile($path)];
+        }
+
+        if (\is_dir($path)) {
+            return $this->loadFromDirectory($path);
+        }
+
+        throw new \Exception('Not a file, not a directory');
+    }
+
+    public function loadFromFile(string $path): PactInterface
+    {
 //        PHP >= 7.2
 //        $format = self::getExtensionFromPath($path)
 //            |> self::getFormatFromFileExtension($$);
         $format = self::getFormatFromFileExtension(self::getExtensionFromPath($path));
 
+        $fileContents = @\file_get_contents($path);
+
+        if ($fileContents === false) {
+            throw new PactLoadingException(\sprintf('File `%s` does not exist or is not readable', $path));
+        }
+
         try {
             /** @var PactInterface $pact */
-            $pact = $this->serializer->deserialize(\file_get_contents($path), PactInterface::class, $format);
+            $pact = $this->serializer->deserialize($fileContents, PactInterface::class, $format);
 
             return $pact;
         } catch (Mismatch $mismatch) {

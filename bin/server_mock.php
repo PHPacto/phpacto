@@ -64,8 +64,10 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
     ));
 
     try {
+        $headerContract = $request->getHeaderLine('PHPacto-Contract');
+
         $pacts = (new PactLoader(SerializerFactory::getInstance()))
-            ->loadFromDirectory(CONTRACTS_DIR);
+            ->loadFromPath($headerContract ? CONTRACTS_DIR . $headerContract: CONTRACTS_DIR);
 
         if (0 === \count($pacts)) {
             throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
