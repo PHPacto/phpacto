@@ -24,22 +24,26 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
-class UriRuleTest extends SerializerAwareTestCase
+class PathRuleTest extends SerializerAwareTestCase
 {
     public function matchesProvider()
     {
         return [
-            [false, '', ''],
-            [false, '', 'path'],
-            [true, '', '/path'],
-            [false, '', '?query'],
-            [true, '', '/?query'],
-            [false, '', '//hostname?query'],
-            [true, '', '//hostname/?query=b'],
-            [true, '', '//hostname:80/'],
-            [true, '', 'http://hostname/'],
-            [true, '', 'https://hostname:433/'],
-            [true, '', '/{param1}/{param2}'],
+            [true, '', ''],
+            [true, '', '/'],
+            [true, '/', ''],
+            [true, '/', '/'],
+            [true, '/path', 'path'],
+            [true, 'path', '/path'],
+            [false, '/', '/path'],
+            [false, '/', '?query'],
+            [true, '/', '/?query'],
+//            [false, '/', '//hostname?query'],
+//            [true, '/', '//hostname/?query=b'],
+//            [true, '/', '//hostname:80/'],
+//            [true, '/', 'http://hostname/'],
+//            [true, '/', 'https://hostname:433/'],
+//            [true, '/', '/{param1}/{param2}'],
         ];
     }
 
@@ -48,10 +52,10 @@ class UriRuleTest extends SerializerAwareTestCase
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
-        $rule = new UriRule($ruleValue, [], null);
+        $rule = new PathRule($ruleValue, [], []);
 
         if (!$shouldMatch) {
-            $this->expectException(Mismatches\TypeMismatch::class);
+            $this->expectException(Mismatches\Mismatch::class);
         }
 
         $rule->assertMatch($testValue);
