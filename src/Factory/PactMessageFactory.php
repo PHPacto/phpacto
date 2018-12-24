@@ -21,7 +21,8 @@
 
 namespace Bigfoot\PHPacto\Factory;
 
-use Bigfoot\PHPacto\BodyEncoder;
+use Bigfoot\PHPacto\Encoder\BodyEncoder;
+use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
@@ -53,7 +54,9 @@ abstract class PactMessageFactory
 
     protected static function getHeadersRules(MessageInterface $response)
     {
-        return self::getHeaderRulesFromArray(self::filterHeaders($response->getHeaders()));
+        $decodedHeaders = HeadersEncoder::decode($response->getHeaders());
+
+        return self::getHeaderRulesFromArray($decodedHeaders);
     }
 
     protected static function getBodyRules(MessageInterface $response)
@@ -62,22 +65,6 @@ abstract class PactMessageFactory
         $decodedBody = BodyEncoder::decode((string) $response->getBody(), $contentType);
 
         return !empty($decodedBody) ? new EqualsRule($decodedBody) : null;
-    }
-
-    protected static function filterHeaders(array $headers): array
-    {
-        $array = [
-            'host',
-            'date',
-            'accept-encoding',
-            'connection',
-            'content-length',
-            'transfer-encoding',
-        ];
-
-        return \array_filter($headers, function($key) use ($array) {
-            return !\in_array(\strtolower($key), $array, true);
-        }, ARRAY_FILTER_USE_KEY);
     }
 
     protected static function getHeaderRulesFromArray(array $headers): array

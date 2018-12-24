@@ -138,7 +138,7 @@ class PactLoaderTest extends TestCase
         self::fail('An exception should be thrown');
     }
 
-    public function test_it_throws_exception_if_any_pact_was_fount_in_directory()
+    public function test_it_throws_exception_if_no_pact_was_fount_in_directory()
     {
         $loader = $this->getMockBuilder(PactLoader::class)
             ->disableOriginalConstructor()
@@ -150,5 +150,19 @@ class PactLoaderTest extends TestCase
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/empty-directory');
 
         self::fail('An exception should be thrown');
+    }
+
+    public function test_load_path()
+    {
+        $loader = $this->getMockBuilder(PactLoader::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['loadFromPath'])
+            ->getMock();
+
+        $loader->expects(self::once())
+            ->method('loadFromDirectory')
+            ->willReturn([]);
+
+        $pacts = $loader->loadFromPath($this->fs->url() . '/empty-directory');
     }
 }

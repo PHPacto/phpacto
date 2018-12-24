@@ -29,7 +29,7 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
     if ('all' === \strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
@@ -53,13 +53,14 @@ $controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PR
 $handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
     if (
         isset($allowOrigin)
-        && $request->getMethod() === 'OPTIONS'
+        && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
         $stream = new Stream('php://memory', 'r');
 
         return new Response($stream, 201, [
             'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
             'Access-Control-Allow-Headers' => '*',
             'Access-Control-Allow-Origin' => '*',
         ]);
@@ -80,20 +81,22 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
         if (null !== $this->allowOrigin) {
             $response = $response
                 ->withHeader('Access-Control-Allow-Credentials', 'True')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
                 ->withHeader('Access-Control-Allow-Headers', '*')
                 ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
         }
 
         return $response;
     } catch (\Throwable $t) {
-        function throwableToArray(\Throwable $t): array {
+        function throwableToArray(\Throwable $t): array
+        {
             return [
                 'message' => $t->getMessage(),
                 'trace' => $t->getTrace(),
                 'line' => $t->getLine(),
                 'file' => $t->getFile(),
                 'code' => $t->getCode(),
-                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
         };
 

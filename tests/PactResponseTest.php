@@ -72,11 +72,24 @@ class PactResponseTest extends SerializerAwareTestCase
         self::assertJsonStringEqualsJsonString('{"x":["content"]}', (string) $sample->getBody());
     }
 
+    public function test_it_match_if_request_match()
+    {
+        $request = new PactResponse(
+            $this->rule->hasSample(200),
+            ['X' => $this->rule->hasSample(1)],
+            $this->rule->hasSample('body')
+        );
+
+        $request->assertMatch(new Response('php://memory', 200, ['x' => 1]));
+
+        self::assertTrue(true, 'No exceptions should be thrown');
+    }
+
     public function test_it_not_throws_mismatch_if_request_match()
     {
         $response = new PactResponse(
             $this->rule->hasSample(200),
-            ['x' => $this->rule->hasSample(1)],
+            ['X' => $this->rule->hasSample(1)],
             $this->rule->hasSample('body')
         );
 
@@ -89,7 +102,7 @@ class PactResponseTest extends SerializerAwareTestCase
     {
         $response = new PactResponse(
             $statusCode = $this->rule->hasSample(200),
-            ['x' => $header = $this->rule->hasSample(0)],
+            ['0' => $header = $this->rule->hasSample(0)],
             $body = $this->rule->hasSample('')
         );
 
@@ -184,8 +197,8 @@ class PactResponseTest extends SerializerAwareTestCase
         $data = [
             'status_code' => 200,
             'headers' => [
-                'Y' => 'X',
-                'X' => ['Y', 'Z'],
+                'x-key' => 'val',       // "x-key" will be normalized to CamelCase "X-Key"
+                'y' => ['Y', 'Z'],
             ],
             'body' => 'Body',
         ];
@@ -193,36 +206,10 @@ class PactResponseTest extends SerializerAwareTestCase
         /** @var PactResponseInterface $response */
         $response = $this->normalizer->denormalize($data, PactResponseInterface::class);
 
-        self::assertCount(2, $response->getHeaders());
-        self::assertEquals('X', $response->getHeaders()['Y']->getSample());
-        self::assertEquals('Y', $response->getHeaders()['X'][0]->getSample());
-        self::assertEquals('Z', $response->getHeaders()['X'][1]->getSample());
+        self::assertCount(2, $response->getHeaders()['Y']);
+        self::assertEquals('val', $response->getHeaders()['X-Key']->getSample());
+        self::assertEquals('Y', $response->getHeaders()['Y'][0]->getSample());
+        self::assertEquals('Z', $response->getHeaders()['Y'][1]->getSample());
         self::assertEquals('Body', $response->getBody()->getSample());
-    }
-
-    public function test_it_is_denormalizable_body_json()
-    {
-        $data = [
-            'status_code' => 200,
-            'headers' => [
-                'content-type' => 'application/json',
-                'X' => ['Y', 'Z'],
-            ],
-            'body' => [
-                'a' => ['b', 'c'],
-            ],
-        ];
-
-        /** @var PactResponseInterface $response */
-        $response = $this->normalizer->denormalize($data, PactResponseInterface::class);
-
-        self::assertCount(2, $response->getHeaders());
-        self::assertEquals('Y', $response->getHeaders()['X'][0]->getSample());
-        self::assertEquals('Z', $response->getHeaders()['X'][1]->getSample());
-
-        self::assertCount(1, $response->getBody());
-        self::assertCount(2, $response->getBody()['a']);
-        self::assertEquals('b', $response->getBody()['a'][0]->getSample());
-        self::assertEquals('c', $response->getBody()['a'][1]->getSample());
     }
 }

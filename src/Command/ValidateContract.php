@@ -53,12 +53,13 @@ class ValidateContract extends BaseCommand
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getArgument('path');
+        $hasErrors = false;
 
         if (\is_file($path) && \is_readable($path)) {
-            $this->loadPact($output, $path, $this->defaultContractsDir);
+            $hasErrors |= !$this->isPactValid($output, $path, $this->defaultContractsDir);
         } elseif (\is_dir($path)) {
             $finder = new Finder();
             $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', PactLoader::CONFIG_EXTS)));
@@ -68,16 +69,18 @@ class ValidateContract extends BaseCommand
             }
 
             foreach ($finder->files() as $file) {
-                $this->loadPact($output, (string) $file, $path);
+                $hasErrors |= !$this->isPactValid($output, (string) $file, $path);
             }
         } else {
             throw new \Exception(\sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
         self::getTable($output)->render();
+
+        return (int) $hasErrors;
     }
 
-    protected function loadPact(OutputInterface $output, string $filePath, string $rootDir = null): void
+    protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null): bool
     {
         $shortPath = self::getShortPath($filePath, $rootDir);
 
@@ -85,6 +88,8 @@ class ValidateContract extends BaseCommand
             $pact = $this->loader->loadFromFile($filePath);
 
             self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>');
+
+            return true;
         } catch (\Throwable $e) {
             if ($e instanceof Mismatch) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $e);
@@ -94,6 +99,8 @@ class ValidateContract extends BaseCommand
                 self::outputResult($output, $shortPath, '<fg=red>✖ Error</>', $e->getPrevious() ?? $e);
             }
         }
+
+        return false;
     }
 
     private static function getTable(OutputInterface $output): Table

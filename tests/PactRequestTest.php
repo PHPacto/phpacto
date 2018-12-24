@@ -82,7 +82,7 @@ class PactRequestTest extends SerializerAwareTestCase
         $request = new PactRequest(
             $this->rule->hasSample('get'),
             $this->rule->hasSample('/'),
-            ['x' => $this->rule->hasSample('y')],
+            ['X' => $this->rule->hasSample('y')],
             $this->rule->hasSample('body')
         );
 
@@ -110,7 +110,7 @@ class PactRequestTest extends SerializerAwareTestCase
         $request = new PactRequest(
             $method = $this->rule->hasSample('get'),
             $path = $this->rule->hasSample('/'),
-            ['x' => $header = $this->rule->hasSample(0)],
+            ['X' => $header = $this->rule->hasSample(0)],
             $body = $this->rule->hasSample('')
         );
 
@@ -223,7 +223,7 @@ class PactRequestTest extends SerializerAwareTestCase
             'method' => 'POST',
             'path' => '/path?query',
             'headers' => [
-                'Y' => 'X',
+                'x-key' => 'val',       // "x-key" will be normalized to CamelCase "X-Key"
             ],
             'body' => 'Body',
         ];
@@ -233,7 +233,7 @@ class PactRequestTest extends SerializerAwareTestCase
 
         self::assertEquals('POST', $request->getMethod()->getSample());
         self::assertEquals('/path?query', $request->getPath()->getSample());
-        self::assertEquals('X', $request->getHeaders()['Y']->getSample());
+        self::assertEquals('val', $request->getHeaders()['X-Key']->getSample());
         self::assertEquals('Body', $request->getBody()->getSample());
     }
 }

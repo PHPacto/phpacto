@@ -21,24 +21,12 @@
 
 namespace Bigfoot\PHPacto\Matcher;
 
+use Bigfoot\PHPacto\Matcher\Rules\ContainsItemRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 
 class HeadersMatcher
 {
     public function assertMatch($rules, array $headers): void
-    {
-        $expectedHeaders = $this->normalizeKeys($rules);
-        $actualHeaders = $this->normalizeKeys($headers);
-
-        $this->compareHeaders($expectedHeaders, $actualHeaders);
-    }
-
-    private function normalizeKeys($headers)
-    {
-        return \array_change_key_case($headers, CASE_LOWER);
-    }
-
-    private function compareHeaders($rules, array $headers): void
     {
         $mismatches = [];
 
@@ -49,25 +37,46 @@ class HeadersMatcher
                 continue;
             }
 
-            if (\is_array($headers[$key]) && 1 === \count($headers[$key])) {
-                $headers[$key] = $headers[$key][0];
-            }
-
             try {
-                if ($rule instanceof Rule) {
-                    $rule->assertMatch($headers[$key]);
-                } elseif (\is_array($rule)) {
-                    $this->compareHeaders($rule, $headers[$key]);
-                } else {
-                    throw new \Exception('Headers should be a Rule or an array of Rules');
-                }
+                $this->assertMatchItem($rule, $headers[$key]);
             } catch (Mismatches\Mismatch $mismatch) {
-                $mismatches[] = $mismatch;
+                $mismatches[$key] = $mismatch;
             }
         }
 
         if ($mismatches) {
             throw new Mismatches\MismatchCollection($mismatches, '{{ count }} Headers do not match');
+        }
+    }
+
+    private function assertMatchItem($rule, $value)
+    {
+        if ($rule instanceof Rule) {
+            if (is_array($value)) {
+                $contains = new ContainsItemRule($rule);
+                $contains->assertMatch($value);
+            } else {
+                $rule->assertMatch($value);
+            }
+        } elseif (\is_array($rule)) {
+            $mismatches = [];
+
+            /** @var Rule $rule */
+            foreach ($rule as $key => $childRule) {
+                $contains = new ContainsItemRule($childRule);
+
+                try {
+                    $contains->assertMatch($value);
+                } catch (Mismatches\Mismatch $mismatch) {
+                    $mismatches[$key] = $mismatch;
+                }
+            }
+
+            if ($mismatches) {
+                throw new Mismatches\MismatchCollection($mismatches, '{{ count }} Headers do not match');
+            }
+        } else {
+            throw new \Exception('Headers should be a Rule or an array of Rules');
         }
     }
 }

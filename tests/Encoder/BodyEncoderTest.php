@@ -19,9 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher;
+namespace Bigfoot\PHPacto\Encoder;
 
-use Bigfoot\PHPacto\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
 use PHPUnit\Framework\TestCase;
 

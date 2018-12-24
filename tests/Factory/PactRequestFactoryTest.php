@@ -46,11 +46,11 @@ class PactRequestFactoryTest extends TestCase
      */
     public function test_it_returns_pact_request_with_headers()
     {
-        $request = new Request('/', 'get', 'php://memory', ['X-CUSTOM' => 'a custom header']);
+        $request = new Request('/', 'get', 'php://memory', ['x-CUSTOM' => 'a custom header']);
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
-        self::assertContains('custom header', $pactRequest->getHeaders()['X-CUSTOM']->getSample());
+        self::assertContains('custom header', $pactRequest->getHeaders()['X-Custom']->getSample());
     }
 
     /**

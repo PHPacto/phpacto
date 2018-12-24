@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto;
 
+use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;

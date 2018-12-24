@@ -42,7 +42,7 @@ class BooleanRuleTest extends SerializerAwareTestCase
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
         self::assertInstanceOf(BooleanRule::class, $rule);
-        self::assertSame(true, $rule->getSample());
+        self::assertTrue($rule->getSample());
     }
 
     public function supportedValuesProvider()

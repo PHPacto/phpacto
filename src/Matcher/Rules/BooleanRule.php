@@ -44,6 +44,7 @@ class BooleanRule extends AbstractRule
 
     /**
      * @param Rule|Rule[] $rules
+     * @param mixed       $value
      */
     protected function assertSupport($value): void
     {

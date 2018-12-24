@@ -21,6 +21,7 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
+use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\PactRequest;
 use Bigfoot\PHPacto\PactRequestInterface;
@@ -137,9 +138,13 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
         }
 
         if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
+            $headers = [];
             foreach ($data['headers'] as $headerKey => $headerValue) {
-                $data['headers'][$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
+                unset($data[$headerKey]);
+                $headerKey = HeadersEncoder::normalizeName($headerKey);
+                $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
             }
+            $data['headers'] = $headers;
         } else {
             $data['headers'] = [];
         }

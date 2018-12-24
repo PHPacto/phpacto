@@ -30,7 +30,6 @@ use Bigfoot\PHPacto\PactResponseInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 
 class MockControllerTest extends TestCase
 {

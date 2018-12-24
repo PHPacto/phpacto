@@ -30,7 +30,7 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== $allowOrigin = \getenv('ALLOW_ORIGIN')) {
+if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
     if ('all' === \strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
@@ -43,13 +43,14 @@ $logger = new StdoutLogger();
 $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
     if (
         isset($allowOrigin)
-        && $request->getMethod() === 'OPTIONS'
+        && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
         $stream = new Stream('php://memory', 'r');
 
         return new Response($stream, 201, [
             'Access-Control-Allow-Credentials' => 'True',
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
             'Access-Control-Allow-Headers' => '*',
             'Access-Control-Allow-Origin' => '*',
         ]);
@@ -63,8 +64,10 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
     ));
 
     try {
+        $headerContract = $request->getHeaderLine('PHPacto-Contract');
+
         $pacts = (new PactLoader(SerializerFactory::getInstance()))
-            ->loadFromDirectory(CONTRACTS_DIR);
+            ->loadFromPath($headerContract ? CONTRACTS_DIR . $headerContract : CONTRACTS_DIR);
 
         if (0 === \count($pacts)) {
             throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
@@ -78,6 +81,7 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
 
         if (null !== $allowOrigin) {
             $response = $response
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
                 ->withHeader('Access-Control-Allow-Credentials', 'True')
                 ->withHeader('Access-Control-Allow-Headers', '*')
                 ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
@@ -88,21 +92,22 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
         $stream = new Stream('php://memory', 'rw');
         $stream->write(json_encode([
             'message' => $mismatches->getMessage(),
-            'contracts' => $mismatches->toArray()
+            'contracts' => $mismatches->toArray(),
         ]));
 
         $logger->log($mismatches->getMessage());
 
         return new Response($stream, 418, ['Content-type' => 'application/json']);
     } catch (\Throwable $t) {
-        function throwableToArray(\Throwable $t): array {
+        function throwableToArray(\Throwable $t): array
+        {
             return [
                 'message' => $t->getMessage(),
                 'trace' => $t->getTrace(),
                 'line' => $t->getLine(),
                 'file' => $t->getFile(),
                 'code' => $t->getCode(),
-                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null
+                'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
         };
 

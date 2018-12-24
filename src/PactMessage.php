@@ -21,6 +21,8 @@
 
 namespace Bigfoot\PHPacto;
 
+use Bigfoot\PHPacto\Encoder\BodyEncoder;
+use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\BodyMatcher;
 use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
@@ -68,7 +70,7 @@ abstract class PactMessage implements PactMessageInterface
 
     public function getSampleHeaders(): array
     {
-        return $this->getSampleRecursive($this->headers);
+        return HeadersEncoder::encode($this->getSampleRecursive($this->headers));
     }
 
     public function getSampleBody()
@@ -79,7 +81,9 @@ abstract class PactMessage implements PactMessageInterface
     protected function assertMatchHeaders(MessageInterface $message)
     {
         if ($this->headers) {
-            $this->getHeadersMatcher()->assertMatch($this->headers, $message->getHeaders());
+            $headers = HeadersEncoder::decode($message->getHeaders());
+
+            $this->getHeadersMatcher()->assertMatch($this->headers, $headers);
         }
     }
 
