@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Matcher\Rules\BooleanRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
@@ -82,6 +83,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
+        if ($object instanceof ObjectRule && null === $object->getSample()) {
+            return $this->recursiveNormalization($object->getProperties(), $format, $this->createChildContext($context, 'properties'));
+        }
+
         return $this->normalizeRuleObject($object, $format, $context);
     }
 
@@ -108,6 +113,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key));
             }
 
+            if (($context['parent'] ?? null) !== ObjectRule::class && \count($data) && $this->isArrayAssociative($data)) {
+                return new ObjectRule($data);
+            }
+
             return $data;
         }
 
@@ -124,10 +133,14 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     protected function isAllowedAttribute($object, $attribute, $format = null, array $context = [])
     {
-        if (\is_object($object) && 'sample' === $attribute && \method_exists($object, 'getValue')) {
+        if (\is_object($object) && $attribute === 'sample' && \method_exists($object, 'getValue')) {
             if ($object->getValue() === $object->getSample()) {
                 return false;
             }
+        }
+
+        if (\is_object($object) && get_class($object) === ObjectRule::class && $attribute === 'rules') {
+            return false;
         }
 
         return parent::isAllowedAttribute($object, $attribute, $format, $context);
@@ -186,6 +199,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
         if (\array_key_exists('rules', $data) && \is_array($data['rules'])) {
             $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class . '[]', $format, $this->createChildContext($context, 'rules'));
+        } elseif ($class == ObjectRule::class && \array_key_exists('properties', $data) && \is_array($data['properties'])) {
+            $data['properties'] = $this->recursiveDenormalization($data['properties'], Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties'));
         }
 
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
@@ -234,6 +249,11 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $this->serializer->denormalize($data, $class, $format, $context);
+    }
+
+    private function isArrayAssociative(array $array): bool
+    {
+        return array_values($array) !== $array;
     }
 
     /**

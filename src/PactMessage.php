@@ -26,6 +26,7 @@ use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\BodyMatcher;
 use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
+use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
 use Bigfoot\PHPacto\Matcher\Rules\OrRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
@@ -102,8 +103,12 @@ abstract class PactMessage implements PactMessageInterface
             $sample = $rule->getSample();
 
             if (null === $sample) {
-                if ($rule instanceof EachItemRule) {
-                    $sample = [$this->getSampleRecursive($rule->getRules())];
+                if ($rule instanceof ObjectRule) {
+                    $sample = $this->getSampleRecursive($rule->getProperties());
+                } elseif ($rule instanceof EachItemRule) {
+                    $sample = [
+                        $this->getSampleRecursive($rule->getRules())
+                    ];
                 } elseif ($rule instanceof OrRule) {
                     $childRules = $rule->getRules();
 

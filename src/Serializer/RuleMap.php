@@ -41,6 +41,7 @@ final class RuleMap
         'lowerEqual' => Rules\LowerOrEqualRule::class,
         'lower' => Rules\LowerRule::class,
         'number' => Rules\NumericRule::class,
+        'object' => Rules\ObjectRule::class,
         'or' => Rules\OrRule::class,
         'regex' => Rules\RegexpRule::class,
         'string' => Rules\StringRule::class,

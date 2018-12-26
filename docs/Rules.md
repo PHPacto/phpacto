@@ -21,7 +21,7 @@ boolean
 ---
 Asserts that a value is a boolean type `True` or `False`
 ```yaml
-'@rule': equals
+'@rule': boolean
 sample: true
 ```
 
@@ -101,6 +101,9 @@ Asserts that a value is equal to a given value
 '@rule': equals
 sample: 5
 ```
+```yaml
+5
+```
 
 exists
 ------
@@ -169,6 +172,20 @@ Asserts that a value is number *(it does not distinguish between integers and de
 ```yaml
 '@rule': number
 sample: 5
+```
+    
+object
+------
+Asserts that a value is equal to a given value
+```yaml
+'@rule': object
+properties:
+    one: 1
+    two: 2
+```
+```yaml
+one: 1
+two: 2
 ```
 
 or
