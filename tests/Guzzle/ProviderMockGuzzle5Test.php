@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ class ProviderMockGuzzle5Test extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (\version_compare($guzzleVersion, '5', '<') || \version_compare($guzzleVersion, '6', '>=')) {
-            self::markTestSkipped(\sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
+        if (version_compare($guzzleVersion, '5', '<') || version_compare($guzzleVersion, '6', '>=')) {
+            self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 
         $this->server = new ProviderMockGuzzle5();

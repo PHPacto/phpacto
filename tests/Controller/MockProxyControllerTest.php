@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ class MockProxyControllerTest extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (\version_compare($guzzleVersion, '6', '<') || \version_compare($guzzleVersion, '7', '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped('MockProxyController works with Guzzle 6 or newer');
         }
 
@@ -181,6 +181,6 @@ class MockProxyControllerTest extends TestCase
 
     private static function assertStringContains(string $needle, string $haystack, string $message = '')
     {
-        self::assertRegexp('/' . \preg_quote($needle, '/') . '/', $haystack, $message);
+        self::assertRegexp('/' . preg_quote($needle, '/') . '/', $haystack, $message);
     }
 }

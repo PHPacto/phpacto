@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ abstract class HeadersEncoder
         $encoded = [];
 
         foreach ($headers as $name => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $encoded[$name] = implode('; ', $value);
             } else {
                 $encoded[$name] = $value;
@@ -52,10 +52,10 @@ abstract class HeadersEncoder
         $decoded = [];
 
         foreach ($headers as $name => $value) {
-            if (in_array(strtolower($name), self::EXCLUDED, true)) {
+            if (\in_array(strtolower($name), self::EXCLUDED, true)) {
                 continue;
             }
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $value = implode(';', $value);
             }
             $decoded[self::normalizeName($name)] = array_map('trim', explode(';', (string) $value));

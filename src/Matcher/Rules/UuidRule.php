@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class UuidRule extends AbstractRule
             throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
 
-        if (!\preg_match(self::PATTERN, $test)) {
+        if (!preg_match(self::PATTERN, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not a valid UUID, expecting a string like {{ expected }}', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', $test);
         }
     }

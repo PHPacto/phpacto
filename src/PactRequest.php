@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
         }
 
         try {
-            $uri = \urldecode((string) $request->getUri());
+            $uri = urldecode((string) $request->getUri());
             $this->path->assertMatch($uri);
         } catch (Mismatch $mismatch) {
             $mismatches['PATH'] = $mismatch;
@@ -108,7 +108,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
 
     public function getSample(): ServerRequestInterface
     {
-        $method = \strtoupper($this->method->getSample());
+        $method = strtoupper($this->method->getSample());
         $uri = $this->path->getSample();
 
         $headers = $this->getSampleHeaders();

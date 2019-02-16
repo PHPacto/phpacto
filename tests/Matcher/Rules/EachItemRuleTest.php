@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.A', '1.B', '2.C'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.A', '1.B', '2.C'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
@@ -207,7 +207,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.B'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,13 +107,13 @@ abstract class PactMessage implements PactMessageInterface
                     $sample = $this->getSampleRecursive($rule->getProperties());
                 } elseif ($rule instanceof EachItemRule) {
                     $sample = [
-                        $this->getSampleRecursive($rule->getRules())
+                        $this->getSampleRecursive($rule->getRules()),
                     ];
                 } elseif ($rule instanceof OrRule) {
                     $childRules = $rule->getRules();
 
-                    $sample = $childRules[\array_rand($childRules)];
-                } elseif (\method_exists($rule, 'getRule')) {
+                    $sample = $childRules[array_rand($childRules)];
+                } elseif (method_exists($rule, 'getRule')) {
                     $sample = $rule->getRule();
                 }
             }
@@ -134,7 +134,7 @@ abstract class PactMessage implements PactMessageInterface
 
     protected function getContentType(): ?string
     {
-        $val = @\array_change_key_case($this->headers, CASE_LOWER)['content-type'];
+        $val = @array_change_key_case($this->headers, CASE_LOWER)['content-type'];
 
         if ($val instanceof Rule) {
             return (string) $val->getSample();

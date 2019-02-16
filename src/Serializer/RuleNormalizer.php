@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || \is_scalar($data));
+        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || is_scalar($data));
     }
 
     /**
@@ -72,7 +72,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof Rule) {
-            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), Rule::class));
+            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), Rule::class));
         }
 
         if ($this->isCircularReference($object, $context)) {
@@ -95,10 +95,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $class = \rtrim($class, '[]');
+        $class = rtrim($class, '[]');
 
-        if (!(Rule::class === $class || (\interface_exists($class) && \is_subclass_of($class, Rule::class)))) {
-            throw new InvalidArgumentException(\sprintf('Interface "%s" should extends "%s"', $class, Rule::class));
+        if (!(Rule::class === $class || (interface_exists($class) && is_subclass_of($class, Rule::class)))) {
+            throw new InvalidArgumentException(sprintf('Interface "%s" should extends "%s"', $class, Rule::class));
         }
 
         if (\is_array($data)) {
@@ -133,13 +133,13 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     protected function isAllowedAttribute($object, $attribute, $format = null, array $context = [])
     {
-        if (\is_object($object) && $attribute === 'sample' && \method_exists($object, 'getValue')) {
+        if (\is_object($object) && 'sample' === $attribute && method_exists($object, 'getValue')) {
             if ($object->getValue() === $object->getSample()) {
                 return false;
             }
         }
 
-        if (\is_object($object) && get_class($object) === ObjectRule::class && $attribute === 'rules') {
+        if (\is_object($object) && ObjectRule::class === \get_class($object) && 'rules' === $attribute) {
             return false;
         }
 
@@ -148,9 +148,9 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     private static function isRule(string $class): bool
     {
-        $class = \rtrim($class, '[]');
+        $class = rtrim($class, '[]');
 
-        return Rule::class === $class || \is_subclass_of($class, Rule::class);
+        return Rule::class === $class || is_subclass_of($class, Rule::class);
     }
 
     private static function isFormatSupported(?string $format): bool
@@ -181,7 +181,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (\is_scalar($attributeValue)) {
+            if (is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
             } else {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
@@ -199,7 +199,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
         if (\array_key_exists('rules', $data) && \is_array($data['rules'])) {
             $data['rules'] = $this->recursiveDenormalization($data['rules'], Rule::class . '[]', $format, $this->createChildContext($context, 'rules'));
-        } elseif ($class == ObjectRule::class && \array_key_exists('properties', $data) && \is_array($data['properties'])) {
+        } elseif (ObjectRule::class === $class && \array_key_exists('properties', $data) && \is_array($data['properties'])) {
             $data['properties'] = $this->recursiveDenormalization($data['properties'], Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties'));
         }
 
@@ -267,7 +267,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return \md5($format . \serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

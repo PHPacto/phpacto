@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class VersionRule extends AbstractRule
     {
         $this->assertSupport($test);
 
-        if (!\version_compare($test, $this->value, $this->operator)) {
+        if (!version_compare($test, $this->value, $this->operator)) {
             switch ($this->operator) {
                 case '<': $operatorString = 'lower than'; break;
                 case '<=': $operatorString = 'lower than or equal to'; break;

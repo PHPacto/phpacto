@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
                 'B' => 'Y',
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['C'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['C'], array_keys($mismatches->toArrayFlat()));
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['C']);
 
             return;

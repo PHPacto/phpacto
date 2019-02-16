@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class NumericRule extends AbstractRule
 {
     public function assertMatch($test): void
     {
-        if (!\is_numeric($test)) {
+        if (!is_numeric($test)) {
             throw new Mismatches\TypeMismatch('number', \gettype($test));
         }
     }

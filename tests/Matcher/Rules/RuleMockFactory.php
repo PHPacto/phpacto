@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 // For PhpUnit:6 back-compatibility
-if (!\interface_exists(MockObject::class)) {
-    \class_alias('PHPUnit_Framework_MockObject_MockObject', MockObject::class);
+if (!interface_exists(MockObject::class)) {
+    class_alias('PHPUnit_Framework_MockObject_MockObject', MockObject::class);
 }
 
 final class RuleMockFactory extends TestCase
@@ -45,7 +45,7 @@ final class RuleMockFactory extends TestCase
 
     public function map(MockObject $mock): void
     {
-        $this->ruleMap->addRule(get_class($mock), get_class($mock));
+        $this->ruleMap->addRule(\get_class($mock), \get_class($mock));
     }
 
     public function empty(string $type = Rule::class): Rule

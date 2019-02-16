@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
-    if ('all' === \strtolower($allowOrigin)) {
+if (false !== ($allowOrigin = getenv('ALLOW_ORIGIN'))) {
+    if ('all' === strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
 } else {
@@ -56,9 +56,9 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
         ]);
     }
 
-    $logger->log(\sprintf(
+    $logger->log(sprintf(
         '[%s] %s: %s',
-        \date('Y-m-d H:i:s'),
+        date('Y-m-d H:i:s'),
         $_SERVER['REQUEST_METHOD'],
         $_SERVER['REQUEST_URI']
     ));
@@ -69,15 +69,15 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
         $pacts = (new PactLoader(SerializerFactory::getInstance()))
             ->loadFromPath($headerContract ? CONTRACTS_DIR . $headerContract : CONTRACTS_DIR);
 
-        if (0 === \count($pacts)) {
-            throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
+        if (0 === count($pacts)) {
+            throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
         }
 
         $controller = new MockController($logger, $pacts);
 
         $response = $controller->action($request);
 
-        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         if (null !== $allowOrigin) {
             $response = $response

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class PactLoaderTest extends TestCase
             'empty.json' => '',
             'empty-directory' => [],
             'contracts' => [
-                'pact.json' => \json_encode([
+                'pact.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -117,7 +117,7 @@ class PactLoaderTest extends TestCase
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/contracts');
 
         self::assertCount(1, $pacts);
-        self::assertInstanceOf(PactInterface::class, \current($pacts));
+        self::assertInstanceOf(PactInterface::class, current($pacts));
     }
 
     public function test_it_throws_exception_if_directory_does_not_exists()

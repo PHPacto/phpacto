@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ class GreaterOrEqualRule extends AbstractRule implements ComparisonRule
 
     protected function assertSupport($value): void
     {
-        if (!(\is_numeric($value) || \is_string($value))) {
+        if (!(is_numeric($value) || \is_string($value))) {
             throw new Mismatches\TypeMismatch(['number', 'string'], \gettype($value), 'Only {{ expected }} types are supported, {{ actual }} was provided');
         }
     }

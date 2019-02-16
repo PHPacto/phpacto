@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +36,18 @@ class PHPacto
      */
     public function __construct(string $contractsBasePath = '')
     {
-        $this->contractsBasePath = \rtrim($contractsBasePath, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+        $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
     }
 
     public function createServerMock(): Guzzle\ProviderMock
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (\version_compare($guzzleVersion, '6', '<')) {
+        if (version_compare($guzzleVersion, '6', '<')) {
             return new Guzzle\ProviderMockGuzzle5();
         }
 
-        if (\version_compare($guzzleVersion, '7', '<')) {
+        if (version_compare($guzzleVersion, '7', '<')) {
             return new Guzzle\ProviderMockGuzzle6();
         }
 

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof PactRequestInterface) {
-            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), PactRequestInterface::class));
+            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), PactRequestInterface::class));
         }
 
         return $this->normalizeObject($object, $format, $context);
@@ -69,7 +69,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if (!(\is_array($data) && PactRequestInterface::class === $class)) {
-            throw new InvalidArgumentException(\sprintf('Data must be array type and class equal to "%s".', PactRequestInterface::class));
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactRequestInterface::class));
         }
 
         return $this->denormalizeArray($data, PactRequest::class, $format, $context);
@@ -109,7 +109,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (null !== $attributeValue && !\is_scalar($attributeValue)) {
+            if (null !== $attributeValue && !is_scalar($attributeValue)) {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
             } else {
                 $data[$attribute] = $attributeValue;
@@ -134,7 +134,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
         }
 
         if (isset($data['method']) && \is_string($data['method'])) {
-            $data['method'] = \strtoupper($data['method']);
+            $data['method'] = strtoupper($data['method']);
         }
 
         if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
@@ -212,7 +212,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
     private function getCacheKey($format, array $context)
     {
         try {
-            return \md5($format . \serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

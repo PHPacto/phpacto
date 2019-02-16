@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class ValidateContractTest extends TestCase
 
                 'malformed.json' => '[{}]',
 
-                'invalid.json' => \json_encode([
+                'invalid.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -63,7 +63,7 @@ class ValidateContractTest extends TestCase
                     ],
                 ]),
 
-                'valid.json' => \json_encode([
+                'valid.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -75,7 +75,7 @@ class ValidateContractTest extends TestCase
                     ],
                 ]),
 
-                'matching.json' => \json_encode([
+                'matching.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -92,7 +92,7 @@ class ValidateContractTest extends TestCase
                     ],
                 ]),
 
-                'not-matching.json' => \json_encode([
+                'not-matching.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [

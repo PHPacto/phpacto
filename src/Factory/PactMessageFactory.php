@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ abstract class PactMessageFactory
 {
     protected static function getMethodRule(RequestInterface $request): Rule
     {
-        return new EqualsRule(\strtoupper($request->getMethod()));
+        return new EqualsRule(strtoupper($request->getMethod()));
     }
 
     protected static function getUriRule(RequestInterface $request): Rule
@@ -77,6 +77,6 @@ abstract class PactMessageFactory
             return new EqualsRule($value);
         };
 
-        return \array_map($map, $headers);
+        return array_map($map, $headers);
     }
 }

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class MockController
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(\sprintf('Found matching contract %s', $contractLocation));
+                $this->logger->log(sprintf('Found matching contract %s', $contractLocation));
 
                 return $pact;
             } catch (Mismatch $mismatch) {

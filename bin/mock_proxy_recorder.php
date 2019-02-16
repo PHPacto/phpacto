@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) 2019  Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
-    if ('all' === \strtolower($allowOrigin)) {
+if (false !== ($allowOrigin = getenv('ALLOW_ORIGIN'))) {
+    if ('all' === strtolower($allowOrigin)) {
         $allowOrigin = '*';
     }
 } else {
@@ -39,16 +39,16 @@ if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
 
 $logger = new StdoutLogger();
 
-if (!\is_dir(CONTRACTS_DIR)) {
-    \mkdir(CONTRACTS_DIR, 0777, true);
+if (!is_dir(CONTRACTS_DIR)) {
+    mkdir(CONTRACTS_DIR, 0777, true);
 }
 
-if (!\getenv('RECORDER_PROXY_TO')) {
-    throw new \Exception(\sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
+if (!getenv('RECORDER_PROXY_TO')) {
+    throw new \Exception(sprintf('Environment variable "RECORDER_PROXY_TO" is not set.'));
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, \getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
+$controller = new MockProxyController($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
 $handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
     if (
@@ -66,9 +66,9 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
         ]);
     }
 
-    $logger->log(\sprintf(
+    $logger->log(sprintf(
         '[%s] %s: %s',
-        \date('Y-m-d H:i:s'),
+        date('Y-m-d H:i:s'),
         $_SERVER['REQUEST_METHOD'],
         $_SERVER['REQUEST_URI']
     ));
@@ -76,7 +76,7 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
     try {
         $response = $controller->action($request);
 
-        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         if (null !== $this->allowOrigin) {
             $response = $response
