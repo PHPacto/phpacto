@@ -83,7 +83,7 @@ class HeadersMatcherTest extends TestCase
     }
 
     /**
-     * @-depends test_it_throws_mismatch_if_key_is_missing
+     * @depends test_it_throws_mismatch_if_key_is_missing
      */
     public function test_it_throws_mismatch_if_value_doesnt_match()
     {

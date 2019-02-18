@@ -70,8 +70,8 @@ abstract class PactMessageFactory
     protected static function getHeaderRulesFromArray(array $headers): array
     {
         $map = function($value) {
-            if (1 === \count($value)) {
-                $value = $value[0];
+            if (is_array($value)) {
+                return self::getHeaderRulesFromArray($value);
             }
 
             return new EqualsRule($value);

@@ -22,6 +22,7 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\PactRequestInterface;
 
 class PactRequestNormalizerTest extends SerializerAwareTestCase
@@ -95,5 +96,56 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         self::assertInstanceOf(PactRequestInterface::class, $pact);
         self::assertEquals('GET', $pact->getMethod()->getSample());
         self::assertEquals('/path', $pact->getPath()->getSample());
+    }
+
+    /**
+     * @depends test_denormalize
+     */
+    public function test_denormalize_html()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'method' => 'get',
+            'path' => '/',
+            'headers' => [
+                'Content-Type' => [
+                    'text/html',
+                    'Charset=UTF-8',
+                ],
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactRequestInterface $pact */
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getBody());
+    }
+
+    /**
+     * @-depends test_denormalize
+     */
+    public function test_denormalize_html2()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'method' => 'get',
+            'path' => '/',
+            'headers' => [
+                'Content-Type' => 'text/html; Charset=UTF-8',
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactRequestInterface $pact */
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringEqualsRule::class, $pact->getBody());
     }
 }

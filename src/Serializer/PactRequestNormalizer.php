@@ -138,10 +138,10 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
         }
 
         if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
+            $data['headers'] = HeadersEncoder::decode($data['headers']);
             $headers = [];
+
             foreach ($data['headers'] as $headerKey => $headerValue) {
-                unset($data[$headerKey]);
-                $headerKey = HeadersEncoder::normalizeName($headerKey);
                 $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
             }
             $data['headers'] = $headers;

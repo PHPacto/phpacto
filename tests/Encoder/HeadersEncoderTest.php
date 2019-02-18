@@ -62,25 +62,39 @@ class HeadersEncoderTest extends TestCase
     public function test_decode_headers_with_multiple_values_will_be_exploded()
     {
         $headers = [
-            'x' => 'first; second',
+            'x' => 'a; b=c, d, e=f',
         ];
 
         $decoded = HeadersEncoder::decode($headers);
 
-        self::assertEquals(['first', 'second'], $decoded['X']);
+        self::assertEquals([['a', 'b=c'], 'd', 'e=f'], $decoded['X']);
     }
 
     public function test_encode()
     {
         $headers = [
             'x' => 'val',
-            'y' => ['first', 'second'],
+            'y' => [['a', 'b=c'], 'd', 'e=f'],
         ];
 
         $encoded = HeadersEncoder::encode($headers);
 
         self::assertCount(2, $encoded);
         self::assertEquals('val', $encoded['x']);
-        self::assertEquals('first; second', $encoded['y']);
+        self::assertEquals('a; b=c, d, e=f', $encoded['y']);
+    }
+
+    public function test_encode_content_type()
+    {
+        $headers = [
+            'Content-Type' => [
+                'application/json',
+                'charset=UTF-8'
+            ],
+        ];
+
+        $encoded = HeadersEncoder::encode($headers);
+
+        self::assertEquals('application/json; charset=UTF-8', $encoded['Content-Type']);
     }
 }
