@@ -137,3 +137,7 @@ There are two different test files `ConsumerTest.php` and `ProviderTest.php`
 # Mastering with PHPacto contract Rules
 
 Read the dedicated page [here](docs/Rules.md)
+
+# Contributing
+
+Feel free to contribute by opening a pull request. Bug fixes or feature suggestions are always welcome.
