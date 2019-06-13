@@ -170,11 +170,9 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
 
         if (isset($data['body'])) {
             $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
-        } else {
-            $data['body'] = null;
         }
 
-        $object = new PactRequest($data['method'], $data['path'], $data['headers'], $data['body']);
+        $object = new PactRequest($data['method'], $data['path'], $data['headers'], $data['body'] ?? null);
 
         return $object;
     }

@@ -140,6 +140,12 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
+        if (\is_integer($data['status_code'])) {
+            $data['status_code'] = new EqualsRule($data['status_code']);
+        } else {
+            $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code'));
+        }
+
         if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
             $data['headers'] = HeadersEncoder::decode($data['headers']);
             $headers = [];
@@ -156,32 +162,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
             $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
         }
 
-        $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
-
-        $reflectionClass = new \ReflectionClass($class);
-        $object = $this->instantiateObject($data, $class, $context, $reflectionClass, $allowedAttributes, $format);
-
-        foreach ($data as $attribute => $value) {
-            if ($this->nameConverter) {
-                $attribute = $this->nameConverter->denormalize($attribute);
-            }
-
-            if ((false !== $allowedAttributes && !\in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
-                $extraAttributes[] = $attribute;
-
-                continue;
-            }
-
-            try {
-                $this->setAttributeValue($object, $attribute, $value, $format, $context);
-            } catch (InvalidArgumentException $e) {
-                throw new UnexpectedValueException($e->getMessage(), $e->getCode(), $e);
-            }
-        }
-
-        if (!empty($extraAttributes)) {
-            throw new ExtraAttributesException($extraAttributes);
-        }
+        $object = new PactResponse($data['status_code'], $data['headers'], $data['body'] ?? null);
 
         return $object;
     }
