@@ -27,6 +27,7 @@ use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\ExistsRule;
 use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
+use Bigfoot\PHPacto\Matcher\Rules\NumericRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
@@ -116,7 +117,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
     public function test_normalize_equals()
     {
-        $rule = new EqualsRule(5);
+        $rule = new NumericRule(5);
 
         $expected = 5;
 
@@ -149,7 +150,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(EqualsRule::class, $rule);
+        self::assertInstanceOf(NumericRule::class, $rule);
         self::assertEquals(5, $rule->getSample());
     }
 

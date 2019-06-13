@@ -25,6 +25,8 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -33,7 +35,7 @@ abstract class PactMessageFactory
 {
     protected static function getMethodRule(RequestInterface $request): Rule
     {
-        return new EqualsRule(strtoupper($request->getMethod()));
+        return new StringEqualsRule(strtoupper($request->getMethod()));
     }
 
     protected static function getUriRule(RequestInterface $request): Rule
@@ -44,7 +46,7 @@ abstract class PactMessageFactory
             $uri .= $request->getUri()->getQuery();
         }
 
-        return new EqualsRule($uri);
+        return new StringEqualsRule($uri);
     }
 
     protected static function getStatusCodeRule(ResponseInterface $response): Rule
@@ -74,7 +76,7 @@ abstract class PactMessageFactory
                 return self::getHeaderRulesFromArray($value);
             }
 
-            return new EqualsRule($value);
+            return new StringRule($value);
         };
 
         return array_map($map, $headers);

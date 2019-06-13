@@ -22,7 +22,9 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\PactResponse;
 use Bigfoot\PHPacto\PactResponseInterface;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
@@ -114,6 +116,11 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
             } else {
                 $data[$attribute] = $attributeValue;
             }
+        }
+
+        $statusCodeRule = $object->getStatusCode();
+        if ($statusCodeRule instanceof EqualsRule) {
+            $data['status_code'] = $statusCodeRule->getSample();
         }
 
         if (empty($data['body'])) {

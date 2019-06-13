@@ -49,18 +49,11 @@ class ValidateContractTest extends TestCase
             'contracts' => [
                 'not-a-json.json' => 'Not a JSON',
 
-                'malformed.json' => '[{}]',
+                'malformed.json' => '{[""]}',
 
                 'invalid.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
-                    'request' => [
-                        'method' => 5,
-                        'path' => '/',
-                    ],
-                    'response' => [
-                        'status_code' => 200,
-                    ],
                 ]),
 
                 'valid.json' => json_encode([
@@ -127,9 +120,9 @@ class ValidateContractTest extends TestCase
 
         $output = $this->tester->getDisplay();
 
-        self::assertContains('not-a-json.json     ✖ Syntax error', $output);
+        self::assertContains('not-a-json.json     ✖ Error', $output);
         self::assertContains('malformed.json      ✖ Error', $output);
-        self::assertContains('invalid.json        ✖ Not valid', $output);
+        self::assertContains('invalid.json        ✖ Error', $output);
         self::assertContains('valid.json          ✔ Valid', $output);
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);

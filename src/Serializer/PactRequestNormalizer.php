@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\PactRequest;
 use Bigfoot\PHPacto\PactRequestInterface;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
@@ -116,6 +117,16 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
             }
         }
 
+        $methodRule = $object->getMethod();
+        if ($methodRule instanceof StringEqualsRule) {
+            $data['method'] = $methodRule->getValue();
+        }
+
+        $pathRule = $object->getPath();
+        if ($pathRule instanceof StringEqualsRule) {
+            $data['path'] = $pathRule->getValue();
+        }
+
         if (empty($data['body'])) {
             unset($data['body']);
         }
@@ -133,8 +144,16 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
-        if (isset($data['method']) && \is_string($data['method'])) {
-            $data['method'] = strtoupper($data['method']);
+        if (\is_string($data['path'])) {
+            $data['path'] = new StringEqualsRule($data['path']);
+        } else {
+            $data['path'] = $this->recursiveDenormalization($data['path'], Rule::class, $format, $this->createChildContext($context, 'path'));
+        }
+
+        if (\is_string($data['method'])) {
+            $data['method'] = new StringEqualsRule(strtoupper($data['method']));
+        } else {
+            $data['method'] = $this->recursiveDenormalization($data['method'], Rule::class, $format, $this->createChildContext($context, 'method'));
         }
 
         if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
@@ -151,34 +170,11 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
 
         if (isset($data['body'])) {
             $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
+        } else {
+            $data['body'] = null;
         }
 
-        $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
-
-        $reflectionClass = new \ReflectionClass($class);
-        $object = $this->instantiateObject($data, $class, $context, $reflectionClass, $allowedAttributes, $format);
-
-        foreach ($data as $attribute => $value) {
-            if ($this->nameConverter) {
-                $attribute = $this->nameConverter->denormalize($attribute);
-            }
-
-            if ((false !== $allowedAttributes && !\in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
-                $extraAttributes[] = $attribute;
-
-                continue;
-            }
-
-            try {
-                $this->setAttributeValue($object, $attribute, $value, $format, $context);
-            } catch (InvalidArgumentException $e) {
-                throw new UnexpectedValueException($e->getMessage(), $e->getCode(), $e);
-            }
-        }
-
-        if (!empty($extraAttributes)) {
-            throw new ExtraAttributesException($extraAttributes);
-        }
+        $object = new PactRequest($data['method'], $data['path'], $data['headers'], $data['body']);
 
         return $object;
     }
@@ -218,4 +214,23 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
             return false;
         }
     }
+
+    /**
+     * Gets attributes to normalize using groups.
+     *
+     * @param string|object $classOrObject
+     * @param array         $context
+     * @param bool          $attributesAsString If false, return an array of {@link AttributeMetadataInterface}
+     *
+     * @throws LogicException if the 'allow_extra_attributes' context variable is false and no class metadata factory is provided
+     *
+     * @return string[]|AttributeMetadataInterface[]|bool
+     */
+//    protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false)
+//    {
+//        return [
+//            'body',
+//            'headers',
+//        ];
+//    }
 }

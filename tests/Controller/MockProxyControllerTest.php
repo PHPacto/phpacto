@@ -122,15 +122,15 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-test-path', $contract);
-        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertStringContains("body: 'Request Body'", $contract);
+        self::assertContains('method: METHOD', $contract);
+        self::assertContains('path: /my-test-path', $contract);
+        self::assertContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertContains("body:\n        '@rule': equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertStringContains("body: 'Response Body'", $contract);
+        self::assertContains('status_code: 418', $contract);
+        self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertContains("body:\n        '@rule': equals\n        sample: 'Response Body'", $contract);
     }
 
     /**
@@ -168,19 +168,14 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-test-path', $contract);
-        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertStringContains("body: 'Request Body'", $contract);
+        self::assertContains('method: METHOD', $contract);
+        self::assertContains('path: /my-test-path', $contract);
+        self::assertContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertContains("body:\n        '@rule': equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertStringContains("body: 'Response Body'", $contract);
-    }
-
-    private static function assertStringContains(string $needle, string $haystack, string $message = '')
-    {
-        self::assertRegexp('/' . preg_quote($needle, '/') . '/', $haystack, $message);
+        self::assertContains('status_code: 418', $contract);
+        self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertContains("body:\n        '@rule': equals\n        sample: 'Response Body'", $contract);
     }
 }

@@ -80,7 +80,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $this->handleCircularReference($object);
         }
 
-        if ($object instanceof BooleanRule || $object instanceof EqualsRule || get_class($object) == StringRule::class) {
+        if ($object instanceof BooleanRule || get_class($object) == StringRule::class || $object instanceof NumericRule) {
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
@@ -127,6 +127,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
         if (\is_string($data)) {
             return new StringRule($data);
+        }
+
+        if (\is_numeric($data)) {
+            return new NumericRule($data);
         }
 
         return new EqualsRule($data);
