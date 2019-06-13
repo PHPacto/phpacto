@@ -22,7 +22,7 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Bigfoot\PHPacto\PactResponseInterface;
 
 class PactResponseNormalizerTest extends SerializerAwareTestCase
@@ -117,8 +117,8 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
         /** @var PactResponseInterface $pact */
         $pact = $serializer->denormalize($data, PactResponseInterface::class);
 
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][0]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][1]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getBody());
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
     }
 }

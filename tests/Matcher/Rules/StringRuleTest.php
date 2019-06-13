@@ -31,17 +31,14 @@ class StringRuleTest extends SerializerAwareTestCase
             ->setMethodsExcept(['getSample'])
             ->getMock();
 
-        self::assertEquals('', $rule->getSample());
+        self::assertSame('', $rule->getSample());
     }
 
     public function test_it_is_normalizable()
     {
         $rule = new StringRule('Sample');
 
-        $expected = [
-            '@rule' => 'string',
-            'sample' => 'Sample',
-        ];
+        $expected = 'Sample';
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
     }

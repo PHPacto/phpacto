@@ -22,7 +22,7 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Bigfoot\PHPacto\PactRequestInterface;
 
 class PactRequestNormalizerTest extends SerializerAwareTestCase
@@ -120,9 +120,9 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         /** @var PactRequestInterface $pact */
         $pact = $serializer->denormalize($data, PactRequestInterface::class);
 
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][0]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][1]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getBody());
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
     }
 
     /**
@@ -144,8 +144,8 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         /** @var PactRequestInterface $pact */
         $pact = $serializer->denormalize($data, PactRequestInterface::class);
 
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][0]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getHeaders()['Content-Type'][1]);
-        self::assertInstanceOf(StringEqualsRule::class, $pact->getBody());
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
     }
 }

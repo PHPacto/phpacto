@@ -191,6 +191,21 @@ class EachItemRuleTest extends SerializerAwareTestCase
         self::fail('An MismatchCollection should been thrown');
     }
 
+    public function testMatchArrayOfStrings()
+    {
+        $stringRule = new StringRule();
+
+        $rule = new EachItemRule([
+            'string' => $stringRule,
+        ]);
+
+        $rule->assertMatch([
+            ['string' => 'any string value'],
+        ]);
+
+        self::assertTrue(true, 'No exceptions should be thrown if matching');
+    }
+
     public function testMismatchArray()
     {
         $matching = $this->rule->matching();

@@ -23,9 +23,10 @@ namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Matcher\Rules\BooleanRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\NumericRule;
 use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
@@ -79,7 +80,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return $this->handleCircularReference($object);
         }
 
-        if ($object instanceof BooleanRule || $object instanceof EqualsRule || ($object instanceof StringEqualsRule && $object->isCaseSensitive() && $object->getValue() === $object->getSample())) {
+        if ($object instanceof BooleanRule || $object instanceof EqualsRule || get_class($object) == StringRule::class) {
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
         }
 
@@ -124,8 +125,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             return new BooleanRule($data);
         }
 
-        if (\is_string($data) && '' !== $data) {
-            return new StringEqualsRule($data, true);
+        if (\is_string($data)) {
+            return new StringRule($data);
         }
 
         return new EqualsRule($data);

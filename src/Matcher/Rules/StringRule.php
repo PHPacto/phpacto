@@ -36,4 +36,9 @@ class StringRule extends AbstractRule
             throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
     }
+
+    public function getSample()
+    {
+        return (string) parent::getSample();
+    }
 }

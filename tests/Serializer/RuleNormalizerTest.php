@@ -21,8 +21,11 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
+use Bigfoot\PHPacto\Matcher\Rules\BooleanRule;
 use Bigfoot\PHPacto\Matcher\Rules\ComparisonRule;
+use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\ExistsRule;
 use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
@@ -108,7 +111,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
             'sample' => 5,
         ];
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_normalize_equals()
@@ -117,19 +120,27 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
         $expected = 5;
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_normalize_string()
+    {
+        $rule = new StringRule('string');
+
+        $expected = 'string';
+
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_normalize_with_alias()
     {
-        $rule = new StringRule('string');
+        $rule = new ExistsRule();
 
         $expected = [
-            '@rule' => 'string',
-            'sample' => 'string',
+            '@rule' => 'exists',
         ];
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_denormalize_equals()
@@ -148,7 +159,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertInstanceOf(StringRule::class, $rule);
         self::assertEquals('string', $rule->getSample());
     }
 
@@ -169,13 +180,14 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
 //    public function test_normalize_recursive()
 //    {
-//        $rule = new EachRule(new StringEqualsRule('a'), ['a']);
+//        $rule = new EachItemRule(new StringEqualsRule('a'), ['a']);
 //
 //        $data = $this->normalizer->normalize($rule);
+//        var_dump($data);
 //
 //        $rule = $this->normalizer->denormalize($data, Rule::class);
 //
-//        self::assertInstanceOf(EachRule::class, $rule);
+//        self::assertInstanceOf(EachItemRule::class, $rule);
 //        self::assertInstanceOf(StringEqualsRule::class, $stringRule = $rule->getValue());
 //    }
 //
