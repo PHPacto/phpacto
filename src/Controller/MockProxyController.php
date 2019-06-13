@@ -74,7 +74,7 @@ class MockProxyController
 
         $dateStr = date('Y-m-d H:i:s');
 
-        $pact = new Pact($pactRequest, $pactResponse, 'Created automatically - ' . $dateStr);
+        $pact = new Pact($pactRequest, $pactResponse, 'Created for you by PHPacto Recorder - ' . $dateStr);
 
         $this->createContractFile($pact, $dateStr);
 
