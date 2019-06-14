@@ -89,7 +89,7 @@ class HeadersEncoderTest extends TestCase
         $headers = [
             'Content-Type' => [
                 'application/json',
-                'charset=UTF-8'
+                'charset=UTF-8',
             ],
         ];
 

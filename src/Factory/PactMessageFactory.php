@@ -72,7 +72,7 @@ abstract class PactMessageFactory
     protected static function getHeaderRulesFromArray(array $headers): array
     {
         $map = function($value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 return self::getHeaderRulesFromArray($value);
             }
 

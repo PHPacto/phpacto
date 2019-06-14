@@ -141,7 +141,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         }
 
         try {
-            if (\is_integer($data['status_code'])) {
+            if (\is_int($data['status_code'])) {
                 $data['status_code'] = new EqualsRule($data['status_code']);
             } else {
                 $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code'));

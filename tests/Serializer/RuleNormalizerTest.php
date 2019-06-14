@@ -21,7 +21,6 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Matcher\Rules\BooleanRule;
 use Bigfoot\PHPacto\Matcher\Rules\ComparisonRule;
 use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;

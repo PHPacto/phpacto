@@ -234,7 +234,7 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
         }
     }
 
-    /**
+    /*
      * Gets attributes to normalize using groups.
      *
      * @param string|object $classOrObject

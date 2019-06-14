@@ -32,7 +32,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '@rule' => 'equals',
-            'sample' => 5
+            'sample' => 5,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -42,7 +42,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
     {
         $data = [
             '@rule' => 'equals',
-            'sample' => 5
+            'sample' => 5,
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);

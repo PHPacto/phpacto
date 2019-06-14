@@ -136,7 +136,7 @@ abstract class PactMessage implements PactMessageInterface
     {
         $val = @array_change_key_case($this->headers, CASE_LOWER)['content-type'];
 
-        if (is_array($val) && count($val) >= 1) {
+        if (\is_array($val) && \count($val) >= 1) {
             $val = $val[0];
         }
 
