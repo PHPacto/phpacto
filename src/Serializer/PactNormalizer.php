@@ -21,11 +21,14 @@
 
 namespace Bigfoot\PHPacto\Serializer;
 
+use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactInterface;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
+use Symfony\Component\Serializer\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
@@ -140,6 +143,87 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         return $object;
+    }
+
+    protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
+    {
+        if (null !== $object = $this->extractObjectToPopulate($class, $context, static::OBJECT_TO_POPULATE)) {
+            unset($context[static::OBJECT_TO_POPULATE]);
+
+            return $object;
+        }
+
+        $constructor = $this->getConstructor($data, $class, $context, $reflectionClass, $allowedAttributes);
+        if ($constructor) {
+            $constructorParameters = $constructor->getParameters();
+
+            $mismatches = [];
+            $params = [];
+            foreach ($constructorParameters as $constructorParameter) {
+                $paramName = $constructorParameter->name;
+                $key = $this->nameConverter ? $this->nameConverter->normalize($paramName) : $paramName;
+
+                $allowed = false === $allowedAttributes || \in_array($paramName, $allowedAttributes);
+                $ignored = !$this->isAllowedAttribute($class, $paramName, $format, $context);
+                if ($constructorParameter->isVariadic()) {
+                    if ($allowed && !$ignored && (isset($data[$key]) || array_key_exists($key, $data))) {
+                        if (!\is_array($data[$paramName])) {
+                            throw new RuntimeException(sprintf('Cannot create an instance of %s from serialized data because the variadic parameter %s can only accept an array.', $class, $constructorParameter->name));
+                        }
+
+                        $params = array_merge($params, $data[$paramName]);
+                    }
+                } elseif ($allowed && !$ignored && (isset($data[$key]) || array_key_exists($key, $data))) {
+                    $parameterData = $data[$key];
+                    if (null === $parameterData && $constructorParameter->allowsNull()) {
+                        $params[] = null;
+                        // Don't run set for a parameter passed to the constructor
+                        unset($data[$key]);
+                        continue;
+                    }
+                    try {
+                        if (null !== $constructorParameter->getClass()) {
+                            if (!$this->serializer instanceof DenormalizerInterface) {
+                                throw new LogicException(sprintf('Cannot create an instance of %s from serialized data because the serializer inject in "%s" is not a denormalizer', $constructorParameter->getClass(), static::class));
+                            }
+                            $parameterClass = $constructorParameter->getClass()->getName();
+                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName));
+                        }
+                    } catch (Mismatches\Mismatch $e) {
+                        $mismatches[strtoupper($key)] = $e;
+                    } catch (\ReflectionException $e) {
+                        throw new RuntimeException(sprintf('Could not determine the class of the parameter "%s".', $key), 0, $e);
+                    } catch (MissingConstructorArgumentsException $e) {
+                        if (!$constructorParameter->getType()->allowsNull()) {
+                            throw $e;
+                        }
+                        $parameterData = null;
+                    }
+
+                    // Don't run set for a parameter passed to the constructor
+                    $params[] = $parameterData;
+                    unset($data[$key]);
+                } elseif (isset($context[static::DEFAULT_CONSTRUCTOR_ARGUMENTS][$class][$key])) {
+                    $params[] = $context[static::DEFAULT_CONSTRUCTOR_ARGUMENTS][$class][$key];
+                } elseif ($constructorParameter->isDefaultValueAvailable()) {
+                    $params[] = $constructorParameter->getDefaultValue();
+                } else {
+                    throw new MissingConstructorArgumentsException(sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name));
+                }
+            }
+
+            if ($mismatches) {
+                throw new Mismatches\MismatchCollection($mismatches, 'There are {{ count }} errors');
+            }
+
+            if ($constructor->isConstructor()) {
+                return $reflectionClass->newInstanceArgs($params);
+            } else {
+                return $constructor->invokeArgs(null, $params);
+            }
+        }
+
+        return new $class();
     }
 
     private function recursiveNormalization($data, $format = null, array $context = [])
