@@ -109,10 +109,10 @@ class PactResponseFactoryTest extends TestCase
     }
 
     /**
-     * @depends test_it_returns_pact_request_with_headers
-     * @depends test_it_returns_pact_request_with_body_plain_string
+     * @depends test_it_returns_pact_response_with_headers
+     * @depends test_it_returns_pact_response_with_body_plain_string
      */
-    public function test_it_returns_pact_request_with_content_type_mime_and_charset()
+    public function test_it_returns_pact_response_with_content_type_mime_and_charset()
     {
         $stream = new Stream('php://memory', 'w');
         $stream->write('{"a":1,"0":[2,"3"]}');
