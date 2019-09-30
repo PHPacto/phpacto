@@ -25,9 +25,10 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Http\Factory\Discovery\HttpFactory;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class PactResponse extends PactMessage implements PactResponseInterface
 {
@@ -90,13 +91,18 @@ class PactResponse extends PactMessage implements PactResponseInterface
         $headers = $this->getSampleHeaders();
         $body = $this->getSampleBody();
 
-        $stream = new Stream('php://memory', 'w');
+        $response = HttpFactory::responseFactory()->createResponse($statusCode);
 
         if (null !== $body) {
+            $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
             $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+
+            $response = $response->withBody($stream);
         }
 
-        $response = new Response($stream, $statusCode, $headers);
+        foreach ($headers as $key => $value) {
+            $response = $response->withAddedHeader($key, $value);
+        }
 
         return $response;
     }

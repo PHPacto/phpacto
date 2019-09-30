@@ -25,10 +25,11 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Stream;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class PactRequest extends PactMessage implements PactRequestInterface
 {
@@ -114,14 +115,20 @@ class PactRequest extends PactMessage implements PactRequestInterface
         $headers = $this->getSampleHeaders();
         $body = $this->getSampleBody();
 
-        $stream = new Stream('php://memory', 'w');
+        $request = HttpFactory::serverRequestFactory()->createServerRequest($method, $uri);
 
         if (null !== $body) {
+            $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
             $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+
+            $request = $request->withBody($stream)
+                ->withParsedBody(\is_array($body) ? $body : []);
         }
 
-        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], \is_array($body) ? $body : []);
+        foreach ($headers as $key => $value) {
+            $request = $request->withAddedHeader($key, $value);
+        }
 
-        return $response;
+        return $request;
     }
 }

@@ -25,9 +25,9 @@ use Bigfoot\PHPacto\Logger\Logger;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\PactInterface;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Uri;
 
 class MockController
 {
@@ -49,7 +49,7 @@ class MockController
 
     public function action(RequestInterface $request): ResponseInterface
     {
-        $uri = (new Uri())
+        $uri = HttpFactory::uriFactory()->createUri()
             ->withPath($request->getUri()->getPath())
             ->withQuery($request->getUri()->getQuery());
 

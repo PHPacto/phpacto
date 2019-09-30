@@ -24,9 +24,9 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
+use Psr\Http\Message\ResponseInterface;
 
 require __DIR__ . '/bootstrap.php';
 
@@ -40,27 +40,24 @@ if (false !== ($allowOrigin = getenv('ALLOW_ORIGIN'))) {
 
 $logger = new StdoutLogger();
 
-$handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
+$handler = function(RequestInterface $request) use ($logger, $allowOrigin): ResponseInterface {
     if (
         isset($allowOrigin)
         && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
-        $stream = new Stream('php://memory', 'r');
-
-        return new Response($stream, 201, [
-            'Access-Control-Allow-Credentials' => 'True',
-            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
-            'Access-Control-Allow-Headers' => '*',
-            'Access-Control-Allow-Origin' => '*',
-        ]);
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
+            ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
+            ->withAddedHeader('Access-Control-Allow-Headers', '*')
+            ->withAddedHeader('Access-Control-Allow-Origin', '*');
     }
 
     $logger->log(sprintf(
         '[%s] %s: %s',
         date('Y-m-d H:i:s'),
-        $_SERVER['REQUEST_METHOD'],
-        $_SERVER['REQUEST_URI']
+        $_SERVER['REQUEST_METHOD'] ?? '',
+        $_SERVER['REQUEST_URI'] ?? ''
     ));
 
     try {
@@ -81,15 +78,15 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
 
         if (null !== $allowOrigin) {
             $response = $response
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-                ->withHeader('Access-Control-Allow-Credentials', 'True')
-                ->withHeader('Access-Control-Allow-Headers', '*')
-                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
+                ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
+                ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
+                ->withAddedHeader('Access-Control-Allow-Headers', '*')
+                ->withAddedHeader('Access-Control-Allow-Origin', $allowOrigin);
         }
 
         return $response;
     } catch (MismatchCollection $mismatches) {
-        $stream = new Stream('php://memory', 'rw');
+        $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode([
             'message' => $mismatches->getMessage(),
             'contracts' => $mismatches->toArray(),
@@ -97,7 +94,9 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
 
         $logger->log($mismatches->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'application/json']);
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Content-type', 'application/json')
+            ->withBody($stream);
     } catch (\Throwable $t) {
         function throwableToArray(\Throwable $t): array
         {
@@ -111,12 +110,14 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
             ];
         };
 
-        $stream = new Stream('php://memory', 'rw');
+        $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode(throwableToArray($t)));
 
         $logger->log($t->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'application/json']);
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Content-type', 'application/json')
+            ->withBody($stream);
     }
 };
 
