@@ -29,10 +29,10 @@ use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\Uri;
 
 class MockProxyController
 {
@@ -118,7 +118,7 @@ class MockProxyController
 
     private function getProxiedUri(UriInterface $uri): UriInterface
     {
-        return (new Uri())
+        return HttpFactory::uriFactory()->createUri()
             ->withScheme($this->proxyTo['scheme'] ?? 'http')
             ->withHost($this->proxyTo['host'] ?? 'localhost')
             ->withPort($this->proxyTo['port'] ?? ('https' === @$this->proxyTo['scheme'] ? 443 : 80))

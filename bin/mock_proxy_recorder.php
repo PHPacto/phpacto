@@ -22,10 +22,9 @@
 use Bigfoot\PHPacto\Controller\MockProxyController;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use GuzzleHttp\Client;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 require __DIR__ . '/bootstrap.php';
 
@@ -56,21 +55,18 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
         && 'OPTIONS' === $request->getMethod()
         && $request->hasHeader('Access-Control-Request-Method')
     ) {
-        $stream = new Stream('php://memory', 'r');
-
-        return new Response($stream, 201, [
-            'Access-Control-Allow-Credentials' => 'True',
-            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
-            'Access-Control-Allow-Headers' => '*',
-            'Access-Control-Allow-Origin' => '*',
-        ]);
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
+            ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
+            ->withAddedHeader('Access-Control-Allow-Headers', '*')
+            ->withAddedHeader('Access-Control-Allow-Origin', '*');
     }
 
     $logger->log(sprintf(
         '[%s] %s: %s',
         date('Y-m-d H:i:s'),
-        $_SERVER['REQUEST_METHOD'],
-        $_SERVER['REQUEST_URI']
+        $_SERVER['REQUEST_METHOD'] ?? '',
+        $_SERVER['REQUEST_URI'] ?? ''
     ));
 
     try {
@@ -100,12 +96,14 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
             ];
         };
 
-        $stream = new Stream('php://memory', 'rw');
+        $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode(throwableToArray($t)));
 
         $logger->log($t->getMessage());
 
-        return new Response($stream, 418, ['Content-type' => 'application/json']);
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Content-type', 'application/json')
+            ->withBody($stream);
     }
 };
 

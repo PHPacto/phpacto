@@ -1,0 +1,20 @@
+# Do not try and merge these files
+composer.lock -diff
+yarn.lock -diff
+
+# Ignore all test and documentation with “export-ignore”.
+.circleci export-ignore
+.codacy.yml export-ignore
+.dockerignore export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.php_cs export-ignore
+.scrutinizer export-ignore
+.travis export-ignore
+code of conduct.md export-ignore
+entrypoint.sh export-ignore
+README.md export-ignore
+phpunit.xml.dist export-ignore
+/examples export-ignore
+/docs export-ignore
+/tests export-ignore

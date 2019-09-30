@@ -24,6 +24,7 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle6;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -45,7 +46,7 @@ class ProviderMockGuzzle6Test extends TestCase
 
     public function setUp()
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        $guzzleVersion = ClientInterface::VERSION;
 
         if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
