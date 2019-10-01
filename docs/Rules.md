@@ -136,7 +136,7 @@ ifNotNull
 Will match child rules only if the value is set and different than `null`
 ```yaml
 '@rule': ifNotNull
-rule:
+rules:
   '@rule': equals
   sample: 3
 sample: 3
