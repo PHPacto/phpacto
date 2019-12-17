@@ -20,12 +20,12 @@
         "symfony/yaml": "^2|^3|^4"
     },
     "require-dev": {
-        "guzzlehttp/guzzle": "^5.3.1|^6",
+        "guzzlehttp/guzzle": "^5.3.3|^6",
         "http-interop/http-factory-diactoros": "^1.0",
-        "mikey179/vfsStream": "^1.6",
+        "mikey179/vfsStream": "^1.6.7",
         "namshi/cuzzle": "^1|^2",
         "phpunit/php-code-coverage": "^5|^6",
-        "phpunit/phpunit": "^6.5|^7"
+        "phpunit/phpunit": "^7.5.15|^8"
     },
     "suggest": {
         "namshi/cuzzle": "Generates cUrl command out of you PHPacto contracts",
