@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.4-zts-alpine
 
 RUN apk add --update bash
 

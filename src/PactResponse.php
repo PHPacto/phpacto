@@ -26,9 +26,7 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Http\Factory\Discovery\HttpFactory;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 
 class PactResponse extends PactMessage implements PactResponseInterface
 {
@@ -38,7 +36,6 @@ class PactResponse extends PactMessage implements PactResponseInterface
     private $statusCode;
 
     /**
-     * @param Rule      $statusCode
      * @param Rule[]    $headers
      * @param Rule|null $body
      */
@@ -49,9 +46,6 @@ class PactResponse extends PactMessage implements PactResponseInterface
         $this->statusCode = $statusCode;
     }
 
-    /**
-     * @return Rule
-     */
     public function getStatusCode(): Rule
     {
         return $this->statusCode;

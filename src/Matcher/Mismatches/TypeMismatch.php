@@ -25,8 +25,6 @@ class TypeMismatch extends ValueMismatch
 {
     /**
      * @param string|string[] $expected
-     * @param string          $actual
-     * @param string|null     $message
      */
     public function __construct($expected, string $actual, string $message = null)
     {

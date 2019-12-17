@@ -85,8 +85,6 @@ class PactLoader
     }
 
     /**
-     * @param string $path
-     *
      * @throws \Exception
      *
      * @return PactInterface[]

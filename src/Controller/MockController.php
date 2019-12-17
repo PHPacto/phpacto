@@ -41,7 +41,7 @@ class MockController
      */
     private $pacts;
 
-    public function __construct(Logger  $logger, array $pacts)
+    public function __construct(Logger $logger, array $pacts)
     {
         $this->logger = $logger;
         $this->pacts = $pacts;

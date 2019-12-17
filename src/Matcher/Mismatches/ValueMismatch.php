@@ -27,9 +27,8 @@ class ValueMismatch extends Mismatch
     private $expected;
 
     /**
-     * @param string $message
-     * @param mixed  $expected
-     * @param mixed  $actual
+     * @param mixed $expected
+     * @param mixed $actual
      */
     public function __construct(string $message, $expected, $actual)
     {
@@ -58,12 +57,6 @@ class ValueMismatch extends Mismatch
         return $this->expected;
     }
 
-    /**
-     * @param array  $values
-     * @param string $glue
-     *
-     * @return string
-     */
     protected static function strJoin(array $values, string $glue = ' or '): string
     {
         $callback = function($value) {
@@ -75,8 +68,6 @@ class ValueMismatch extends Mismatch
 
     /**
      * @param mixed $value
-     *
-     * @return string
      */
     protected static function wrap($value): string
     {

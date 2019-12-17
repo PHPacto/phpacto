@@ -31,18 +31,12 @@ interface PactMatcherInterface
     /**
      * Match the request with given pact.
      *
-     * @param PactInterface    $pact
-     * @param RequestInterface $request
-     *
      * @throws MismatchCollection
      */
     public function assertMatchRequest(PactInterface $pact, RequestInterface $request): void;
 
     /**
      * Match the request with given pact.
-     *
-     * @param PactInterface     $pact
-     * @param ResponseInterface $response
      *
      * @throws MismatchCollection
      */

@@ -31,9 +31,6 @@ class PHPacto
      */
     private $contractsBasePath;
 
-    /**
-     * @param string $contractsBasePath
-     */
     public function __construct(string $contractsBasePath = '')
     {
         $this->contractsBasePath = rtrim($contractsBasePath, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
@@ -56,19 +53,12 @@ class PHPacto
 
     /**
      * Load a contract file and returns a Pactgit.
-     *
-     * @param string $path
-     *
-     * @return PactInterface
      */
     public function getPact(string $path): PactInterface
     {
         return $this->getLoader()->loadFromFile($this->contractsBasePath . $path);
     }
 
-    /**
-     * @return PactLoader
-     */
     protected function getLoader(): PactLoader
     {
         return new PactLoader(SerializerFactory::getInstance());

@@ -231,7 +231,6 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      * Gets the cache key to use.
      *
      * @param string|null $format
-     * @param array       $context
      *
      * @return bool|string
      */

@@ -26,9 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 
 interface PactResponseInterface extends PactMessageInterface
 {
-    /**
-     * @return Rule
-     */
     public function getStatusCode(): Rule;
 
     /**

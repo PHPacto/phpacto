@@ -51,9 +51,6 @@ class ProviderMockGuzzle6 implements ProviderMock
         });
     }
 
-    /**
-     * @return HandlerStack
-     */
     public function getHandler(): HandlerStack
     {
         return HandlerStack::create($this->mock);

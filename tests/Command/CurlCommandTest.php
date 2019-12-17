@@ -22,7 +22,6 @@
 namespace Bigfoot\PHPacto\Factory;
 
 use Bigfoot\PHPacto\Command\CurlCommand;
-use Namshi\Cuzzle\Formatter\CurlFormatter;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;

@@ -27,9 +27,7 @@ use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 
 class PactRequest extends PactMessage implements PactRequestInterface
 {
@@ -44,8 +42,6 @@ class PactRequest extends PactMessage implements PactRequestInterface
     private $path;
 
     /**
-     * @param Rule             $method
-     * @param Rule             $path
      * @param Rule[]           $headers
      * @param Rule|Rule[]|null $body
      */
@@ -57,17 +53,11 @@ class PactRequest extends PactMessage implements PactRequestInterface
         $this->path = $path;
     }
 
-    /**
-     * @return Rule
-     */
     public function getMethod(): Rule
     {
         return $this->method;
     }
 
-    /**
-     * @return Rule
-     */
     public function getPath(): Rule
     {
         return $this->path;

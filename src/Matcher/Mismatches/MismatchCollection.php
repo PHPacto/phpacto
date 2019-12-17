@@ -50,9 +50,6 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         return implode("\n", array_map($map, array_keys($mismatches), $mismatches));
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         $result = [];
@@ -69,10 +66,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
     }
 
     /**
-     * @param string     $prefix
-     * @param array|null $mismatches
-     *
-     * @return array
+     * @param string $prefix
      */
     public function toArrayFlat(string $prefix = null, array $mismatches = null): array
     {

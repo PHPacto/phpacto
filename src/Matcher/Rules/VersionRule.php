@@ -49,9 +49,6 @@ class VersionRule extends AbstractRule
         return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function getOperator(): string
     {
         return $this->operator;
