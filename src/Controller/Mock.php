@@ -29,7 +29,7 @@ use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class MockController
+class Mock
 {
     /**
      * @var Logger

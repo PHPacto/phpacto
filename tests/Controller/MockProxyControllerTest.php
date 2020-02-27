@@ -55,7 +55,7 @@ class MockProxyControllerTest extends TestCase
     protected $serializer;
 
     /**
-     * @var MockProxyController
+     * @var ProxyRecorder
      */
     protected $controller;
 
@@ -84,7 +84,7 @@ class MockProxyControllerTest extends TestCase
         // Setup and cache the virtual file system
         $this->fs = vfsStream::setup('root', 444, $directory);
 
-        $this->controller = new MockProxyController($this->client, $this->logger, $this->proxyTo, $this->fs->url());
+        $this->controller = new ProxyRecorder($this->client, $this->logger, $this->proxyTo, $this->fs->url());
     }
 
     /**

@@ -75,7 +75,7 @@ class MockControllerTest extends TestCase
             ->method('getResponse')
             ->willReturn($matchingResponse);
 
-        $controller = new MockController($this->logger, [$notMatchingPact, $matchingPact]);
+        $controller = new Mock($this->logger, [$notMatchingPact, $matchingPact]);
 
         $response = $controller->action(new Request());
 
@@ -84,7 +84,7 @@ class MockControllerTest extends TestCase
 
     public function test_it_throws_exception_if_no_pact_is_matching()
     {
-        $controller = new MockController($this->logger, []);
+        $controller = new Mock($this->logger, []);
 
         self::expectException(MismatchCollection::class);
         self::expectExceptionMessage('No matching contract found for your request');

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Bigfoot\PHPacto\Controller\MockController;
+use Bigfoot\PHPacto\Controller\Mock;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
@@ -70,7 +70,7 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin): Resp
             throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
         }
 
-        $controller = new MockController($logger, $pacts);
+        $controller = new Mock($logger, $pacts);
 
         $response = $controller->action($request);
 

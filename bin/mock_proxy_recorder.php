@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Bigfoot\PHPacto\Controller\MockProxyController;
+use Bigfoot\PHPacto\Controller\ProxyRecorder;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use GuzzleHttp\Client;
 use Http\Factory\Discovery\HttpFactory;
@@ -47,7 +47,7 @@ if (!getenv('RECORDER_PROXY_TO')) {
 }
 
 $httpClient = new Client();
-$controller = new MockProxyController($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
+$controller = new ProxyRecorder($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
 $handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
     if (
