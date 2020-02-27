@@ -46,7 +46,7 @@ class StringRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'string',
+            '_rule' => 'string',
             'sample' => 'Sample',
         ];
 

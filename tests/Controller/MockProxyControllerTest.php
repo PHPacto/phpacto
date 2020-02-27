@@ -125,12 +125,12 @@ class MockProxyControllerTest extends TestCase
         self::assertContains('method: METHOD', $contract);
         self::assertContains('path: /my-test-path', $contract);
         self::assertContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertContains("body:\n        '@rule': equals\n        sample: 'Request Body'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
         self::assertContains('status_code: 418', $contract);
         self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertContains("body:\n        '@rule': equals\n        sample: 'Response Body'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Response Body'", $contract);
     }
 
     /**
@@ -171,11 +171,11 @@ class MockProxyControllerTest extends TestCase
         self::assertContains('method: METHOD', $contract);
         self::assertContains('path: /my-test-path', $contract);
         self::assertContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertContains("body:\n        '@rule': equals\n        sample: 'Request Body'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
         self::assertContains('status_code: 418', $contract);
         self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertContains("body:\n        '@rule': equals\n        sample: 'Response Body'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Response Body'", $contract);
     }
 }

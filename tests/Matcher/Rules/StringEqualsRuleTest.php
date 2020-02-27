@@ -33,7 +33,7 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
         $data = $this->normalizer->normalize($rule);
 
         $expected = [
-            '@rule' => 'stringEquals',
+            '_rule' => 'stringEquals',
             'case_sensitive' => true,
             'value' => 'S',
         ];
@@ -44,7 +44,7 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable_equals()
     {
         $data = [
-            '@rule' => 'stringEquals',
+            '_rule' => 'stringEquals',
             'case_sensitive' => true,
             'value' => 'S',
         ];

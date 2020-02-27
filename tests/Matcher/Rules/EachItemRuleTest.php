@@ -32,8 +32,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $rule = new EachItemRule($childRule, []);
 
         $expected = [
-            '@rule' => 'each',
-            'rules' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'each',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -45,8 +45,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'each',
-            'rules' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'each',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 

@@ -32,9 +32,9 @@ class OrRuleTest extends SerializerAwareTestCase
         $rule = new OrRule([$childRule]);
 
         $expected = [
-            '@rule' => 'or',
+            '_rule' => 'or',
             'rules' => [
-                ['@rule' => \get_class($childRule)],
+                ['_rule' => \get_class($childRule)],
             ],
         ];
 
@@ -44,7 +44,7 @@ class OrRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'or',
+            '_rule' => 'or',
             'rules' => [5],
             'sample' => 5,
         ];

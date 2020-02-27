@@ -31,7 +31,7 @@ class StringContainsRuleTest extends SerializerAwareTestCase
         $rule = new StringContainsRule('amp', 'sample');
 
         $expected = [
-            '@rule' => 'stringContains',
+            '_rule' => 'stringContains',
             'value' => 'amp',
             'sample' => 'sample',
             'case_sensitive' => true,

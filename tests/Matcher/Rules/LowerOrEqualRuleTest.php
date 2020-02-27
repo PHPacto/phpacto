@@ -31,7 +31,7 @@ class LowerOrEqualRuleTest extends SerializerAwareTestCase
         $rule = new LowerOrEqualRule(5, 5);
 
         $expected = [
-            '@rule' => 'lowerEqual',
+            '_rule' => 'lowerEqual',
             'value' => 5,
         ];
 

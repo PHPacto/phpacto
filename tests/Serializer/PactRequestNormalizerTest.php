@@ -74,8 +74,8 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         $this->rule->map($request->getPath());
 
         $expected = [
-            'method' => ['@rule' => \get_class($request->getMethod())],
-            'path' => ['@rule' => \get_class($request->getPath())],
+            'method' => ['_rule' => \get_class($request->getMethod())],
+            'path' => ['_rule' => \get_class($request->getPath())],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($request));

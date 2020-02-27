@@ -31,7 +31,7 @@ class VersionRuleTest extends SerializerAwareTestCase
         $rule = new VersionRule('dev');
 
         $expected = [
-            '@rule' => 'version',
+            '_rule' => 'version',
             'value' => 'dev',
             'operator' => '=',
         ];

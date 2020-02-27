@@ -31,7 +31,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
         $rule = new RegexpRule('^$', true, false, '');
 
         $expected = [
-            '@rule' => 'regex',
+            '_rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => true,
@@ -44,7 +44,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'regex',
+            '_rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => false,

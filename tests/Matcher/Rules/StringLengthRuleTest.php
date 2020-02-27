@@ -32,8 +32,8 @@ class StringLengthRuleTest extends SerializerAwareTestCase
         $rule = new StringLengthRule($childRule, 'sample');
 
         $expected = [
-            '@rule' => 'stringLength',
-            'length' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'stringLength',
+            'length' => ['_rule' => \get_class($childRule)],
             'sample' => 'sample',
         ];
 

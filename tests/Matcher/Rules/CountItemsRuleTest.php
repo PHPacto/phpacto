@@ -32,8 +32,8 @@ class CountItemsRuleTest extends SerializerAwareTestCase
         $rule = new CountItemsRule($childRule, []);
 
         $expected = [
-            '@rule' => 'count',
-            'rule' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'count',
+            'rule' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -45,8 +45,8 @@ class CountItemsRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty(ComparisonRule::class);
 
         $data = [
-            '@rule' => 'count',
-            'rule' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'count',
+            'rule' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 

@@ -32,9 +32,9 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $rule = new IfIsSetRule($childRule);
 
         $expected = [
-            '@rule' => 'ifNotNull',
+            '_rule' => 'ifNotNull',
             'rules' => [
-                '@rule' => \get_class($childRule),
+                '_rule' => \get_class($childRule),
             ],
         ];
 
@@ -46,8 +46,8 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'ifNotNull',
-            'rules' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'ifNotNull',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => 'any',
         ];
 

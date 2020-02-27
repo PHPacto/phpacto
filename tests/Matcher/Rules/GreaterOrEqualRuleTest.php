@@ -31,7 +31,7 @@ class GreaterOrEqualRuleTest extends SerializerAwareTestCase
         $rule = new GreaterOrEqualRule(5, 6);
 
         $expected = [
-            '@rule' => 'greaterEqual',
+            '_rule' => 'greaterEqual',
             'value' => 5,
             'sample' => 6,
         ];

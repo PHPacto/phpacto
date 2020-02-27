@@ -32,9 +32,9 @@ class ObjectRuleTest extends SerializerAwareTestCase
         $rule = new ObjectRule(['prop' => $childRule], ['prop' => 'value']);
 
         $expected = [
-            '@rule' => 'object',
+            '_rule' => 'object',
             'properties' => [
-                'prop' => ['@rule' => \get_class($childRule)],
+                'prop' => ['_rule' => \get_class($childRule)],
             ],
             'sample' => [
                 'prop' => 'value',
@@ -49,9 +49,9 @@ class ObjectRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'object',
+            '_rule' => 'object',
             'properties' => [
-                'prop' => ['@rule' => \get_class($childRule)],
+                'prop' => ['_rule' => \get_class($childRule)],
             ],
             'sample' => [
                 'prop' => 'value',

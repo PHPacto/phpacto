@@ -101,9 +101,9 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if (\is_array($data)) {
-            if (\array_key_exists('@rule', $data)) {
-                $class = $this->ruleMap->getClassName($data['@rule']);
-                unset($data['@rule']);
+            if (\array_key_exists('_rule', $data)) {
+                $class = $this->ruleMap->getClassName($data['_rule']);
+                unset($data['_rule']);
 
                 return $this->denormalizeRuleArray($data, $class, $format, $context);
             }
@@ -251,7 +251,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         $data = [
-            '@rule' => $this->ruleMap->getAlias(\get_class($rule)),
+            '_rule' => $this->ruleMap->getAlias(\get_class($rule)),
         ];
 
         $attributes = $this->getAttributes($rule, $format, $context);

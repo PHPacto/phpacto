@@ -154,11 +154,11 @@ class PactRequestTest extends SerializerAwareTestCase
 
         $expected = [
             'method' => [
-                '@rule' => \get_class($mockMethod),
+                '_rule' => \get_class($mockMethod),
                 'sample' => 'get',
             ],
             'path' => [
-                '@rule' => \get_class($mockPath),
+                '_rule' => \get_class($mockPath),
                 'sample' => '/',
             ],
         ];
@@ -180,21 +180,21 @@ class PactRequestTest extends SerializerAwareTestCase
 
         $expected = [
             'method' => [
-                '@rule' => \get_class($mockMethod),
+                '_rule' => \get_class($mockMethod),
                 'sample' => 'put',
             ],
             'path' => [
-                '@rule' => \get_class($mockPath),
+                '_rule' => \get_class($mockPath),
                 'sample' => '/path',
             ],
             'headers' => [
                 'Y' => [
-                    '@rule' => \get_class($mockHeaderValue),
+                    '_rule' => \get_class($mockHeaderValue),
                     'sample' => 'X',
                 ],
             ],
             'body' => [
-                '@rule' => \get_class($mockBody),
+                '_rule' => \get_class($mockBody),
                 'sample' => 'Body',
             ],
         ];

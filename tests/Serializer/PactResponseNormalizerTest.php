@@ -75,7 +75,7 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
             ->willReturn($this->rule->hasSample(200));
 
         $expected = [
-            'status_code' => ['@rule' => \get_class($response->getStatusCode()), 'sample' => 200],
+            'status_code' => ['_rule' => \get_class($response->getStatusCode()), 'sample' => 200],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($response));

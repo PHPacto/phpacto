@@ -107,7 +107,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         $rule = $this->rule->hasSample(5);
 
         $expected = [
-            '@rule' => \get_class($rule),
+            '_rule' => \get_class($rule),
             'sample' => 5,
         ];
 
@@ -137,7 +137,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         $rule = new ExistsRule();
 
         $expected = [
-            '@rule' => 'exists',
+            '_rule' => 'exists',
         ];
 
         self::assertSame($expected, $this->normalizer->normalize($rule));
@@ -166,7 +166,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
     public function test_denormalize_with_alias()
     {
         $data = [
-            '@rule' => 'greater',
+            '_rule' => 'greater',
             'value' => 5,
             'sample' => 6,
         ];

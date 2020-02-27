@@ -31,7 +31,7 @@ class StringEndsRuleTest extends SerializerAwareTestCase
         $rule = new StringEndsRule('ple', 'sample');
 
         $expected = [
-            '@rule' => 'stringEnds',
+            '_rule' => 'stringEnds',
             'value' => 'ple',
             'sample' => 'sample',
             'case_sensitive' => true,

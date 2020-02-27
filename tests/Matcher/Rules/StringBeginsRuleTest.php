@@ -31,7 +31,7 @@ class StringBeginsRuleTest extends SerializerAwareTestCase
         $rule = new StringBeginsRule('sam', 'sample');
 
         $expected = [
-            '@rule' => 'stringBegins',
+            '_rule' => 'stringBegins',
             'value' => 'sam',
             'sample' => 'sample',
             'case_sensitive' => true,

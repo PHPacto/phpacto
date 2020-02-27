@@ -31,7 +31,7 @@ class UuidRuleTest extends SerializerAwareTestCase
         $rule = new UuidRule();
 
         $expected = [
-            '@rule' => 'uuid',
+            '_rule' => 'uuid',
             'sample' => '00000000-0000-0000-0000-000000000000',
         ];
 

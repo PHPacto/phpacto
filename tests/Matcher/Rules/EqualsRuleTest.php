@@ -31,7 +31,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
         $rule = new EqualsRule(5);
 
         $expected = [
-            '@rule' => 'equals',
+            '_rule' => 'equals',
             'sample' => 5,
         ];
 
@@ -41,7 +41,7 @@ class EqualsRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'equals',
+            '_rule' => 'equals',
             'sample' => 5,
         ];
 
@@ -64,12 +64,12 @@ class EqualsRuleTest extends SerializerAwareTestCase
         ]);
 
         $expected = [
-            '@rule' => 'equals',
+            '_rule' => 'equals',
             'sample' => [
-                0 => ['@rule' => \get_class($childRule)],
-                'key' => ['@rule' => \get_class($childRule)],
+                0 => ['_rule' => \get_class($childRule)],
+                'key' => ['_rule' => \get_class($childRule)],
                 'nested' => [
-                    'key' => ['@rule' => \get_class($childRule)],
+                    'key' => ['_rule' => \get_class($childRule)],
                 ],
             ],
         ];
