@@ -9,7 +9,6 @@ php:
   - 7.4
 
 env:
-  - dependencies=locked
   - dependencies=highest
   - dependencies=lowest
 
@@ -22,8 +21,14 @@ install:
   - composer install -n
 
 before_script:
-  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --prefer-stable -n; fi;
-  - if [ "$dependencies" = "highest" ]; then composer update --prefer-stable -n; fi;
+  - case "${dependencies}" in
+      "lowest")
+        composer update --prefer-lowest --prefer-stable -n
+        ;;
+      *)
+        composer update --prefer-stable -n
+        ;;
+    esac
 
 script:
   - vendor/bin/phpunit --coverage-clover=coverage.xml

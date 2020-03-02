@@ -153,7 +153,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         self::assertEquals(5, $rule->getSample());
     }
 
-    public function test_denormalize_string_equals()
+    public function test_denormalize_string()
     {
         $data = 'string';
 
@@ -161,6 +161,19 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
         self::assertInstanceOf(StringRule::class, $rule);
         self::assertEquals('string', $rule->getSample());
+    }
+
+    public function test_denormalize_string_equals()
+    {
+        $data = [
+            '_rule' => 'stringEquals',
+            'value' => 'test',
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertEquals('test', $rule->getSample());
     }
 
     public function test_denormalize_with_alias()

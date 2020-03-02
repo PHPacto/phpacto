@@ -1,7 +1,3 @@
-# Do not try and merge these files
-composer.lock -diff
-yarn.lock -diff
-
 # Ignore all test and documentation with “export-ignore”.
 .circleci export-ignore
 .codacy.yml export-ignore

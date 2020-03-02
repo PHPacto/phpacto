@@ -40,7 +40,7 @@ class BuilderWriteContract extends BaseCommand
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $format = $input->getOption('format');
         $path = $input->getArgument('path');
@@ -65,6 +65,8 @@ class BuilderWriteContract extends BaseCommand
         } else {
             throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
+
+        return 0;
     }
 
     protected function processFile(OutputInterface $output, string $path, string $format): void

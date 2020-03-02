@@ -40,6 +40,8 @@ class CurlCommand extends BaseCommand
      */
     protected $loader;
 
+    private $exitCode = 0;
+
     public function __construct(Serializer $serializer, string $defaultContractsDir = null)
     {
         parent::__construct($serializer, $defaultContractsDir);
@@ -58,7 +60,7 @@ class CurlCommand extends BaseCommand
         $this->addOption('port', 'p', InputArgument::OPTIONAL, 'On wich port is your service located', 80);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getArgument('path');
         $host = $input->getOption('host');
@@ -99,6 +101,8 @@ class CurlCommand extends BaseCommand
                     } else {
                         throw $e;
                     }
+
+                    $this->exitCode = 1;
                 }
             }
 
@@ -106,6 +110,8 @@ class CurlCommand extends BaseCommand
         } else {
             throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
+
+        return $this->exitCode;
     }
 
     protected function loadPact(string $filePath): PactInterface

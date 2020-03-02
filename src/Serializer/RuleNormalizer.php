@@ -214,7 +214,15 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 } elseif ($constructorParameter->isDefaultValueAvailable()) {
                     $params[] = $constructorParameter->getDefaultValue();
                 } else {
-                    throw new MissingConstructorArgumentsException(sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name));
+                    var_dump($data);
+                    $message = sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name);
+
+                    // MissingConstructorArgumentsException added on Sf 4.1
+                    if (class_exists(MissingConstructorArgumentsException::class)) {
+                        throw new MissingConstructorArgumentsException($message);
+                    }
+
+                    throw new RuntimeException($message);
                 }
             }
 

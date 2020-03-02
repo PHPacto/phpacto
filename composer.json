@@ -14,10 +14,10 @@
         "php": "^7.1",
         "http-interop/http-factory-discovery": "^1.5",
         "psr/http-message-implementation": "^1",
-        "symfony/console": "^2.8|^3|^4",
-        "symfony/finder": "^2.3|^3|^4",
+        "symfony/console": "^2.8|^3|^4|^5",
+        "symfony/finder": "^2.3|^3|^4|^5",
         "symfony/serializer": "^3.3|^4",
-        "symfony/yaml": "^2|^3|^4"
+        "symfony/yaml": "^2|^3|^4|^5"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^5.3.3|^6",
