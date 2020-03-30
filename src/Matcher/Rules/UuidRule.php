@@ -25,7 +25,7 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class UuidRule extends AbstractRule
 {
-    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-5][0-9A-F]{3}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/i';
+    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-6][0-9A-F]{3}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
     public function __construct($sample = '00000000-0000-0000-0000-000000000000')
     {
