@@ -40,8 +40,6 @@ class CurlCommand extends BaseCommand
      */
     protected $loader;
 
-    private $exitCode = 0;
-
     public function __construct(Serializer $serializer, string $defaultContractsDir = null)
     {
         parent::__construct($serializer, $defaultContractsDir);
@@ -67,18 +65,19 @@ class CurlCommand extends BaseCommand
         $port = $input->getOption('port');
 
         $curlFormatter = new CurlFormatter(INF);
+        $hasErrors = false;
 
         if (is_file($path) && is_readable($path)) {
-//            try {
+            try {
             $pact = $this->loadPact((string) $path);
-            $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path, false);
-//            } catch (\Throwable $e) {
-//                if ($e instanceof Mismatch) {
-//                    self::outputResult($output, $path, '<fg=red>✖ Not valid</>');
-//                } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
-//                    self::outputResult($output, $path, '<fg=red>✖ Syntax error</>');
-//                }
-//            }
+            $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path);
+            } catch (\Throwable $e) {
+                if ($e instanceof Mismatch) {
+                    $output->writeln('<fg=red>✖ Not valid</>');
+                } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
+                    $output->writeln('<fg=red>✖ Syntax error</>');
+                }
+            }
         } elseif (is_dir($path)) {
             $finder = new Finder();
             $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
@@ -91,27 +90,28 @@ class CurlCommand extends BaseCommand
                 $shortPath = self::getShortPath((string) $file, $path);
 
                 try {
+                    $output->writeln($shortPath);
                     $pact = $this->loadPact((string) $file);
-                    $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $shortPath, true);
+                    $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $shortPath);
                 } catch (\Throwable $e) {
                     if ($e instanceof Mismatch) {
-                        self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>');
+                        $output->writeln('<fg=red>✖ Not valid</>');
                     } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
-                        self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>');
+                        $output->writeln('<fg=red>✖ Syntax error</>');
                     } else {
-                        throw $e;
+                        $output->writeln('<fg=red>✖ Something gone wrong</>');
                     }
 
-                    $this->exitCode = 1;
+                    $hasErrors = true;
                 }
-            }
 
-            self::getTable($output)->render();
+                $output->writeln('');
+            }
         } else {
             throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
-        return $this->exitCode;
+        return $hasErrors;
     }
 
     protected function loadPact(string $filePath): PactInterface
@@ -119,7 +119,7 @@ class CurlCommand extends BaseCommand
         return $this->loader->loadFromFile($filePath);
     }
 
-    private function printCurlCommand(OutputInterface $output, CurlFormatter $formatter, PactInterface $pact, string $host, int $port, string $path, bool $multipleFiles = false): void
+    private function printCurlCommand(OutputInterface $output, CurlFormatter $formatter, PactInterface $pact, string $host, int $port, string $path): void
     {
         $sample = $pact->getRequest()->getSample();
 
@@ -132,7 +132,7 @@ class CurlCommand extends BaseCommand
 
         $curlCommand = $this->generateCurlCommand($request, $formatter);
 
-        self::outputResult($output, $path, $curlCommand, $multipleFiles);
+        $output->writeln($curlCommand);
     }
 
     /**
@@ -152,22 +152,6 @@ class CurlCommand extends BaseCommand
         return $formatter->format($request);
     }
 
-    private static function getTable(OutputInterface $output): Table
-    {
-        static $table;
-
-        if (!$table) {
-            $table = new Table($output);
-            $table->setStyle('borderless');
-            $table->setHeaders([
-                'Contract',
-                'cURL command',
-            ]);
-        }
-
-        return $table;
-    }
-
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
@@ -177,12 +161,8 @@ class CurlCommand extends BaseCommand
         return $filePath;
     }
 
-    private static function outputResult(OutputInterface $output, string $filePath, string $curlCommand, $multipleFiles): void
+    private static function outputResult(OutputInterface $output, string $filePath, string $curlCommand): void
     {
-        if ($multipleFiles) {
-            self::getTable($output)->addRow([$filePath, $curlCommand]);
-        } else {
-            $output->writeln($curlCommand);
-        }
+        $output->writeln($curlCommand);
     }
 }
