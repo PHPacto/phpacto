@@ -23,23 +23,16 @@ use Bigfoot\PHPacto\Controller\ProxyRecorder;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use GuzzleHttp\Client;
 use Http\Factory\Discovery\HttpFactory;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== ($allowOrigin = getenv('ALLOW_ORIGIN'))) {
-    if ('all' === strtolower($allowOrigin)) {
-        $allowOrigin = '*';
-    }
-} else {
-    $allowOrigin = null;
-}
-
 $logger = new StdoutLogger();
 
-if (!is_dir(CONTRACTS_DIR)) {
-    mkdir(CONTRACTS_DIR, 0777, true);
+if (!mkdir(CONTRACTS_DIR, 0777, true) || is_dir(CONTRACTS_DIR) || is_writable(CONTRACTS_DIR)) {
+    throw new \RuntimeException(sprintf('Directory "%s" is not writeable', CONTRACTS_DIR));
 }
 
 if (!getenv('RECORDER_PROXY_TO')) {
@@ -49,19 +42,7 @@ if (!getenv('RECORDER_PROXY_TO')) {
 $httpClient = new Client();
 $controller = new ProxyRecorder($httpClient, $logger, getenv('RECORDER_PROXY_TO'), CONTRACTS_DIR);
 
-$handler = function(RequestInterface $request) use ($logger, $controller, $allowOrigin): ResponseInterface {
-    if (
-        isset($allowOrigin)
-        && 'OPTIONS' === $request->getMethod()
-        && $request->hasHeader('Access-Control-Request-Method')
-    ) {
-        return HttpFactory::responseFactory()->createResponse(418)
-            ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-            ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
-            ->withAddedHeader('Access-Control-Allow-Headers', '*')
-            ->withAddedHeader('Access-Control-Allow-Origin', '*');
-    }
-
+$handler = function(ServerRequestInterface $request, RequestHandlerInterface $handler) use ($logger, $controller): ResponseInterface {
     $logger->log(sprintf(
         '[%s] %s: %s',
         date('Y-m-d H:i:s'),
@@ -69,21 +50,26 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
         $_SERVER['REQUEST_URI'] ?? ''
     ));
 
-    try {
-        $response = $controller->action($request);
+    $response = $controller->handle($request);
 
-        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
+    $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
-        if (null !== $this->allowOrigin) {
-            $response = $response
-                ->withHeader('Access-Control-Allow-Credentials', 'True')
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-                ->withHeader('Access-Control-Allow-Headers', '*')
-                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
-        }
+    return $response;
+};
 
-        return $response;
-    } catch (\Throwable $t) {
+$app = new \Laminas\Stratigility\MiddlewarePipe();
+$app->pipe(new \Bigfoot\PHPacto\Controller\CorsMiddleware());
+$app->pipe(\Laminas\Stratigility\middleware($handler));
+
+$server = new \Laminas\HttpHandlerRunner\RequestHandlerRunner(
+    $app,
+    new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter(),
+    static function(): ServerRequestInterface {
+        return HttpFactory::serverRequestFactory()::fromGlobals();
+    },
+    static function(\Throwable $t) use ($logger): ResponseInterface {
+        $logger->log($t->getMessage());
+
         function throwableToArray(\Throwable $t): array
         {
             return [
@@ -94,18 +80,15 @@ $handler = function(RequestInterface $request) use ($logger, $controller, $allow
                 'code' => $t->getCode(),
                 'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
-        };
+        }
 
         $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode(throwableToArray($t)));
 
-        $logger->log($t->getMessage());
-
-        return HttpFactory::responseFactory()->createResponse(418)
+        return HttpFactory::responseFactory()->createResponse(500)
             ->withAddedHeader('Content-type', 'application/json')
             ->withBody($stream);
     }
-};
+);
 
-$server = Zend\Diactoros\Server::createServer($handler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-$server->listen();
+$server->run();

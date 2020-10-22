@@ -25,12 +25,12 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Logger\Logger;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 class MockProxyControllerTest extends TestCase
 {
@@ -94,7 +94,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client wiil make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new ServerRequest([], [], '/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -108,7 +108,7 @@ class MockProxyControllerTest extends TestCase
             ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willReturn($response);
 
-        $response = $this->controller->action($request);
+        $response = $this->controller->handle($request);
 
         // Assertions on Response coming from proxied server
         self::assertEquals(418, $response->getStatusCode());
@@ -140,7 +140,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client will make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new ServerRequest([], [], '/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -154,7 +154,7 @@ class MockProxyControllerTest extends TestCase
             ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willThrowException(new BadResponseException('Server respond with a BAD status code', $request, $response));
 
-        $response = $this->controller->action($request);
+        $response = $this->controller->handle($request);
 
         // Assertions on Response coming from proxied server
         self::assertEquals(418, $response->getStatusCode());

@@ -25,34 +25,15 @@ use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Http\Factory\Discovery\HttpFactory;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== ($allowOrigin = getenv('ALLOW_ORIGIN'))) {
-    if ('all' === strtolower($allowOrigin)) {
-        $allowOrigin = '*';
-    }
-} else {
-    $allowOrigin = null;
-}
-
 $logger = new StdoutLogger();
 
-$handler = function(RequestInterface $request) use ($logger, $allowOrigin): ResponseInterface {
-    if (
-        isset($allowOrigin)
-        && 'OPTIONS' === $request->getMethod()
-        && $request->hasHeader('Access-Control-Request-Method')
-    ) {
-        return HttpFactory::responseFactory()->createResponse(418)
-            ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-            ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
-            ->withAddedHeader('Access-Control-Allow-Headers', '*')
-            ->withAddedHeader('Access-Control-Allow-Origin', '*');
-    }
-
+$handler = function(ServerRequestInterface $request, RequestHandlerInterface $handler) use ($logger): ResponseInterface {
     $logger->log(sprintf(
         '[%s] %s: %s',
         date('Y-m-d H:i:s'),
@@ -72,17 +53,9 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin): Resp
 
         $controller = new Mock($logger, $pacts);
 
-        $response = $controller->action($request);
+        $response = $controller->handle($request);
 
         $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
-
-        if (null !== $allowOrigin) {
-            $response = $response
-                ->withAddedHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-                ->withAddedHeader('Access-Control-Allow-Credentials', 'True')
-                ->withAddedHeader('Access-Control-Allow-Headers', '*')
-                ->withAddedHeader('Access-Control-Allow-Origin', $allowOrigin);
-        }
 
         return $response;
     } catch (MismatchCollection $mismatches) {
@@ -92,12 +65,27 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin): Resp
             'contracts' => $mismatches->toArray(),
         ]));
 
-        $logger->log($mismatches->getMessage());
+        $logger->log($mismatches->getMessage() . "\n");
 
         return HttpFactory::responseFactory()->createResponse(418)
             ->withAddedHeader('Content-type', 'application/json')
             ->withBody($stream);
-    } catch (\Throwable $t) {
+    }
+};
+
+$app = new \Laminas\Stratigility\MiddlewarePipe();
+$app->pipe(new \Bigfoot\PHPacto\Controller\CorsMiddleware());
+$app->pipe(\Laminas\Stratigility\middleware($handler));
+
+$server = new \Laminas\HttpHandlerRunner\RequestHandlerRunner(
+    $app,
+    new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter(),
+    static function(): ServerRequestInterface {
+        return HttpFactory::serverRequestFactory()::fromGlobals();
+    },
+    static function(\Throwable $t) use ($logger): ResponseInterface {
+        $logger->log($t->getMessage());
+
         function throwableToArray(\Throwable $t): array
         {
             return [
@@ -108,18 +96,15 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin): Resp
                 'code' => $t->getCode(),
                 'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
-        };
+        }
 
         $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode(throwableToArray($t)));
 
-        $logger->log($t->getMessage());
-
-        return HttpFactory::responseFactory()->createResponse(418)
+        return HttpFactory::responseFactory()->createResponse(500)
             ->withAddedHeader('Content-type', 'application/json')
             ->withBody($stream);
     }
-};
+);
 
-$server = Zend\Diactoros\Server::createServer($handler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-$server->listen();
+$server->run();

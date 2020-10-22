@@ -30,11 +30,12 @@ use Bigfoot\PHPacto\PactInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Http\Factory\Discovery\HttpFactory;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class ProxyRecorder
+class ProxyRecorder implements RequestHandlerInterface
 {
     /**
      * @var ClientInterface
@@ -64,7 +65,7 @@ class ProxyRecorder
         $this->contractsDir = $contractsDir;
     }
 
-    public function action(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this->makeProxyCall($request);
 
@@ -83,7 +84,7 @@ class ProxyRecorder
         return $response;
     }
 
-    private function makeProxyCall(RequestInterface $request): ResponseInterface
+    private function makeProxyCall(ServerRequestInterface $request): ResponseInterface
     {
         $uri = $this->getProxiedUri($request->getUri());
         $method = $request->getMethod();

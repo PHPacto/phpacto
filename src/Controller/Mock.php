@@ -28,8 +28,10 @@ use Bigfoot\PHPacto\PactInterface;
 use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Mock
+class Mock implements RequestHandlerInterface
 {
     /**
      * @var Logger
@@ -47,19 +49,15 @@ class Mock
         $this->pacts = $pacts;
     }
 
-    public function action(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $uri = HttpFactory::uriFactory()->createUri()
             ->withPath($request->getUri()->getPath())
             ->withQuery($request->getUri()->getQuery());
 
-        $request = $request->withUri($uri);
+        $pact = $this->findMatchingPact($request->withUri($uri));
 
-        $pact = $this->findMatchingPact($request);
-
-        $response = $pact->getResponse()->getSample();
-
-        return $response;
+        return $pact->getResponse()->getSample();
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
