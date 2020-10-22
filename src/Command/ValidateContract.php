@@ -77,7 +77,13 @@ class ValidateContract extends BaseCommand
 
         self::getTable($output)->render();
 
-        return (int) $hasErrors;
+        if (!$hasErrors) {
+            $output->writeln('<fg=green>✔️ All your contracts are correct!</>');
+        } else {
+            $output->writeln('<fg=red>✖ Check your contracts files!</>');
+        }
+
+        return $hasErrors;
     }
 
     protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null): bool
