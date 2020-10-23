@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,32 +42,49 @@ class PactLoader
         $this->serializer = $serializer;
     }
 
-    public function loadFromFile(string $path): PactInterface
+    public function loadFromPath(string $path): array
     {
-        if (!(\file_exists($path) && \is_readable($path))) {
-            throw new \Exception(\sprintf('File `%s` does not exist or is not readable', $path));
+        if (!is_readable($path)) {
+            throw new \Exception(sprintf('Path `%s` does not exist or is not readable', $path));
         }
 
+        if (is_file($path)) {
+            return [$path => $this->loadFromFile($path)];
+        }
+
+        if (is_dir($path)) {
+            return $this->loadFromDirectory($path);
+        }
+
+        throw new \Exception('Not a file, not a directory');
+    }
+
+    public function loadFromFile(string $path): PactInterface
+    {
 //        PHP >= 7.2
 //        $format = self::getExtensionFromPath($path)
 //            |> self::getFormatFromFileExtension($$);
         $format = self::getFormatFromFileExtension(self::getExtensionFromPath($path));
 
+        $fileContents = @file_get_contents($path);
+
+        if (false === $fileContents) {
+            throw new PactLoadingException(sprintf('File `%s` does not exist or is not readable', $path));
+        }
+
         try {
             /** @var PactInterface $pact */
-            $pact = $this->serializer->deserialize(\file_get_contents($path), PactInterface::class, $format);
+            $pact = $this->serializer->deserialize($fileContents, PactInterface::class, $format);
 
             return $pact;
         } catch (Mismatch $mismatch) {
             throw $mismatch;
         } catch (\Throwable $e) {
-            throw new PactLoadingException(\sprintf('File `%s` does not contain a valid pact', $path), 0, $e);
+            throw new PactLoadingException(sprintf('File `%s` does not contain a valid pact', $path), 0, $e);
         }
     }
 
     /**
-     * @param string $path
-     *
      * @throws \Exception
      *
      * @return PactInterface[]
@@ -76,12 +93,12 @@ class PactLoader
     {
         $pacts = [];
 
-        if (\is_dir($path)) {
+        if (is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', self::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(\sprintf('No contracts found in `%s`', $path));
+                throw new \Exception(sprintf('No contracts found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {
@@ -89,7 +106,7 @@ class PactLoader
                 $pacts[str_replace($path, '', $filePath)] = $this->loadFromFile($filePath);
             }
         } else {
-            throw new \Exception(\sprintf('Directory `%s` does not exist', $path));
+            throw new \Exception(sprintf('Directory `%s` does not exist', $path));
         }
 
         return $pacts;

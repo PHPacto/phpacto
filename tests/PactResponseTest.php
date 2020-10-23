@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ class PactResponseTest extends SerializerAwareTestCase
 
         $expected = [
             'status_code' => [
-                '@rule' => \get_class($mockStatusCode),
+                '_rule' => \get_class($mockStatusCode),
                 'sample' => 200,
             ],
         ];
@@ -161,17 +161,17 @@ class PactResponseTest extends SerializerAwareTestCase
 
         $expected = [
             'status_code' => [
-                '@rule' => \get_class($mockStatusCode),
+                '_rule' => \get_class($mockStatusCode),
                 'sample' => 201,
             ],
             'headers' => [
                 'Y' => [
-                    '@rule' => \get_class($mockHeaderValue),
+                    '_rule' => \get_class($mockHeaderValue),
                     'sample' => 'X',
                 ],
             ],
             'body' => [
-                '@rule' => \get_class($mockBody),
+                '_rule' => \get_class($mockBody),
                 'sample' => 'Body',
             ],
         ];

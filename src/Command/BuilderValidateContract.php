@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,46 +30,53 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BuilderValidateContract extends BuilderWriteContract
 {
+    private $exitCode = 0;
+
     protected function configure()
     {
         $this
             ->setName('builder:validate')
             ->setDescription('Check that all contracts are up to date with their contract builders')
-            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . \implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
+            ->addOption('format', 'f', InputArgument::OPTIONAL, 'The contract\'s file format <fg=cyan>(' . implode('|', PactLoader::getSupportedFormats()) . ')</>', 'json')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
         self::getTable($output)->render();
+
+        return $this->exitCode;
     }
 
     protected function processFile(OutputInterface $output, string $path, string $format): void
     {
         $pact = $this->runPactBuilder($path);
 
-        $pactPath = \rtrim($path, '.php') . '.' . $format;
+        $pactPath = rtrim($path, '.php') . '.' . $format;
 
-        if (!\file_exists($pactPath)) {
+        if (!file_exists($pactPath)) {
             self::outputResult($output, $pactPath, '<fg=red>✖ Pact missing</>');
+            $this->exitCode = 1;
 
             return;
         }
 
         try {
             $matching = $this->normalizePact($pact, $format) === $this->decodeContractFile($pactPath, $format);
+            $this->exitCode = (int) !$matching;
 
             self::outputResult($output, $pactPath, $matching ? '<fg=green>✔ Matching</>' : '<fg=red>✖ Not matching</>');
         } catch (\Exception | \Error $e) {
             self::outputResult($output, $pactPath, '<fg=red>✖ Invalid</>');
+            $this->exitCode = 1;
         }
     }
 
     final protected function decodeContractFile(string $path, string $format): array
     {
-        return $this->serializer->decode(\file_get_contents($path), $format);
+        return $this->serializer->decode(file_get_contents($path), $format);
     }
 
     final protected function normalizePact(PactInterface $pact, string $format): array

@@ -23,61 +23,67 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
 
-class AndRule extends AbstractRule
+class ObjectRule extends AbstractRecursiveRule
 {
     /**
      * @var Rule[]
      */
-    protected $rules;
+    protected $properties;
 
     /**
-     * @param Rule[] $rules
+     * @param Rule[] $properties
      * @param mixed  $sample
      */
-    public function __construct(array $rules, $sample)
+    public function __construct(array $properties, $sample = null)
     {
-        $this->assertSupport($this->rules = $rules);
-
-        parent::__construct($sample);
+        parent::__construct($this->properties = $properties, $sample);
     }
 
     /**
      * @return Rule[]
      */
-    public function getRules(): array
+    public function getProperties(): array
     {
-        return $this->rules;
+        return $this->properties;
     }
 
     public function assertMatch($test): void
     {
+        if (!\is_array($test)) {
+            throw new Mismatches\TypeMismatch('array', \gettype($test));
+        }
+
         $mismatches = [];
 
-        foreach ($this->rules as $rule) {
+        foreach ($this->properties as $key => $rule) {
             try {
-                $rule->assertMatch($test);
+                if (!\array_key_exists($key, $test)) {
+                    throw new Mismatches\KeyNotFoundMismatch($key);
+                }
+
+                $this->assertMatchRec($rule, $test[$key]);
             } catch (Mismatches\Mismatch $e) {
-                $mismatches[] = $e;
+                $mismatches[$key] = $e;
             }
         }
 
         if ($mismatches) {
-            throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} rules not matching the value');
+            throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} properties not matching the rule');
         }
     }
 
     /**
-     * @param Rule[] $rules
+     * @param Rule[] $properties
      */
-    protected function assertSupport(array $rules): void
+    protected function assertSupport($properties): void
     {
-        if (!\count($rules)) {
+        if (!\count($properties)) {
             throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
         }
 
-        foreach ($rules as $item) {
-            if (!$item instanceof Rule) {
-                throw new Mismatches\TypeMismatch('Rule', \gettype($item), 'Each item should be an instance of {{ expected }}');
+        foreach ($properties as $item) {
+            if (!(\is_array($item) || $item instanceof Rule)) {
+                throw new Mismatches\TypeMismatch('Rule', \gettype($properties), 'Each item should be an instance of {{ expected }}');
             }
         }
     }

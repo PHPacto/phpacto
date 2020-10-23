@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class AbstractRuleTest extends SerializerAwareTestCase implements RuleTestCase
         $rule = $this->rule->hasSample('sample');
 
         $expected = [
-            '@rule' => \get_class($rule),
+            '_rule' => \get_class($rule),
             'sample' => 'sample',
         ];
 

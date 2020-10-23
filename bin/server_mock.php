@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,84 +19,73 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Bigfoot\PHPacto\Controller\MockController;
+use Bigfoot\PHPacto\Controller\Mock;
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Logger\StdoutLogger;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
+use Http\Factory\Discovery\HttpFactory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 require __DIR__ . '/bootstrap.php';
 
-if (false !== ($allowOrigin = \getenv('ALLOW_ORIGIN'))) {
-    if ('all' === \strtolower($allowOrigin)) {
-        $allowOrigin = '*';
-    }
-} else {
-    $allowOrigin = null;
-}
-
 $logger = new StdoutLogger();
 
-$handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
-    if (
-        isset($allowOrigin)
-        && 'OPTIONS' === $request->getMethod()
-        && $request->hasHeader('Access-Control-Request-Method')
-    ) {
-        $stream = new Stream('php://memory', 'r');
-
-        return new Response($stream, 201, [
-            'Access-Control-Allow-Credentials' => 'True',
-            'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
-            'Access-Control-Allow-Headers' => '*',
-            'Access-Control-Allow-Origin' => '*',
-        ]);
-    }
-
-    $logger->log(\sprintf(
+$handler = function(ServerRequestInterface $request, RequestHandlerInterface $handler) use ($logger): ResponseInterface {
+    $logger->log(sprintf(
         '[%s] %s: %s',
-        \date('Y-m-d H:i:s'),
-        $_SERVER['REQUEST_METHOD'],
-        $_SERVER['REQUEST_URI']
+        date('Y-m-d H:i:s'),
+        $_SERVER['REQUEST_METHOD'] ?? '',
+        $_SERVER['REQUEST_URI'] ?? ''
     ));
 
     try {
+        $headerContract = $request->getHeaderLine('PHPacto-Contract');
+
         $pacts = (new PactLoader(SerializerFactory::getInstance()))
-            ->loadFromDirectory(CONTRACTS_DIR);
+            ->loadFromPath($headerContract ? CONTRACTS_DIR . $headerContract : CONTRACTS_DIR);
 
-        if (0 === \count($pacts)) {
-            throw new \Exception(\sprintf('No Pacts found in %s', \realpath(CONTRACTS_DIR)));
+        if (0 === count($pacts)) {
+            throw new \Exception(sprintf('No Pacts found in %s', realpath(CONTRACTS_DIR)));
         }
 
-        $controller = new MockController($logger, $pacts);
+        $controller = new Mock($logger, $pacts);
 
-        $response = $controller->action($request);
+        $response = $controller->handle($request);
 
-        $logger->log(\sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
-
-        if (null !== $allowOrigin) {
-            $response = $response
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD')
-                ->withHeader('Access-Control-Allow-Credentials', 'True')
-                ->withHeader('Access-Control-Allow-Headers', '*')
-                ->withHeader('Access-Control-Allow-Origin', $allowOrigin);
-        }
+        $logger->log(sprintf('Pact responded with Status Code %d', $response->getStatusCode()));
 
         return $response;
     } catch (MismatchCollection $mismatches) {
-        $stream = new Stream('php://memory', 'rw');
+        $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode([
             'message' => $mismatches->getMessage(),
             'contracts' => $mismatches->toArray(),
         ]));
 
-        $logger->log($mismatches->getMessage());
+        $logger->log($mismatches->getMessage() . "\n");
 
-        return new Response($stream, 418, ['Content-type' => 'application/json']);
-    } catch (\Throwable $t) {
+        return HttpFactory::responseFactory()->createResponse(418)
+            ->withAddedHeader('Content-type', 'application/json')
+            ->withBody($stream);
+    }
+};
+
+$app = new \Laminas\Stratigility\MiddlewarePipe();
+$app->pipe(new \Bigfoot\PHPacto\Controller\CorsMiddleware());
+$app->pipe(\Laminas\Stratigility\middleware($handler));
+
+$server = new \Laminas\HttpHandlerRunner\RequestHandlerRunner(
+    $app,
+    new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter(),
+    static function(): ServerRequestInterface {
+        return HttpFactory::serverRequestFactory()::fromGlobals();
+    },
+    static function(\Throwable $t) use ($logger): ResponseInterface {
+        $logger->log($t->getMessage());
+
         function throwableToArray(\Throwable $t): array
         {
             return [
@@ -107,16 +96,15 @@ $handler = function(RequestInterface $request) use ($logger, $allowOrigin) {
                 'code' => $t->getCode(),
                 'previous' => $t->getPrevious() ? throwableToArray($t->getPrevious()) : null,
             ];
-        };
+        }
 
-        $stream = new Stream('php://memory', 'rw');
+        $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'rw');
         $stream->write(json_encode(throwableToArray($t)));
 
-        $logger->log($t->getMessage());
-
-        return new Response($stream, 418, ['Content-type' => 'application/json']);
+        return HttpFactory::responseFactory()->createResponse(500)
+            ->withAddedHeader('Content-type', 'application/json')
+            ->withBody($stream);
     }
-};
+);
 
-$server = Zend\Diactoros\Server::createServer($handler, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-$server->listen();
+$server->run();

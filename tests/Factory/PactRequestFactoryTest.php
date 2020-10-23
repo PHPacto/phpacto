@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,27 @@ class PactRequestFactoryTest extends TestCase
         $stream->write('{"a":1,"0":[2,"3"]}');
 
         $request = new Request('/', 'get', $stream, ['Content-Type' => 'application/json']);
+
+        $pactRequest = PactRequestFactory::createFromPSR7($request);
+
+        $expectedBody = [
+            'a' => 1,
+            0 => [2.0, '3'],
+        ];
+
+        self::assertEquals($expectedBody, $pactRequest->getBody()->getSample());
+    }
+
+    /**
+     * @depends test_it_returns_pact_request_with_headers
+     * @depends test_it_returns_pact_request_with_body_plain_string
+     */
+    public function test_it_returns_pact_request_with_content_type_mime_and_charset()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('{"a":1,"0":[2,"3"]}');
+
+        $request = new Request('/', 'get', $stream, ['Content-Type' => 'application/json; charset=UTF-8']);
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 

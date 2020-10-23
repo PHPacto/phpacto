@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,13 @@ use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\RequestInterface;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\Uri;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class MockProxyController
+class ProxyRecorder implements RequestHandlerInterface
 {
     /**
      * @var ClientInterface
@@ -60,11 +61,11 @@ class MockProxyController
     {
         $this->client = $client;
         $this->logger = $logger;
-        $this->proxyTo = \parse_url($proxyTo);
+        $this->proxyTo = parse_url($proxyTo);
         $this->contractsDir = $contractsDir;
     }
 
-    public function action(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this->makeProxyCall($request);
 
@@ -72,9 +73,9 @@ class MockProxyController
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
-        $dateStr = \date('Y-m-d H:i:s');
+        $dateStr = date('Y-m-d H:i:s');
 
-        $pact = new Pact($pactRequest, $pactResponse, 'Created automatically - ' . $dateStr);
+        $pact = new Pact($pactRequest, $pactResponse, 'Created for you by PHPacto Recorder - ' . $dateStr);
 
         $this->createContractFile($pact, $dateStr);
 
@@ -83,7 +84,7 @@ class MockProxyController
         return $response;
     }
 
-    private function makeProxyCall(RequestInterface $request): ResponseInterface
+    private function makeProxyCall(ServerRequestInterface $request): ResponseInterface
     {
         $uri = $this->getProxiedUri($request->getUri());
         $method = $request->getMethod();
@@ -108,21 +109,21 @@ class MockProxyController
 
     private function createContractFile(PactInterface $pact, string $dateStr): void
     {
-        $filename = \sprintf('%s/%s %s.yaml', $this->contractsDir, $dateStr, (float) (\microtime()) * 1000000);
+        $filename = sprintf('%s/%s %s.yaml', $this->contractsDir, $dateStr, (float) (microtime()) * 1000000);
 
         $serializer = SerializerFactory::getInstance();
-        \file_put_contents($filename, $serializer->serialize($pact, 'yaml'));
+        file_put_contents($filename, $serializer->serialize($pact, 'yaml'));
 
-        $this->logger->log('Contract wrote to ' . \realpath($filename));
+        $this->logger->log('Contract wrote to ' . realpath($filename));
     }
 
     private function getProxiedUri(UriInterface $uri): UriInterface
     {
-        return (new Uri())
+        return HttpFactory::uriFactory()->createUri()
             ->withScheme($this->proxyTo['scheme'] ?? 'http')
             ->withHost($this->proxyTo['host'] ?? 'localhost')
             ->withPort($this->proxyTo['port'] ?? ('https' === @$this->proxyTo['scheme'] ? 443 : 80))
-            ->withPath(\str_replace('//', '/', $this->proxyTo['path'] ?? '/') . $uri->getPath())
+            ->withPath(str_replace('//', '/', $this->proxyTo['path'] ?? '/') . $uri->getPath())
             ->withQuery($uri->getQuery())
             ->withFragment($uri->getFragment());
     }

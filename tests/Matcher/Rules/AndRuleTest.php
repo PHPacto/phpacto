@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ class AndRuleTest extends SerializerAwareTestCase
         $rule = new AndRule([$childRule, $childRule], 'sample');
 
         $expected = [
-            '@rule' => 'and',
+            '_rule' => 'and',
             'rules' => [
-                ['@rule' => \get_class($childRule)],
-                ['@rule' => \get_class($childRule)],
+                ['_rule' => \get_class($childRule)],
+                ['_rule' => \get_class($childRule)],
             ],
             'sample' => 'sample',
         ];
@@ -48,10 +48,10 @@ class AndRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'and',
+            '_rule' => 'and',
             'rules' => [
-                ['@rule' => \get_class($childRule)],
-                ['@rule' => \get_class($childRule)],
+                ['_rule' => \get_class($childRule)],
+                ['_rule' => \get_class($childRule)],
             ],
             'sample' => 5,
         ];

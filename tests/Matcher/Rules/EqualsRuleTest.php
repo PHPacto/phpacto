@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,20 @@ class EqualsRuleTest extends SerializerAwareTestCase
     {
         $rule = new EqualsRule(5);
 
-        $expected = 5;
+        $expected = [
+            '_rule' => 'equals',
+            'sample' => 5,
+        ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()
     {
-        $data = 5;
+        $data = [
+            '_rule' => 'equals',
+            'sample' => 5,
+        ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
@@ -58,10 +64,13 @@ class EqualsRuleTest extends SerializerAwareTestCase
         ]);
 
         $expected = [
-            ['@rule' => \get_class($childRule)],
-            'key' => ['@rule' => \get_class($childRule)],
-            'nested' => [
-                'key' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'equals',
+            'sample' => [
+                0 => ['_rule' => \get_class($childRule)],
+                'key' => ['_rule' => \get_class($childRule)],
+                'nested' => [
+                    'key' => ['_rule' => \get_class($childRule)],
+                ],
             ],
         ];
 

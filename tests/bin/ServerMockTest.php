@@ -19,25 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher\Rules;
+namespace Bigfoot\PHPacto\Factory;
 
-use Bigfoot\PHPacto\Matcher\Mismatches;
+use PHPUnit\Framework\TestCase;
 
-class NumericRule extends AbstractRule
+class ServerMockTest extends TestCase
 {
-    public function assertMatch($test): void
+    public function test_it_has_pacto_example_contract()
     {
-        if (!is_numeric($test)) {
-            throw new Mismatches\TypeMismatch('number', \gettype($test));
-        }
-    }
+        $output = `CONTRACTS_DIR=examples/ php bin/server_mock.php 2>&1`;
 
-    public function getSample()
-    {
-        if (null !== $this->sample) {
-            return $this->sample;
-        }
-
-        return 0.0;
+        self::assertContains('This is your first API contract', $output);
     }
 }

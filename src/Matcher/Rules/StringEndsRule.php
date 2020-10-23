@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class StringEndsRule extends StringComparisonRule
 
         $function = $this->caseSensitive ? 'strpos' : 'stripos';
 
-        if (0 !== $function(\strrev($test), \strrev($this->value))) {
+        if (0 !== $function(strrev($test), strrev($this->value))) {
             throw new Mismatches\ValueMismatch('String {{ actual }} should end with {{ expected }}', $this->value, $test);
         }
     }

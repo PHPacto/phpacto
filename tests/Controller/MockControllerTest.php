@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Pact;
 use Bigfoot\PHPacto\PactRequestInterface;
 use Bigfoot\PHPacto\PactResponseInterface;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Request;
 
 class MockControllerTest extends TestCase
 {
@@ -75,20 +75,20 @@ class MockControllerTest extends TestCase
             ->method('getResponse')
             ->willReturn($matchingResponse);
 
-        $controller = new MockController($this->logger, [$notMatchingPact, $matchingPact]);
+        $controller = new Mock($this->logger, [$notMatchingPact, $matchingPact]);
 
-        $response = $controller->action(new Request());
+        $response = $controller->handle(new ServerRequest());
 
         self::assertSame($matchingResponsePsr7, $response);
     }
 
     public function test_it_throws_exception_if_no_pact_is_matching()
     {
-        $controller = new MockController($this->logger, []);
+        $controller = new Mock($this->logger, []);
 
         self::expectException(MismatchCollection::class);
         self::expectExceptionMessage('No matching contract found for your request');
 
-        $controller->action(new Request());
+        $controller->handle(new ServerRequest());
     }
 }

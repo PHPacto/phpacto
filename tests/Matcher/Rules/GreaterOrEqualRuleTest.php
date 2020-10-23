@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class GreaterOrEqualRuleTest extends SerializerAwareTestCase
         $rule = new GreaterOrEqualRule(5, 6);
 
         $expected = [
-            '@rule' => 'greaterEqual',
+            '_rule' => 'greaterEqual',
             'value' => 5,
             'sample' => 6,
         ];

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,27 +31,21 @@ class NumericRuleTest extends SerializerAwareTestCase
             ->setMethodsExcept(['getSample'])
             ->getMock();
 
-        self::assertEquals(0.0, $rule->getSample());
+        self::assertSame(0.0, $rule->getSample());
     }
 
     public function test_it_is_normalizable()
     {
         $rule = new NumericRule(0.0);
 
-        $expected = [
-            '@rule' => 'number',
-            'sample' => 0.0,
-        ];
+        $expected = 0.0;
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_it_is_denormalizable()
     {
-        $data = [
-            '@rule' => 'number',
-            'sample' => 0.0,
-        ];
+        $data = 0.0;
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 

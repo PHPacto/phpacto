@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class UuidRuleTest extends SerializerAwareTestCase
         $rule = new UuidRule();
 
         $expected = [
-            '@rule' => 'uuid',
+            '_rule' => 'uuid',
             'sample' => '00000000-0000-0000-0000-000000000000',
         ];
 

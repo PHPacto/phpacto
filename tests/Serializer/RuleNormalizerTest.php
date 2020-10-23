@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Matcher\Rules\ComparisonRule;
+use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\ExistsRule;
 use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
+use Bigfoot\PHPacto\Matcher\Rules\NumericRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
@@ -104,32 +107,40 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         $rule = $this->rule->hasSample(5);
 
         $expected = [
-            '@rule' => \get_class($rule),
+            '_rule' => \get_class($rule),
             'sample' => 5,
         ];
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_normalize_equals()
     {
-        $rule = new EqualsRule(5);
+        $rule = new NumericRule(5);
 
         $expected = 5;
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_normalize_string()
+    {
+        $rule = new StringRule('string');
+
+        $expected = 'string';
+
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_normalize_with_alias()
     {
-        $rule = new StringRule('string');
+        $rule = new ExistsRule();
 
         $expected = [
-            '@rule' => 'string',
-            'sample' => 'string',
+            '_rule' => 'exists',
         ];
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertSame($expected, $this->normalizer->normalize($rule));
     }
 
     public function test_denormalize_equals()
@@ -138,24 +149,37 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(EqualsRule::class, $rule);
+        self::assertInstanceOf(NumericRule::class, $rule);
         self::assertEquals(5, $rule->getSample());
     }
 
-    public function test_denormalize_string_equals()
+    public function test_denormalize_string()
     {
         $data = 'string';
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertInstanceOf(StringRule::class, $rule);
         self::assertEquals('string', $rule->getSample());
+    }
+
+    public function test_denormalize_string_equals()
+    {
+        $data = [
+            '_rule' => 'stringEquals',
+            'value' => 'test',
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(StringEqualsRule::class, $rule);
+        self::assertEquals('test', $rule->getSample());
     }
 
     public function test_denormalize_with_alias()
     {
         $data = [
-            '@rule' => 'greater',
+            '_rule' => 'greater',
             'value' => 5,
             'sample' => 6,
         ];
@@ -169,13 +193,14 @@ class RuleNormalizerTest extends SerializerAwareTestCase
 
 //    public function test_normalize_recursive()
 //    {
-//        $rule = new EachRule(new StringEqualsRule('a'), ['a']);
+//        $rule = new EachItemRule(new StringEqualsRule('a'), ['a']);
 //
 //        $data = $this->normalizer->normalize($rule);
+//        var_dump($data);
 //
 //        $rule = $this->normalizer->denormalize($data, Rule::class);
 //
-//        self::assertInstanceOf(EachRule::class, $rule);
+//        self::assertInstanceOf(EachItemRule::class, $rule);
 //        self::assertInstanceOf(StringEqualsRule::class, $stringRule = $rule->getValue());
 //    }
 //

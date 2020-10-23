@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,26 +58,32 @@ class ValidateContract extends BaseCommand
         $path = $input->getArgument('path');
         $hasErrors = false;
 
-        if (\is_file($path) && \is_readable($path)) {
+        if (is_file($path) && is_readable($path)) {
             $hasErrors |= !$this->isPactValid($output, $path, $this->defaultContractsDir);
-        } elseif (\is_dir($path)) {
+        } elseif (is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(\sprintf('*.{%s}', \implode(',', PactLoader::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
 
             if (0 === $finder->count()) {
-                throw new \Exception(\sprintf('No files found in `%s`', $path));
+                throw new \Exception(sprintf('No files found in `%s`', $path));
             }
 
             foreach ($finder->files() as $file) {
                 $hasErrors |= !$this->isPactValid($output, (string) $file, $path);
             }
         } else {
-            throw new \Exception(\sprintf('Path "%s" must be a readable file or directory', $path));
+            throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
         self::getTable($output)->render();
 
-        return (int) $hasErrors;
+        if (!$hasErrors) {
+            $output->writeln('<fg=green>✔️ All your contracts are correct!</>');
+        } else {
+            $output->writeln('<fg=red>✖ Check your contracts files!</>');
+        }
+
+        return $hasErrors;
     }
 
     protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null): bool
@@ -93,8 +99,6 @@ class ValidateContract extends BaseCommand
         } catch (\Throwable $e) {
             if ($e instanceof Mismatch) {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Not valid</>', $e);
-            } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
-                self::outputResult($output, $shortPath, '<fg=red>✖ Syntax error</>', $e->getPrevious() ?? $e);
             } else {
                 self::outputResult($output, $shortPath, '<fg=red>✖ Error</>', $e->getPrevious() ?? $e);
             }
@@ -123,7 +127,7 @@ class ValidateContract extends BaseCommand
     private static function getShortPath(string $filePath, string $rootDir = null): string
     {
         if ($rootDir) {
-            return \str_replace($rootDir . '/', '', $filePath);
+            return str_replace($rootDir . '/', '', $filePath);
         }
 
         return $filePath;
@@ -137,7 +141,7 @@ class ValidateContract extends BaseCommand
             if ($error instanceof MismatchCollection) {
                 $row[] = (string) $error;
             } else {
-                $row[] = \sprintf('<options=bold>%s</>', $error->getMessage());
+                $row[] = sprintf('<options=bold>%s</>', $error->getMessage());
             }
         }
 

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace Bigfoot\PHPacto\Command;
 
-use Bigfoot\PHPacto\Command\ValidateContract;
+use Bigfoot\PHPacto\Factory\SerializerFactory;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
@@ -49,21 +49,14 @@ class ValidateContractTest extends TestCase
             'contracts' => [
                 'not-a-json.json' => 'Not a JSON',
 
-                'malformed.json' => '[{}]',
+                'malformed.json' => '{[""]}',
 
-                'invalid.json' => \json_encode([
+                'invalid.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
-                    'request' => [
-                        'method' => 5,
-                        'path' => '/',
-                    ],
-                    'response' => [
-                        'status_code' => 200,
-                    ],
                 ]),
 
-                'valid.json' => \json_encode([
+                'valid.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -75,12 +68,12 @@ class ValidateContractTest extends TestCase
                     ],
                 ]),
 
-                'matching.json' => \json_encode([
+                'matching.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
                         'method' => [
-                            '@rule' => 'regex',
+                            '_rule' => 'regex',
                             'case_sensitive' => false,
                             'pattern' => '(get|post)',
                             'sample' => 'get',
@@ -92,12 +85,12 @@ class ValidateContractTest extends TestCase
                     ],
                 ]),
 
-                'not-matching.json' => \json_encode([
+                'not-matching.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
                         'method' => [
-                            '@rule' => 'regex',
+                            '_rule' => 'regex',
                             'case_sensitive' => false,
                             'pattern' => '(get|post)',
                             'sample' => 'put',
@@ -127,9 +120,9 @@ class ValidateContractTest extends TestCase
 
         $output = $this->tester->getDisplay();
 
-        self::assertContains('not-a-json.json     ✖ Syntax error', $output);
+        self::assertContains('not-a-json.json     ✖ Error', $output);
         self::assertContains('malformed.json      ✖ Error', $output);
-        self::assertContains('invalid.json        ✖ Not valid', $output);
+        self::assertContains('invalid.json        ✖ Error', $output);
         self::assertContains('valid.json          ✔ Valid', $output);
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);

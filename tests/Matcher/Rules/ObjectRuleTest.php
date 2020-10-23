@@ -24,18 +24,20 @@ namespace Bigfoot\PHPacto\Matcher\Rules;
 use Bigfoot\PHPacto\Matcher\Mismatches;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
-class ContainsItemRuleTest extends SerializerAwareTestCase
+class ObjectRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
-        $rule = new ContainsItemRule($childRule, ['value']);
+        $rule = new ObjectRule(['prop' => $childRule], ['prop' => 'value']);
 
         $expected = [
-            '_rule' => 'contains',
-            'rule' => ['_rule' => \get_class($childRule)],
+            '_rule' => 'object',
+            'properties' => [
+                'prop' => ['_rule' => \get_class($childRule)],
+            ],
             'sample' => [
-                'value',
+                'prop' => 'value',
             ],
         ];
 
@@ -47,34 +49,37 @@ class ContainsItemRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '_rule' => 'contains',
-            'rule' => ['_rule' => \get_class($childRule)],
+            '_rule' => 'object',
+            'properties' => [
+                'prop' => ['_rule' => \get_class($childRule)],
+            ],
             'sample' => [
-                'value',
+                'prop' => 'value',
             ],
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
-        self::assertInstanceOf(ContainsItemRule::class, $rule);
-        self::assertSame(['value'], $rule->getSample());
+        self::assertInstanceOf(ObjectRule::class, $rule);
+        self::assertSame(['prop' => 'value'], $rule->getSample());
     }
 
     public function matchesTrueProvider()
     {
-        $rule = new EqualsRule(2);
+        $two = new EqualsRule(2);
 
         return [
-            [true, $rule, [1, 2, 3]],
+            [true, ['two' => $two], ['one' => 1, 'two' => 2, 'three' => 3]],
         ];
     }
 
     public function matchesFalseProvider()
     {
-        $rule = new EqualsRule(0);
+        $zero = new EqualsRule(0);
 
         return [
-            [false, $rule, [5, 4, 5]],
+            [false, ['zero' => $zero], []],
+            [false, ['zero' => $zero], ['zero' => 1]],
         ];
     }
 
@@ -87,24 +92,15 @@ class ContainsItemRuleTest extends SerializerAwareTestCase
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {
+        $rule = new ObjectRule($ruleValue);
+
         if (!$shouldMatch) {
             $this->expectException(Mismatches\MismatchCollection::class);
-            $this->expectExceptionMessage('At least one item');
+            $this->expectExceptionMessage('properties not matching');
         }
 
-        new ContainsItemRule($ruleValue, $testValue);
+        $rule->assertMatch($testValue);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
-    }
-
-    public function testMismatchEmpty()
-    {
-        $this->expectException(Mismatches\ValueMismatch::class);
-        $this->expectExceptionMessage('empty');
-
-        $childRule = $this->rule->empty();
-
-        $rule = new ContainsItemRule($childRule);
-        $rule->assertMatch([]);
     }
 }

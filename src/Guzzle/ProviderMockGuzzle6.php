@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,6 @@ class ProviderMockGuzzle6 implements ProviderMock
         });
     }
 
-    /**
-     * @return HandlerStack
-     */
     public function getHandler(): HandlerStack
     {
         return HandlerStack::create($this->mock);

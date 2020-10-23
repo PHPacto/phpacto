@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@ class TypeMismatch extends ValueMismatch
 {
     /**
      * @param string|string[] $expected
-     * @param string          $actual
-     * @param string|null     $message
      */
     public function __construct($expected, string $actual, string $message = null)
     {

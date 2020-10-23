@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.4-zts-alpine
 
 RUN apk add --update bash
 
@@ -10,7 +10,7 @@ COPY . /srv/
 
 WORKDIR /srv
 ENV CONTRACTS_DIR=examples
-RUN composer install --no-ansi --no-dev --optimize-autoloader && ./bin/phpacto validate
+RUN composer install --optimize-autoloader && ./bin/phpacto validate
 
 # Start
 USER www-data

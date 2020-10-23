@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ class CountItemsRuleTest extends SerializerAwareTestCase
         $rule = new CountItemsRule($childRule, []);
 
         $expected = [
-            '@rule' => 'count',
-            'rule' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'count',
+            'rule' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -45,8 +45,8 @@ class CountItemsRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty(ComparisonRule::class);
 
         $data = [
-            '@rule' => 'count',
-            'rule' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'count',
+            'rule' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 

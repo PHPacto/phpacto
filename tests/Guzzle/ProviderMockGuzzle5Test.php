@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle5;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use Http\Factory\Discovery\HttpFactory;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 /**
  * @group guzzle
@@ -41,10 +41,10 @@ class ProviderMockGuzzle5Test extends TestCase
 
     public function setUp()
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        $guzzleVersion = ClientInterface::VERSION;
 
-        if (\version_compare($guzzleVersion, '5', '<') || \version_compare($guzzleVersion, '6', '>=')) {
-            self::markTestSkipped(\sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
+        if (version_compare($guzzleVersion, '5', '<') || version_compare($guzzleVersion, '6', '>=')) {
+            self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 
         $this->server = new ProviderMockGuzzle5();
@@ -105,13 +105,13 @@ class ProviderMockGuzzle5Test extends TestCase
             ->expects(self::once())
             ->method('assertMatch');
 
-        $responseBody = new Stream('php://memory', 'w');
+        $responseBody = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
         $responseBody->write('mock');
 
         $response
             ->expects(self::once())
             ->method('getSample')
-            ->willReturn(new Response($responseBody, 123, []));
+            ->willReturn(HttpFactory::responseFactory()->createResponse(123)->withBody($responseBody));
 
         $this->server->handlePact($pact);
 

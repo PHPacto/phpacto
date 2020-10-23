@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,13 @@ use Bigfoot\PHPacto\Logger\Logger;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\PactInterface;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Uri;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class MockController
+class Mock implements RequestHandlerInterface
 {
     /**
      * @var Logger
@@ -41,25 +43,21 @@ class MockController
      */
     private $pacts;
 
-    public function __construct(Logger  $logger, array $pacts)
+    public function __construct(Logger $logger, array $pacts)
     {
         $this->logger = $logger;
         $this->pacts = $pacts;
     }
 
-    public function action(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $uri = (new Uri())
+        $uri = HttpFactory::uriFactory()->createUri()
             ->withPath($request->getUri()->getPath())
             ->withQuery($request->getUri()->getQuery());
 
-        $request = $request->withUri($uri);
+        $pact = $this->findMatchingPact($request->withUri($uri));
 
-        $pact = $this->findMatchingPact($request);
-
-        $response = $pact->getResponse()->getSample();
-
-        return $response;
+        return $pact->getResponse()->getSample();
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
@@ -70,7 +68,7 @@ class MockController
             try {
                 $pact->getRequest()->assertMatch($request);
 
-                $this->logger->log(\sprintf('Found matching contract %s', $contractLocation));
+                $this->logger->log(sprintf('Found matching contract %s', $contractLocation));
 
                 return $pact;
             } catch (Mismatch $mismatch) {

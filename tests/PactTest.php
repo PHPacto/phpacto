@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,11 +65,11 @@ class PactTest extends SerializerAwareTestCase
             'version' => 'ver',
             'description' => 'desc',
             'request' => [
-                'method' => ['@rule' => \get_class($request->getMethod())],
-                'path' => ['@rule' => \get_class($request->getPath())],
+                'method' => ['_rule' => \get_class($request->getMethod())],
+                'path' => ['_rule' => \get_class($request->getPath())],
             ],
             'response' => [
-                'status_code' => ['@rule' => \get_class($response->getStatusCode())],
+                'status_code' => ['_rule' => \get_class($response->getStatusCode())],
             ],
         ];
 

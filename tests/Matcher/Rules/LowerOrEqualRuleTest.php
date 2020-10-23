@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class LowerOrEqualRuleTest extends SerializerAwareTestCase
         $rule = new LowerOrEqualRule(5, 5);
 
         $expected = [
-            '@rule' => 'lowerEqual',
+            '_rule' => 'lowerEqual',
             'value' => 5,
         ];
 

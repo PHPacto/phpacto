@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,9 @@ namespace Bigfoot\PHPacto\Guzzle;
 use Bigfoot\PHPacto\PactInterface;
 use Bigfoot\PHPacto\Test\PHPactoTestTrait;
 use GuzzleHttp\Ring\Client\MockHandler;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Stream;
 
 class ProviderMockGuzzle5 implements ProviderMock
 {
@@ -59,16 +58,29 @@ class ProviderMockGuzzle5 implements ProviderMock
         return $this->mock;
     }
 
-    private static function getRequestFromArray(array $request): RequestInterface
+    private function getRequestFromArray(array $request): RequestInterface
     {
         $uri = $request['uri'];
+        $protocol = $request['version'];
         $method = $request['http_method'];
         $headers = $request['headers'];
+        $body = $request['body'];
 
-        $body = new Stream('php://memory', 'w');
-        $body->write($request['body']);
+        $request = HttpFactory::serverRequestFactory()->createServerRequest($method, $uri)
+            ->withProtocolVersion($protocol);
 
-        return new Request($uri, $method, $body, $headers);
+        if ($body) {
+            $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
+            $stream->write('mock');
+
+            $request = $request->withBody($stream);
+        }
+
+        foreach ($headers as $key => $value) {
+            $request = $request->withAddedHeader($key, $value);
+        }
+
+        return $request;
     }
 
     private static function responseToArray(ResponseInterface $response): array

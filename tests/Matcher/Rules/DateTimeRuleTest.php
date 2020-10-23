@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class DateTimeRuleTest extends SerializerAwareTestCase
         $rule = new DateTimeRule('*', '0');
 
         $expected = [
-            '@rule' => 'datetime',
+            '_rule' => 'datetime',
             'format' => '*',
             'sample' => '0',
         ];
@@ -42,7 +42,7 @@ class DateTimeRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'datetime',
+            '_rule' => 'datetime',
             'format' => '*',
             'sample' => '0',
         ];

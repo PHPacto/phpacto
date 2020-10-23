@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,8 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 class PactResponse extends PactMessage implements PactResponseInterface
 {
@@ -37,7 +36,6 @@ class PactResponse extends PactMessage implements PactResponseInterface
     private $statusCode;
 
     /**
-     * @param Rule      $statusCode
      * @param Rule[]    $headers
      * @param Rule|null $body
      */
@@ -48,9 +46,6 @@ class PactResponse extends PactMessage implements PactResponseInterface
         $this->statusCode = $statusCode;
     }
 
-    /**
-     * @return Rule
-     */
     public function getStatusCode(): Rule
     {
         return $this->statusCode;
@@ -90,13 +85,18 @@ class PactResponse extends PactMessage implements PactResponseInterface
         $headers = $this->getSampleHeaders();
         $body = $this->getSampleBody();
 
-        $stream = new Stream('php://memory', 'w');
+        $response = HttpFactory::responseFactory()->createResponse($statusCode);
 
         if (null !== $body) {
+            $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
             $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+
+            $response = $response->withBody($stream);
         }
 
-        $response = new Response($stream, $statusCode, $headers);
+        foreach ($headers as $key => $value) {
+            $response = $response->withAddedHeader($key, $value);
+        }
 
         return $response;
     }

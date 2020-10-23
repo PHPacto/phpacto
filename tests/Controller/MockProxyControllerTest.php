@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@ use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Logger\Logger;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 class MockProxyControllerTest extends TestCase
 {
@@ -55,7 +55,7 @@ class MockProxyControllerTest extends TestCase
     protected $serializer;
 
     /**
-     * @var MockProxyController
+     * @var ProxyRecorder
      */
     protected $controller;
 
@@ -68,7 +68,7 @@ class MockProxyControllerTest extends TestCase
     {
         $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
 
-        if (\version_compare($guzzleVersion, '6', '<') || \version_compare($guzzleVersion, '7', '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
             self::markTestSkipped('MockProxyController works with Guzzle 6 or newer');
         }
 
@@ -84,7 +84,7 @@ class MockProxyControllerTest extends TestCase
         // Setup and cache the virtual file system
         $this->fs = vfsStream::setup('root', 444, $directory);
 
-        $this->controller = new MockProxyController($this->client, $this->logger, $this->proxyTo, $this->fs->url());
+        $this->controller = new ProxyRecorder($this->client, $this->logger, $this->proxyTo, $this->fs->url());
     }
 
     /**
@@ -94,7 +94,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client wiil make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new ServerRequest([], [], '/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -108,7 +108,7 @@ class MockProxyControllerTest extends TestCase
             ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willReturn($response);
 
-        $response = $this->controller->action($request);
+        $response = $this->controller->handle($request);
 
         // Assertions on Response coming from proxied server
         self::assertEquals(418, $response->getStatusCode());
@@ -122,15 +122,15 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-test-path', $contract);
-        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertStringContains("body: 'Request Body'", $contract);
+        self::assertContains('method: METHOD', $contract);
+        self::assertContains('path: /my-test-path', $contract);
+        self::assertContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertStringContains("body: 'Response Body'", $contract);
+        self::assertContains('status_code: 418', $contract);
+        self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Response Body'", $contract);
     }
 
     /**
@@ -140,7 +140,7 @@ class MockProxyControllerTest extends TestCase
     {
         // A client will make a request like this
         $stream = new Stream('php://memory', 'rw');
-        $request = new Request('/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
+        $request = new ServerRequest([], [], '/my-test-path', 'method', $stream, ['X' => 'REQUEST HEADERS']);
         $stream->write('Request Body');
 
         // The proxied server will respond with
@@ -154,7 +154,7 @@ class MockProxyControllerTest extends TestCase
             ->with('method', $this->proxyTo . '/my-test-path', ['headers' => ['X' => ['REQUEST HEADERS']], 'body' => 'Request Body', 'allow_redirects' => false])
             ->willThrowException(new BadResponseException('Server respond with a BAD status code', $request, $response));
 
-        $response = $this->controller->action($request);
+        $response = $this->controller->handle($request);
 
         // Assertions on Response coming from proxied server
         self::assertEquals(418, $response->getStatusCode());
@@ -168,19 +168,14 @@ class MockProxyControllerTest extends TestCase
         $contract = $this->fs->getChildren()[0]->getContent();
 
         // Contract Request
-        self::assertStringContains('method: METHOD', $contract);
-        self::assertStringContains('path: /my-test-path', $contract);
-        self::assertStringContains("X: 'REQUEST HEADERS'", $contract);
-        self::assertStringContains("body: 'Request Body'", $contract);
+        self::assertContains('method: METHOD', $contract);
+        self::assertContains('path: /my-test-path', $contract);
+        self::assertContains("X: 'REQUEST HEADERS'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Request Body'", $contract);
 
         // Contract Response
-        self::assertStringContains('status_code: 418', $contract);
-        self::assertStringContains("'Y': 'RESPONSE HEADERS'", $contract);
-        self::assertStringContains("body: 'Response Body'", $contract);
-    }
-
-    private static function assertStringContains(string $needle, string $haystack, string $message = '')
-    {
-        self::assertRegexp('/' . \preg_quote($needle, '/') . '/', $haystack, $message);
+        self::assertContains('status_code: 418', $contract);
+        self::assertContains("'Y': 'RESPONSE HEADERS'", $contract);
+        self::assertContains("body:\n        _rule: equals\n        sample: 'Response Body'", $contract);
     }
 }

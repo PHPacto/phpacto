@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,25 +32,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $rule = new EachItemRule($childRule, []);
 
         $expected = [
-            '@rule' => 'each',
-            'rules' => ['@rule' => \get_class($childRule)],
-            'sample' => [],
-        ];
-
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function test_it_is_normalizable_with_rules_array()
-    {
-        $childRule = $this->rule->empty();
-        $rule = new EachItemRule(['key1' => $childRule, 'key2' => $childRule], []);
-
-        $expected = [
-            '@rule' => 'each',
-            'rules' => [
-                'key1' => ['@rule' => \get_class($childRule)],
-                'key2' => ['@rule' => \get_class($childRule)],
-            ],
+            '_rule' => 'each',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -62,8 +45,8 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'each',
-            'rules' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'each',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => [],
         ];
 
@@ -71,26 +54,6 @@ class EachItemRuleTest extends SerializerAwareTestCase
 
         self::assertInstanceOf(EachItemRule::class, $rule);
         self::assertInstanceOf(Rule::class, $rule->getRules());
-        self::assertSame([], $rule->getSample());
-    }
-
-    public function test_it_is_denormalizable_with_rules_array()
-    {
-        $childRule = $this->rule->empty();
-
-        $data = [
-            '@rule' => 'each',
-            'rules' => [
-                'key1' => ['@rule' => \get_class($childRule)],
-                'key2' => ['@rule' => \get_class($childRule)],
-            ],
-            'sample' => [],
-        ];
-
-        $rule = $this->normalizer->denormalize($data, Rule::class);
-
-        self::assertInstanceOf(EachItemRule::class, $rule);
-        self::assertCount(2, $rule->getRules());
         self::assertSame([], $rule->getSample());
     }
 
@@ -220,12 +183,27 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.A', '1.B', '2.C'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.A', '1.B', '2.C'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
 
         self::fail('An MismatchCollection should been thrown');
+    }
+
+    public function testMatchArrayOfStrings()
+    {
+        $stringRule = new StringRule();
+
+        $rule = new EachItemRule([
+            'string' => $stringRule,
+        ]);
+
+        $rule->assertMatch([
+            ['string' => 'any string value'],
+        ]);
+
+        self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 
     public function testMismatchArray()
@@ -244,7 +222,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
                 ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.B'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }

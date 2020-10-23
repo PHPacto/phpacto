@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 function print_banner()
 {
-    $banner = \file_get_contents(__DIR__ . '/../BANNER');
+    $banner = file_get_contents(__DIR__ . '/../BANNER');
 
-    echo \str_replace("\n\n", PHP_EOL, $banner) . PHP_EOL;
+    echo str_replace("\n\n", PHP_EOL, $banner) . PHP_EOL;
 }
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $autoloader) {
-    if (\file_exists($autoloader)) {
+    if (file_exists($autoloader)) {
         require $autoloader;
 
         break;
@@ -35,12 +35,12 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 }
 
 // Load environment
-$_root_dir = \getenv('PWD');
-if ($_env_contracts_dir = \getenv('CONTRACTS_DIR')) {
+$_root_dir = getenv('PWD');
+if ($_env_contracts_dir = getenv('CONTRACTS_DIR')) {
     if (\DIRECTORY_SEPARATOR !== $_env_contracts_dir[0]) {
         $_env_contracts_dir = $_root_dir . \DIRECTORY_SEPARATOR . $_env_contracts_dir;
     }
-    \define('CONTRACTS_DIR', \realpath($_env_contracts_dir));
+    define('CONTRACTS_DIR', realpath($_env_contracts_dir));
 } else {
-    \define('CONTRACTS_DIR', $_root_dir);
+    define('CONTRACTS_DIR', $_root_dir);
 }

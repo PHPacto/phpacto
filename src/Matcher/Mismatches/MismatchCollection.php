@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
      */
     public function __construct(array $mismatches, string $message = null)
     {
-        parent::__construct(\str_replace('{{ count }}', \count($mismatches), $message ?: '{{ count }} rules are failed'));
+        parent::__construct(str_replace('{{ count }}', \count($mismatches), $message ?: '{{ count }} rules are failed'));
 
         $this->mismatches = $mismatches;
     }
@@ -44,15 +44,12 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         $mismatches = $this->toArrayFlat();
 
         $map = function($k, $v) {
-            return \sprintf('%s: %s', $k, $v);
+            return sprintf('%s: %s', $k, $v);
         };
 
-        return \implode("\n", \array_map($map, \array_keys($mismatches), $mismatches));
+        return implode("\n", array_map($map, array_keys($mismatches), $mismatches));
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         $result = [];
@@ -69,10 +66,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
     }
 
     /**
-     * @param string     $prefix
-     * @param array|null $mismatches
-     *
-     * @return array
+     * @param string $prefix
      */
     public function toArrayFlat(string $prefix = null, array $mismatches = null): array
     {
@@ -88,7 +82,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
 
         foreach ($mismatches as $key => $mismatch) {
             if (\is_array($mismatch)) {
-                $result = \array_merge($result, $this->toArrayFlat($prefix . $key, $mismatch));
+                $result = array_merge($result, $this->toArrayFlat($prefix . $key, $mismatch));
             } else {
                 $result[$prefix . $key] = $mismatch;
             }

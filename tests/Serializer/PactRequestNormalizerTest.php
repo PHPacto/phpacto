@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Bigfoot\PHPacto\PactRequestInterface;
 
 class PactRequestNormalizerTest extends SerializerAwareTestCase
@@ -73,8 +74,8 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         $this->rule->map($request->getPath());
 
         $expected = [
-            'method' => ['@rule' => \get_class($request->getMethod())],
-            'path' => ['@rule' => \get_class($request->getPath())],
+            'method' => ['_rule' => \get_class($request->getMethod())],
+            'path' => ['_rule' => \get_class($request->getPath())],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($request));
@@ -95,5 +96,56 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         self::assertInstanceOf(PactRequestInterface::class, $pact);
         self::assertEquals('GET', $pact->getMethod()->getSample());
         self::assertEquals('/path', $pact->getPath()->getSample());
+    }
+
+    /**
+     * @depends test_denormalize
+     */
+    public function test_denormalize_html()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'method' => 'get',
+            'path' => '/',
+            'headers' => [
+                'Content-Type' => [
+                    'text/html',
+                    'Charset=UTF-8',
+                ],
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactRequestInterface $pact */
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
+
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
+    }
+
+    /**
+     * @-depends test_denormalize
+     */
+    public function test_denormalize_html2()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'method' => 'get',
+            'path' => '/',
+            'headers' => [
+                'Content-Type' => 'text/html; Charset=UTF-8',
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactRequestInterface $pact */
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
+
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
     }
 }

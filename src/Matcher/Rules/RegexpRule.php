@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ class RegexpRule extends StringRule
             $modifiers .= 'm';
         }
 
-        if (!\preg_match('/' . $this->pattern . '/' . $modifiers, $test)) {
+        if (!preg_match('/' . $this->pattern . '/' . $modifiers, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $this->pattern, $test);
         }
     }
@@ -89,7 +89,7 @@ class RegexpRule extends StringRule
     {
         parent::assertMatch($value);
 
-        if (false === @\preg_match('/' . $value . '/', '')) {
+        if (false === @preg_match('/' . $value . '/', '')) {
             throw new Mismatches\TypeMismatch('regex pattern', $value, 'Your expression is not valid, check syntax for your pattern {{ actual }}');
         }
     }

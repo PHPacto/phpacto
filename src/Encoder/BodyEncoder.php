@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@ abstract class BodyEncoder
     public static function encode($body, ?string $contentType = null): string
     {
         if ($contentType) {
-            $isJson = false !== \stripos($contentType, 'application/json');
+            $isJson = false !== stripos($contentType, 'application/json');
 
             if ($isJson) {
-                return \json_encode($body);
+                return json_encode($body);
             } elseif (\is_array($body)) {
-                return \http_build_query($body);
+                return http_build_query($body);
             }
         }
 
@@ -43,9 +43,9 @@ abstract class BodyEncoder
     public static function decode(string $body, ?string $contentType = null)
     {
         if ($contentType) {
-            if (false !== \strpos($contentType, 'application/json')) {
+            if (false !== strpos($contentType, 'application/json')) {
                 return static::decodeJsonEncoded($body);
-            } elseif (false !== \stripos($contentType, 'application/x-www-form-urlencoded')) {
+            } elseif (false !== stripos($contentType, 'application/x-www-form-urlencoded')) {
                 return static::decodeUrlEncoded($body);
             }
         }
@@ -56,7 +56,7 @@ abstract class BodyEncoder
     protected static function decodeUrlEncoded(string $body)
     {
         $decoded = [];
-        \parse_str($body, $decoded);
+        parse_str($body, $decoded);
 
         if (empty($decoded)) {
             throw new ValueMismatch('Body content has not a valid FORM data', 'form', 'string');
@@ -67,7 +67,7 @@ abstract class BodyEncoder
 
     protected static function decodeJsonEncoded(string $body)
     {
-        $decoded = \json_decode($body, true);
+        $decoded = json_decode($body, true);
 
         if (null === $decoded) {
             throw new ValueMismatch('Body content is not a valid JSON', 'json', 'string');

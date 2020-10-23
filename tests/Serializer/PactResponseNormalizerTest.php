@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Bigfoot\PHPacto\PactResponseInterface;
 
 class PactResponseNormalizerTest extends SerializerAwareTestCase
@@ -74,7 +75,7 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
             ->willReturn($this->rule->hasSample(200));
 
         $expected = [
-            'status_code' => ['@rule' => \get_class($response->getStatusCode()), 'sample' => 200],
+            'status_code' => ['_rule' => \get_class($response->getStatusCode()), 'sample' => 200],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($response));
@@ -93,5 +94,31 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
 
         self::assertInstanceOf(PactResponseInterface::class, $response);
         self::assertSame(200, $response->getStatusCode()->getSample());
+    }
+
+    /**
+     * @depends test_denormalize
+     */
+    public function test_denormalize_html()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'status_code' => 200,
+            'headers' => [
+                'Content-Type' => [
+                    'text/html',
+                    'Charset=UTF-8',
+                ],
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactResponseInterface $pact */
+        $pact = $serializer->denormalize($data, PactResponseInterface::class);
+
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
     }
 }

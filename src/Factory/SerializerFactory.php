@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ abstract class SerializerFactory
     protected static function getEncoders(): array
     {
         return [
-            new JsonEncoder(new JsonEncode(JSON_PRETTY_PRINT), new JsonDecode(true)),
+            new JsonEncoder(new JsonEncode(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), new JsonDecode(true)),
             new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
         ];
     }

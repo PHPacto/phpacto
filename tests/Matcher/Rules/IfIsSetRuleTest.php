@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,27 +32,10 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $rule = new IfIsSetRule($childRule);
 
         $expected = [
-            '@rule' => 'ifNotNull',
+            '_rule' => 'ifNotNull',
             'rules' => [
-                '@rule' => \get_class($childRule),
+                '_rule' => \get_class($childRule),
             ],
-        ];
-
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
-    }
-
-    public function test_it_is_normalizable_with_rules_array()
-    {
-        $childRule = $this->rule->empty();
-        $rule = new EachItemRule(['key1' => $childRule, 'key2' => $childRule], []);
-
-        $expected = [
-            '@rule' => 'each',
-            'rules' => [
-                'key1' => ['@rule' => \get_class($childRule)],
-                'key2' => ['@rule' => \get_class($childRule)],
-            ],
-            'sample' => [],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -63,8 +46,8 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         $childRule = $this->rule->empty();
 
         $data = [
-            '@rule' => 'ifNotNull',
-            'rules' => ['@rule' => \get_class($childRule)],
+            '_rule' => 'ifNotNull',
+            'rules' => ['_rule' => \get_class($childRule)],
             'sample' => 'any',
         ];
 
@@ -73,26 +56,6 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         self::assertInstanceOf(IfIsSetRule::class, $rule);
         self::assertInstanceOf(Rule::class, $rule->getRules());
         self::assertSame('any', $rule->getSample());
-    }
-
-    public function test_it_is_denormalizable_with_rules_array()
-    {
-        $childRule = $this->rule->empty();
-
-        $data = [
-            '@rule' => 'each',
-            'rules' => [
-                'key1' => ['@rule' => \get_class($childRule)],
-                'key2' => ['@rule' => \get_class($childRule)],
-            ],
-            'sample' => [],
-        ];
-
-        $rule = $this->normalizer->denormalize($data, Rule::class);
-
-        self::assertInstanceOf(EachItemRule::class, $rule);
-        self::assertCount(2, $rule->getRules());
-        self::assertSame([], $rule->getSample());
     }
 
     public function supportedValuesProvider()
@@ -227,7 +190,7 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
                 'B' => 'Y',
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['C'], \array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['C'], array_keys($mismatches->toArrayFlat()));
             self::assertInstanceOf(Mismatches\KeyNotFoundMismatch::class, $mismatches['C']);
 
             return;

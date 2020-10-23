@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +31,12 @@ interface PactMatcherInterface
     /**
      * Match the request with given pact.
      *
-     * @param PactInterface    $pact
-     * @param RequestInterface $request
-     *
      * @throws MismatchCollection
      */
     public function assertMatchRequest(PactInterface $pact, RequestInterface $request): void;
 
     /**
      * Match the request with given pact.
-     *
-     * @param PactInterface     $pact
-     * @param ResponseInterface $response
      *
      * @throws MismatchCollection
      */

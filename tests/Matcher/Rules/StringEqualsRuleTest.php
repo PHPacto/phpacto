@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,31 +26,28 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class StringEqualsRuleTest extends SerializerAwareTestCase
 {
-    public function test_it_is_normalizable_case_sensitive()
+    public function test_it_is_normalizable()
     {
-        $rule = new StringEqualsRule('S', true);
+        $rule = new StringEqualsRule('S');
 
         $data = $this->normalizer->normalize($rule);
 
-        self::assertSame('S', $data);
-    }
-
-    public function test_it_is_normalizable_case_insensitive()
-    {
-        $rule = new StringEqualsRule('string', false);
-
         $expected = [
-            '@rule' => 'stringEquals',
-            'case_sensitive' => false,
-            'value' => 'string',
+            '_rule' => 'stringEquals',
+            'case_sensitive' => true,
+            'value' => 'S',
         ];
 
-        self::assertEquals($expected, $this->normalizer->normalize($rule));
+        self::assertEquals($expected, $data);
     }
 
-    public function test_it_is_denormalizable_equals_case_sensitive()
+    public function test_it_is_denormalizable_equals()
     {
-        $data = 'S';
+        $data = [
+            '_rule' => 'stringEquals',
+            'case_sensitive' => true,
+            'value' => 'S',
+        ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
@@ -58,21 +55,6 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
         self::assertSame('S', $rule->getSample());
         self::assertSame('S', $rule->getValue());
         self::assertTrue($rule->isCaseSensitive());
-    }
-
-    public function test_it_is_denormalizable_case_insensitive()
-    {
-        $data = [
-            '@rule' => 'stringEquals',
-            'case_sensitive' => false,
-            'value' => 'string',
-        ];
-
-        $rule = $this->normalizer->denormalize($data, Rule::class);
-
-        self::assertInstanceOf(StringEqualsRule::class, $rule);
-        self::assertSame('string', $rule->getValue());
-        self::assertFalse($rule->isCaseSensitive());
     }
 
     public function matchesTrueProvider()

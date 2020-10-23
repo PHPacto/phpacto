@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,12 +51,7 @@ class CountItemsRule extends AbstractRule
         try {
             $this->rule->assertMatch(\count($test));
         } catch (Mismatches\Mismatch $mismatch) {
-            throw new Mismatches\ValueMismatch(
-                'The items count in array {{ actual }} should match the rule:' . "\n" .
-                '    {{ expected }}',
-                $mismatch->getMessage(),
-                \count($test)
-            );
+            throw new Mismatches\ValueMismatch('The items count in array {{ actual }} should match the rule:' . "\n" . '    {{ expected }}', $mismatch->getMessage(), \count($test));
         }
     }
 

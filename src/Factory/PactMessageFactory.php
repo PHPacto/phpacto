@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ namespace Bigfoot\PHPacto\Factory;
 use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Psr\Http\Message\MessageInterface;
 
 abstract class PactMessageFactory
@@ -46,11 +48,11 @@ abstract class PactMessageFactory
     protected static function getHeaderRulesFromArray(array $headers): array
     {
         $map = function($value) {
-            if (1 === \count($value)) {
-                $value = $value[0];
+            if (\is_array($value)) {
+                return self::getHeaderRulesFromArray($value);
             }
 
-            return new EqualsRule($value);
+            return new StringRule($value);
         };
 
         return \array_map($map, $headers);

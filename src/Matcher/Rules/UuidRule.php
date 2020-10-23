@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class UuidRule extends AbstractRule
 {
-    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-5][0-9A-F]{3}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/i';
+    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-6][0-9A-F]{3}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
     public function __construct($sample = '00000000-0000-0000-0000-000000000000')
     {
@@ -38,7 +38,7 @@ class UuidRule extends AbstractRule
             throw new Mismatches\TypeMismatch('string', \gettype($test));
         }
 
-        if (!\preg_match(self::PATTERN, $test)) {
+        if (!preg_match(self::PATTERN, $test)) {
             throw new Mismatches\ValueMismatch('Value {{ actual }} is not a valid UUID, expecting a string like {{ expected }}', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', $test);
         }
     }

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,6 @@ class StdoutLogger implements Logger
 
     public function flush(): void
     {
-        \file_put_contents('php://stdout', \implode("\n", $this->messages));
+        file_put_contents('php://stdout', implode("\n", $this->messages));
     }
 }

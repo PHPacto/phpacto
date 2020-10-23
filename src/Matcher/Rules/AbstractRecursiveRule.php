@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,20 +87,20 @@ abstract class AbstractRecursiveRule extends AbstractRule
     }
 
     /**
-     * @param Rule|Rule[] $rule
+     * @param Rule|Rule[] $rules
      */
-    protected function assertSupport($rule): void
+    protected function assertSupport($rules): void
     {
-        if (\is_array($rule)) {
-            if (0 === \count($rule)) {
+        if (\is_array($rules)) {
+            if (0 === \count($rules)) {
                 throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
             }
 
-            foreach ($rule as $item) {
+            foreach ($rules as $item) {
                 $this->assertSupport($item);
             }
-        } elseif (!$rule instanceof Rule) {
-            throw new Mismatches\TypeMismatch('Rule', \gettype($rule), 'Should be an instance of {{ expected }}');
+        } elseif (!$rules instanceof Rule) {
+            throw new Mismatches\TypeMismatch('Rule', \gettype($rules), 'Should be an instance of {{ expected }}');
         }
     }
 }

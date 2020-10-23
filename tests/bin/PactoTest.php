@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class PactoTest extends TestCase
 {
     public function test_it_not_fails()
     {
-        \exec('bin/phpacto', $output, $exitCode);
+        exec('bin/phpacto', $output, $exitCode);
 
         self::assertEquals(0, $exitCode);
         self::assertContains('PHPacto', $output[0]);
@@ -37,8 +37,6 @@ class PactoTest extends TestCase
     {
         $output = `bin/phpacto 2>&1`;
 
-        $currentYear = (new \DateTime())->format('Y');
-
-        self::assertContains('Copyright (c) ' . $currentYear, $output);
+        self::assertContains('Copyright (c) ', $output);
     }
 }

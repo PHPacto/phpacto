@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class PactLoaderTest extends TestCase
             'empty.json' => '',
             'empty-directory' => [],
             'contracts' => [
-                'pact.json' => \json_encode([
+                'pact.json' => json_encode([
                     'version' => 'dev',
                     'description' => '',
                     'request' => [
@@ -117,7 +117,7 @@ class PactLoaderTest extends TestCase
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/contracts');
 
         self::assertCount(1, $pacts);
-        self::assertInstanceOf(PactInterface::class, \current($pacts));
+        self::assertInstanceOf(PactInterface::class, current($pacts));
     }
 
     public function test_it_throws_exception_if_directory_does_not_exists()
@@ -138,7 +138,7 @@ class PactLoaderTest extends TestCase
         self::fail('An exception should be thrown');
     }
 
-    public function test_it_throws_exception_if_any_pact_was_fount_in_directory()
+    public function test_it_throws_exception_if_no_pact_was_fount_in_directory()
     {
         $loader = $this->getMockBuilder(PactLoader::class)
             ->disableOriginalConstructor()
@@ -150,5 +150,19 @@ class PactLoaderTest extends TestCase
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/empty-directory');
 
         self::fail('An exception should be thrown');
+    }
+
+    public function test_load_path()
+    {
+        $loader = $this->getMockBuilder(PactLoader::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['loadFromPath'])
+            ->getMock();
+
+        $loader->expects(self::once())
+            ->method('loadFromDirectory')
+            ->willReturn([]);
+
+        $pacts = $loader->loadFromPath($this->fs->url() . '/empty-directory');
     }
 }

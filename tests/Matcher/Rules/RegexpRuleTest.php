@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
         $rule = new RegexpRule('^$', true, false, '');
 
         $expected = [
-            '@rule' => 'regex',
+            '_rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => true,
@@ -44,7 +44,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
     public function test_it_is_denormalizable()
     {
         $data = [
-            '@rule' => 'regex',
+            '_rule' => 'regex',
             'pattern' => '^$',
             'sample' => '',
             'case_sensitive' => false,

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 namespace Bigfoot\PHPacto\Serializer;
 
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
+use Bigfoot\PHPacto\Matcher\Mismatches;
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\PactResponse;
 use Bigfoot\PHPacto\PactResponseInterface;
-use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -57,7 +57,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof PactResponseInterface) {
-            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), PactResponseInterface::class));
+            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), PactResponseInterface::class));
         }
 
         return $this->normalizeObject($object, $format, $context);
@@ -69,7 +69,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if (!(\is_array($data) && PactResponseInterface::class === $class)) {
-            throw new InvalidArgumentException(\sprintf('Data must be array type and class equal to "%s".', PactResponseInterface::class));
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactResponseInterface::class));
         }
 
         return $this->denormalizeArray($data, PactResponse::class, $format, $context);
@@ -109,11 +109,16 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (null !== $attributeValue && !\is_scalar($attributeValue)) {
+            if (null !== $attributeValue && !is_scalar($attributeValue)) {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
             } else {
                 $data[$attribute] = $attributeValue;
             }
+        }
+
+        $statusCodeRule = $object->getStatusCode();
+        if ($statusCodeRule instanceof EqualsRule) {
+            $data['status_code'] = $statusCodeRule->getSample();
         }
 
         if (empty($data['body'])) {
@@ -129,51 +134,51 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
 
     private function denormalizeArray($data, $class, $format = null, array $context = []): PactResponseInterface
     {
+        $mismatches = [];
+
         if (!isset($context['cache_key'])) {
             $context['cache_key'] = $this->getCacheKey($format, $context);
         }
 
-        if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
-            $headers = [];
-            foreach ($data['headers'] as $headerKey => $headerValue) {
-                $headerKey = HeadersEncoder::normalizeName($headerKey);
-                $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
+        try {
+            if (\is_int($data['status_code'])) {
+                $data['status_code'] = new EqualsRule($data['status_code']);
+            } else {
+                $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code'));
             }
-            $data['headers'] = $headers;
-        } else {
-            $data['headers'] = [];
+        } catch (Mismatches\Mismatch $e) {
+            $mismatches['STATUS_CODE'] = $e;
         }
 
-        if (isset($data['body'])) {
-            $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
+        try {
+            if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
+                $data['headers'] = HeadersEncoder::decode($data['headers']);
+                $headers = [];
+
+                foreach ($data['headers'] as $headerKey => $headerValue) {
+                    $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
+                }
+                $data['headers'] = $headers;
+            } else {
+                $data['headers'] = [];
+            }
+        } catch (Mismatches\Mismatch $e) {
+            $mismatches['HEADERS'] = $e;
         }
 
-        $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
-
-        $reflectionClass = new \ReflectionClass($class);
-        $object = $this->instantiateObject($data, $class, $context, $reflectionClass, $allowedAttributes, $format);
-
-        foreach ($data as $attribute => $value) {
-            if ($this->nameConverter) {
-                $attribute = $this->nameConverter->denormalize($attribute);
+        try {
+            if (isset($data['body'])) {
+                $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
             }
-
-            if ((false !== $allowedAttributes && !\in_array($attribute, $allowedAttributes, true)) || !$this->isAllowedAttribute($class, $attribute, $format, $context)) {
-                $extraAttributes[] = $attribute;
-
-                continue;
-            }
-
-            try {
-                $this->setAttributeValue($object, $attribute, $value, $format, $context);
-            } catch (InvalidArgumentException $e) {
-                throw new UnexpectedValueException($e->getMessage(), $e->getCode(), $e);
-            }
+        } catch (Mismatches\Mismatch $e) {
+            $mismatches['BODY'] = $e;
         }
 
-        if (!empty($extraAttributes)) {
-            throw new ExtraAttributesException($extraAttributes);
+        if ($mismatches) {
+            throw new Mismatches\MismatchCollection($mismatches, 'There are {{ count }} errors');
         }
+
+        $object = new PactResponse($data['status_code'], $data['headers'], $data['body'] ?? null);
 
         return $object;
     }
@@ -200,14 +205,13 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
      * Gets the cache key to use.
      *
      * @param string|null $format
-     * @param array       $context
      *
      * @return bool|string
      */
     private function getCacheKey($format, array $context)
     {
         try {
-            return \md5($format . \serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

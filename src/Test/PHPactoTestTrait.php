@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,7 @@ trait PHPactoTestTrait
     /**
      * Matches a Request against a Pact.
      *
-     * @param PactInterface    $pact
-     * @param RequestInterface $request
-     * @param string|null      $message
+     * @param string|null $message
      */
     public static function assertRequestMatchesPact(PactInterface $pact, RequestInterface $request, string $message = '')
     {
@@ -47,9 +45,7 @@ trait PHPactoTestTrait
     /**
      * Matches a Response against a Pact.
      *
-     * @param PactInterface     $pact
-     * @param ResponseInterface $response
-     * @param string|null       $message
+     * @param string|null $message
      */
     public static function assertResponseMatchesPact(PactInterface $pact, ResponseInterface $response, string $message = '')
     {

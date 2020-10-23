@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +100,8 @@ class Pact implements PactInterface
 
     private function assertVersionIsCompatible($version)
     {
-        if (\version_compare($version, PactInterface::VERSION, '>')) {
-            throw new \Exception(\sprintf('Unsupported Pact version `%s`. Current supported version is `%s` and newer', $version, PactInterface::VERSION));
+        if (version_compare($version, PactInterface::VERSION, '>')) {
+            throw new \Exception(sprintf('Unsupported Pact version `%s`. Current supported version is `%s` and newer', $version, PactInterface::VERSION));
         }
     }
 }

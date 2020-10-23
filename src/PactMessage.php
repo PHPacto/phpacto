@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\BodyMatcher;
 use Bigfoot\PHPacto\Matcher\HeadersMatcher;
 use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
+use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
 use Bigfoot\PHPacto\Matcher\Rules\OrRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
@@ -102,13 +103,17 @@ abstract class PactMessage implements PactMessageInterface
             $sample = $rule->getSample();
 
             if (null === $sample) {
-                if ($rule instanceof EachItemRule) {
-                    $sample = [$this->getSampleRecursive($rule->getRules())];
+                if ($rule instanceof ObjectRule) {
+                    $sample = $this->getSampleRecursive($rule->getProperties());
+                } elseif ($rule instanceof EachItemRule) {
+                    $sample = [
+                        $this->getSampleRecursive($rule->getRules()),
+                    ];
                 } elseif ($rule instanceof OrRule) {
                     $childRules = $rule->getRules();
 
-                    $sample = $childRules[\array_rand($childRules)];
-                } elseif (\method_exists($rule, 'getRule')) {
+                    $sample = $childRules[array_rand($childRules)];
+                } elseif (method_exists($rule, 'getRule')) {
                     $sample = $rule->getRule();
                 }
             }
@@ -129,7 +134,11 @@ abstract class PactMessage implements PactMessageInterface
 
     protected function getContentType(): ?string
     {
-        $val = @\array_change_key_case($this->headers, CASE_LOWER)['content-type'];
+        $val = @array_change_key_case($this->headers, CASE_LOWER)['content-type'];
+
+        if (\is_array($val) && \count($val) >= 1) {
+            $val = $val[0];
+        }
 
         if ($val instanceof Rule) {
             return (string) $val->getSample();

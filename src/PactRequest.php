@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,9 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
+use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Stream;
 
 class PactRequest extends PactMessage implements PactRequestInterface
 {
@@ -44,8 +43,6 @@ class PactRequest extends PactMessage implements PactRequestInterface
     private $path;
 
     /**
-     * @param Rule             $method
-     * @param Rule             $path
      * @param Rule[]           $headers
      * @param Rule|Rule[]|null $body
      */
@@ -57,17 +54,11 @@ class PactRequest extends PactMessage implements PactRequestInterface
         $this->path = $path;
     }
 
-    /**
-     * @return Rule
-     */
     public function getMethod(): Rule
     {
         return $this->method;
     }
 
-    /**
-     * @return Rule
-     */
     public function getPath(): Rule
     {
         return $this->path;
@@ -115,14 +106,20 @@ class PactRequest extends PactMessage implements PactRequestInterface
         $headers = $this->getSampleHeaders();
         $body = $this->getSampleBody();
 
-        $stream = new Stream('php://memory', 'w');
+        $request = HttpFactory::serverRequestFactory()->createServerRequest($method, $uri);
 
         if (null !== $body) {
+            $stream = HttpFactory::streamFactory()->createStreamFromFile('php://memory', 'w');
             $stream->write(BodyEncoder::encode($body, $this->getContentType()));
+
+            $request = $request->withBody($stream)
+                ->withParsedBody(\is_array($body) ? $body : []);
         }
 
-        $response = new ServerRequest([], [], $uri, $method, $stream, $headers, [], [], \is_array($body) ? $body : []);
+        foreach ($headers as $key => $value) {
+            $request = $request->withAddedHeader($key, $value);
+        }
 
-        return $response;
+        return $request;
     }
 }
