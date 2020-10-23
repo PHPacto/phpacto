@@ -43,7 +43,7 @@ class MockControllerTest extends TestCase
         $this->logger = $this->createMock(Logger::class);
     }
 
-    public function test_it_founds_a_pact_matching_request_and_returns_response()
+    public function test_it_founds_a_pact_matching_request_and_return_response()
     {
         $notMatchingPact = $this->createMock(Pact::class);
         $matchingPact = $this->createMock(Pact::class);
@@ -74,6 +74,10 @@ class MockControllerTest extends TestCase
         $matchingPact->expects(self::once())
             ->method('getResponse')
             ->willReturn($matchingResponse);
+
+        $matchingResponsePsr7->expects(self::once())
+            ->method('withAddedHeader')
+            ->willReturnSelf();
 
         $controller = new Mock($this->logger, [$notMatchingPact, $matchingPact]);
 

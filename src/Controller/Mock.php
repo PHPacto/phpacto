@@ -43,6 +43,11 @@ class Mock implements RequestHandlerInterface
      */
     private $pacts;
 
+    /**
+     * @var string
+     */
+    private $contractLocation;
+
     public function __construct(Logger $logger, array $pacts)
     {
         $this->logger = $logger;
@@ -57,7 +62,8 @@ class Mock implements RequestHandlerInterface
 
         $pact = $this->findMatchingPact($request->withUri($uri));
 
-        return $pact->getResponse()->getSample();
+        return $pact->getResponse()->getSample()
+            ->withAddedHeader('PHPacto-Contract', $this->contractLocation);
     }
 
     private function findMatchingPact(RequestInterface $request): PactInterface
@@ -69,6 +75,8 @@ class Mock implements RequestHandlerInterface
                 $pact->getRequest()->assertMatch($request);
 
                 $this->logger->log(sprintf('Found matching contract %s', $contractLocation));
+
+                $this->contractLocation = $contractLocation;
 
                 return $pact;
             } catch (Mismatch $mismatch) {
