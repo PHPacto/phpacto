@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,11 @@ class PathRule extends StringComparisonRule
         $this->assertSupport($location, $parameters, $query);
 
         $this->caseSensitive = $caseSensitive;
-        $this->location = !$caseSensitive ? \strtolower($location) : $location;
+        $this->location = !$caseSensitive ? strtolower($location) : $location;
         $this->parameters = $parameters;
         $this->query = $query;
     }
 
-    /**
-     * @return string
-     */
     public function getLocation(): string
     {
         return $this->location;
@@ -72,7 +69,7 @@ class PathRule extends StringComparisonRule
         $mismatches = [];
 
         // TODO: Move to assertMatchLocation()
-        if ($this->location != $location) {
+        if ($this->location !== $location) {
             $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $value);
         }
 
@@ -81,7 +78,9 @@ class PathRule extends StringComparisonRule
             if ($query) {
                 parse_str($query, $parsed);
 
-                if ($parsed) $query = $parsed;
+                if ($parsed) {
+                    $query = $parsed;
+                }
             }
 
             $mismatches['QUERY'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $value);

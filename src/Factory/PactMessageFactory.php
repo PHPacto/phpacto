@@ -24,7 +24,6 @@ namespace Bigfoot\PHPacto\Factory;
 use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Encoder\HeadersEncoder;
 use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Psr\Http\Message\MessageInterface;
 
@@ -55,6 +54,6 @@ abstract class PactMessageFactory
             return new StringRule($value);
         };
 
-        return \array_map($map, $headers);
+        return array_map($map, $headers);
     }
 }

@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class UrlRule extends StringComparisonRule
 
         var_dump($test, $parsed);
 
-        if (strlen($parsed['path']) < 1 || $parsed['path'][0] != '/') {
+        if (\strlen($parsed['path']) < 1 || $parsed['path'][0] !== '/') {
             throw new Mismatches\TypeMismatch('URI', $test, 'The string {{ actual }} is not a valid URI');
         }
 

@@ -23,12 +23,11 @@ namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+use Laminas\Diactoros\Request;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Request;
 
 class PactRequestTest extends SerializerAwareTestCase
 {

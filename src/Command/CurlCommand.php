@@ -26,7 +26,6 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\PactInterface;
 use Namshi\Cuzzle\Formatter\CurlFormatter;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -69,8 +68,8 @@ class CurlCommand extends BaseCommand
 
         if (is_file($path) && is_readable($path)) {
             try {
-            $pact = $this->loadPact((string) $path);
-            $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path);
+                $pact = $this->loadPact((string) $path);
+                $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $path);
             } catch (\Throwable $e) {
                 if ($e instanceof Mismatch) {
                     $output->writeln('<fg=red>✖ Not valid</>');

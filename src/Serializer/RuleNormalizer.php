@@ -62,7 +62,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || \is_scalar($data));
+        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || is_scalar($data));
     }
 
     /**
@@ -71,7 +71,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     public function normalize($object, $format = null, array $context = [])
     {
         if (!$object instanceof Rules\Rule) {
-            throw new InvalidArgumentException(\sprintf('The object "%s" must implement "%s".', \get_class($object), Rules\Rule::class));
+            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), Rules\Rule::class));
         }
 
         if ($this->isCircularReference($object, $context)) {
@@ -94,10 +94,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $class = \rtrim($class, '[]');
+        $class = rtrim($class, '[]');
 
-        if (!(Rules\Rule::class === $class || (\interface_exists($class) && \is_subclass_of($class, Rules\Rule::class)))) {
-            throw new InvalidArgumentException(\sprintf('The class "%s" should extend "%s"', $class, Rules\Rule::class));
+        if (!(Rules\Rule::class === $class || (interface_exists($class) && is_subclass_of($class, Rules\Rule::class)))) {
+            throw new InvalidArgumentException(sprintf('The class "%s" should extend "%s"', $class, Rules\Rule::class));
         }
 
         if (\is_array($data)) {
@@ -242,9 +242,9 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
     private static function isRule(string $class): bool
     {
-        $class = \rtrim($class, '[]');
+        $class = rtrim($class, '[]');
 
-        return Rules\Rule::class === $class || \is_subclass_of($class, Rules\Rule::class);
+        return Rules\Rule::class === $class || is_subclass_of($class, Rules\Rule::class);
     }
 
     private static function isFormatSupported(?string $format): bool
@@ -275,7 +275,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 $attribute = $this->nameConverter->normalize($attribute);
             }
 
-            if (\is_scalar($attributeValue)) {
+            if (is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
             } else {
                 $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
@@ -360,7 +360,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     private function getCacheKey($format, array $context)
     {
         try {
-            return \md5($format . \serialize($context));
+            return md5($format . serialize($context));
         } catch (\Exception $exception) {
             // The context cannot be serialized, skip the cache
             return false;

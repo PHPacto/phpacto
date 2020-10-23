@@ -3,7 +3,7 @@
 /*
  * PHPacto - Contract testing solution
  *
- * Copyright (c) 2018  Damian Długosz
+ * Copyright (c) Damian Długosz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ class PathRuleTest extends SerializerAwareTestCase
 
     /**
      * @dataProvider matchesProvider
+     *
+     * @param mixed $ruleValue
+     * @param mixed $testValue
      */
     public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
     {

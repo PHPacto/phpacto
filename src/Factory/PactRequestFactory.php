@@ -39,9 +39,10 @@ abstract class PactRequestFactory extends PactMessageFactory
 
         return new PactRequest($method, $uri, $headers, $body);
     }
+
     protected static function getMethodRule(RequestInterface $request): Rule
     {
-        return new EqualsRule(\strtoupper($request->getMethod()));
+        return new EqualsRule(strtoupper($request->getMethod()));
     }
 
     protected static function getUriRule(RequestInterface $request): Rule
