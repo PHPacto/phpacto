@@ -19,10 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace Bigfoot\PHPacto\Guzzle;
 
-use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle6;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\PactRequestInterface;
+use Bigfoot\PHPacto\PactResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\AssertionFailedError;
@@ -46,9 +48,18 @@ class ProviderMockGuzzle6Test extends TestCase
 
     public function setUp()
     {
-        $guzzleVersion = ClientInterface::VERSION;
+        switch (true) {
+            case \defined(ClientInterface::class . '::MAJOR_VERSION'):
+                $guzzleVersion = ClientInterface::MAJOR_VERSION;
+                break;
+            case \defined(ClientInterface::class . '::VERSION'):
+                $guzzleVersion = ClientInterface::VERSION;
+                break;
+            default:
+                self::markTestSkipped('Incompatible Guzzle version');
+        }
 
-        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
+        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '8', '>=')) {
             self::markTestSkipped(sprintf('Incompatible Guzzle version (%s)', $guzzleVersion));
         }
 

@@ -19,10 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace Bigfoot\PHPacto\Guzzle;
 
-use Bigfoot\PHPacto\Guzzle\ProviderMockGuzzle5;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use Bigfoot\PHPacto\PactInterface;
+use Bigfoot\PHPacto\PactRequestInterface;
+use Bigfoot\PHPacto\PactResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Http\Factory\Discovery\HttpFactory;
@@ -41,6 +43,10 @@ class ProviderMockGuzzle5Test extends TestCase
 
     public function setUp()
     {
+        if (!\defined(ClientInterface::class . '::VERSION')) {
+            self::markTestSkipped('Incompatible Guzzle version');
+        }
+
         $guzzleVersion = ClientInterface::VERSION;
 
         if (version_compare($guzzleVersion, '5', '<') || version_compare($guzzleVersion, '6', '>=')) {

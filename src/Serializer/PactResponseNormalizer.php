@@ -110,7 +110,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
             }
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
+                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             } else {
                 $data[$attribute] = $attributeValue;
             }
@@ -144,7 +144,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
             if (\is_int($data['status_code'])) {
                 $data['status_code'] = new EqualsRule($data['status_code']);
             } else {
-                $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code'));
+                $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['STATUS_CODE'] = $e;
@@ -156,7 +156,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
                 $headers = [];
 
                 foreach ($data['headers'] as $headerKey => $headerValue) {
-                    $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey));
+                    $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
                 }
                 $data['headers'] = $headers;
             } else {
@@ -168,7 +168,7 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
 
         try {
             if (isset($data['body'])) {
-                $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body'));
+                $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['BODY'] = $e;

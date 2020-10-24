@@ -23,6 +23,7 @@ namespace Bigfoot\PHPacto;
 
 use Bigfoot\PHPacto\Factory\SerializerFactory;
 use Bigfoot\PHPacto\Loader\PactLoader;
+use GuzzleHttp\ClientInterface;
 
 class PHPacto
 {
@@ -38,17 +39,30 @@ class PHPacto
 
     public function createServerMock(): Guzzle\ProviderMock
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        if (!interface_exists(ClientInterface::class)) {
+            throw new \Exception('Guzzle dependency missing');
+        }
+
+        switch (true) {
+            case \defined(ClientInterface::class . '::MAJOR_VERSION'):
+                $guzzleVersion = ClientInterface::MAJOR_VERSION;
+                break;
+            case \defined(ClientInterface::class . '::VERSION'):
+                $guzzleVersion = ClientInterface::VERSION;
+                break;
+            default:
+                throw new \Exception('Incompatible Guzzle version');
+        }
 
         if (version_compare($guzzleVersion, '6', '<')) {
             return new Guzzle\ProviderMockGuzzle5();
         }
 
-        if (version_compare($guzzleVersion, '7', '<')) {
+        if (version_compare($guzzleVersion, '8', '<')) {
             return new Guzzle\ProviderMockGuzzle6();
         }
 
-        throw new \Exception('No valid Guzzle version is found. Please install Guzzle version 6 or 5.');
+        throw new \Exception('No valid Guzzle version is found. Please install Guzzle version 7, 6 or 5.');
     }
 
     /**
