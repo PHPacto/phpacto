@@ -66,9 +66,18 @@ class MockProxyControllerTest extends TestCase
 
     public function setUp()
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        switch (true) {
+            case \defined(ClientInterface::class . '::MAJOR_VERSION'):
+                $guzzleVersion = ClientInterface::MAJOR_VERSION;
+                break;
+            case \defined(ClientInterface::class . '::VERSION'):
+                $guzzleVersion = ClientInterface::VERSION;
+                break;
+            default:
+                self::markTestSkipped('Incompatible Guzzle version');
+        }
 
-        if (version_compare($guzzleVersion, '6', '<') || version_compare($guzzleVersion, '7', '>=')) {
+        if (version_compare($guzzleVersion, '6', '<')) {
             self::markTestSkipped('MockProxyController works with Guzzle 6 or newer');
         }
 

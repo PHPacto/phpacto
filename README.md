@@ -118,7 +118,7 @@ docker run -it --rm \
 
 # Testing your application with PHPUnit and PHPacto
 
-PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^7.0`, `Guzzle ^5.3.1|^6.0`.
+PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^7.0`, `Guzzle ^5.3.1|^6.0|^7.0`.
 
 If your project satisfies this requirements, you can run `composer req --dev bigfoot90/phpacto` and test 
 your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any kind of application.

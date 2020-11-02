@@ -42,7 +42,7 @@ abstract class PactRequestFactory extends PactMessageFactory
 
     protected static function getMethodRule(RequestInterface $request): Rule
     {
-        return new EqualsRule(strtoupper($request->getMethod()));
+        return new StringEqualsRule(strtoupper($request->getMethod()));
     }
 
     protected static function getUriRule(RequestInterface $request): Rule

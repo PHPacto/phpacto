@@ -50,7 +50,7 @@ class UrlRule extends StringComparisonRule
             'query' => $parsed['query'] ?? null,
         ];
 
-        var_dump($test, $parsed);
+//        var_dump($test, $parsed);
 
         if (\strlen($parsed['path']) < 1 || $parsed['path'][0] !== '/') {
             throw new Mismatches\TypeMismatch('URI', $test, 'The string {{ actual }} is not a valid URI');

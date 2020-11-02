@@ -64,13 +64,13 @@ class PathRule extends StringComparisonRule
         preg_match('/^([^\?]*)\??(.*)$/', $test, $matches);
 
         [$null, $location, $query] = $matches;
-        var_dump($test, [$location, $query]);
+//        var_dump($test, [$location, $query]);
 
         $mismatches = [];
 
         // TODO: Move to assertMatchLocation()
         if ($this->location !== $location) {
-            $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $value);
+            $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $location);
         }
 
         // TODO: Move to assertMatchQuery()
@@ -83,7 +83,7 @@ class PathRule extends StringComparisonRule
                 }
             }
 
-            $mismatches['QUERY'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $value);
+            $mismatches['QUERY'] = new Mismatches\ValueMismatch('Absolute path should begin with "/"', 'ABSOLUTE PATH', $query);
         }
 
 //        $path = $matches['path'] ?? '/';

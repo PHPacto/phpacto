@@ -24,6 +24,7 @@ namespace Bigfoot\PHPacto\Command;
 use Bigfoot\PHPacto\Loader\PactLoader;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\PactInterface;
+use GuzzleHttp\ClientInterface;
 use Namshi\Cuzzle\Formatter\CurlFormatter;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -139,7 +140,20 @@ class CurlCommand extends BaseCommand
      */
     private function generateCurlCommand(ServerRequestInterface $request, CurlFormatter $formatter): string
     {
-        $guzzleVersion = \GuzzleHttp\ClientInterface::VERSION;
+        if (!interface_exists(ClientInterface::class)) {
+            throw new \Exception('Guzzle dependency missing');
+        }
+
+        switch (true) {
+            case \defined(ClientInterface::class . '::MAJOR_VERSION'):
+                $guzzleVersion = ClientInterface::MAJOR_VERSION;
+                break;
+            case \defined(ClientInterface::class . '::VERSION'):
+                $guzzleVersion = ClientInterface::VERSION;
+                break;
+            default:
+                throw new \Exception('Incompatible Guzzle version');
+        }
 
         // For Guzzle 5 compatibility
         if (version_compare($guzzleVersion, '6', '<')) {

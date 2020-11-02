@@ -26,11 +26,6 @@ use Bigfoot\PHPacto\Serializer\RuleMap;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-// For PhpUnit:6 back-compatibility
-if (!interface_exists(MockObject::class)) {
-    class_alias('PHPUnit_Framework_MockObject_MockObject', MockObject::class);
-}
-
 final class RuleMockFactory extends TestCase
 {
     /**
@@ -40,6 +35,8 @@ final class RuleMockFactory extends TestCase
 
     public function __construct(RuleMap $ruleMap = null)
     {
+        parent::__construct();
+
         $this->ruleMap = $ruleMap;
     }
 

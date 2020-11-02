@@ -79,11 +79,11 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if ($object instanceof Rules\BooleanRule || Rules\StringRule::class === \get_class($object) || $object instanceof Rules\NumericRule) {
-            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample'));
+            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample', $format));
         }
 
         if ($object instanceof Rules\ObjectRule && null === $object->getSample()) {
-            return $this->recursiveNormalization($object->getProperties(), $format, $this->createChildContext($context, 'properties'));
+            return $this->recursiveNormalization($object->getProperties(), $format, $this->createChildContext($context, 'properties', $format));
         }
 
         return $this->normalizeRuleObject($object, $format, $context);
@@ -112,7 +112,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
 
             foreach ($data as $key => $value) {
                 try {
-                    $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key));
+                    $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key, $format));
                 } catch (Mismatches\Mismatch $e) {
                     $mismatches[$key] = $e;
                 }
@@ -195,7 +195,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                                 throw new LogicException(sprintf('Cannot create an instance of %s from serialized data because the serializer inject in "%s" is not a denormalizer', $constructorParameter->getClass(), static::class));
                             }
                             $parameterClass = $constructorParameter->getClass()->getName();
-                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName));
+                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName, $format));
                         }
                     } catch (Mismatches\Mismatch $e) {
                         $mismatches[strtoupper($key)] = $e;
@@ -278,7 +278,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             if (is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
             } else {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
+                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             }
         }
 
@@ -292,9 +292,9 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         }
 
         if (\array_key_exists('rules', $data) && \is_array($data['rules'])) {
-            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rules\Rule::class . '[]', $format, $this->createChildContext($context, 'rules'));
+            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rules\Rule::class . '[]', $format, $this->createChildContext($context, 'rules', $format));
         } elseif (Rules\ObjectRule::class === $class && \array_key_exists('properties', $data) && \is_array($data['properties'])) {
-            $data['properties'] = $this->recursiveDenormalization($data['properties'], Rules\Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties'));
+            $data['properties'] = $this->recursiveDenormalization($data['properties'], Rules\Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties', $format));
         }
 
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);

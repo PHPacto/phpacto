@@ -112,7 +112,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                                 throw new LogicException(sprintf('Cannot create an instance of %s from serialized data because the serializer inject in "%s" is not a denormalizer', $constructorParameter->getClass(), static::class));
                             }
                             $parameterClass = $constructorParameter->getClass()->getName();
-                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName));
+                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName, $format));
                         }
                     } catch (Mismatches\Mismatch $e) {
                         $mismatches[strtoupper($key)] = $e;
@@ -180,7 +180,7 @@ class PactNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
             }
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute));
+                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             } else {
                 $data[$attribute] = $attributeValue;
             }

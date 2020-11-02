@@ -34,7 +34,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_has_sample()
     {
         $request = new PactRequest(
-            $this->rule->hasSample('get'),
+            $this->rule->hasSample('get', StringRule::class),
             $this->rule->hasSample('/', StringRule::class),
             ['X-Custom' => $this->rule->hasSample('X')],
             $this->rule->hasSample('Body')
@@ -52,7 +52,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_has_sample_with_body_url_encoded()
     {
         $request = new PactRequest(
-            $this->rule->hasSample('get'),
+            $this->rule->hasSample('get', StringRule::class),
             $this->rule->hasSample('/', StringRule::class),
             ['Content-Type' => $this->rule->hasSample('application/x-www-form-urlencoded')],
             $this->rule->hasSample(['x' => ['content']])
@@ -68,7 +68,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_has_sample_with_body_json_encoded()
     {
         $request = new PactRequest(
-            $this->rule->hasSample('get'),
+            $this->rule->hasSample('get', StringRule::class),
             $this->rule->hasSample('/', StringRule::class),
             ['Content-Type' => $this->rule->hasSample('application/json')],
             $this->rule->hasSample(['x' => ['content']])
@@ -81,7 +81,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_it_match_if_request_match()
     {
         $request = new PactRequest(
-            $this->rule->hasSample('get'),
+            $this->rule->hasSample('get', StringRule::class),
             $this->rule->hasSample('/', StringRule::class),
             ['X' => $this->rule->hasSample('y')],
             $this->rule->hasSample('body')
@@ -95,7 +95,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_it_match_with_request_query_url_encoded()
     {
         $request = new PactRequest(
-            $this->rule->hasSample('get'),
+            $this->rule->hasSample('get', StringRule::class),
             new StringEqualsRule('/url-encoded?param[key]=value'),
             [],
             $this->rule->hasSample('body')
@@ -109,7 +109,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_it_throws_mismatch_if_request_not_match()
     {
         $request = new PactRequest(
-            $method = $this->rule->hasSample('get'),
+            $method = $this->rule->hasSample('get', StringRule::class),
             $path = $this->rule->hasSample('/', StringRule::class),
             ['X' => $header = $this->rule->hasSample(0)],
             $body = $this->rule->hasSample('')
@@ -149,7 +149,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_it_is_normalizable_minimal()
     {
         $request = new PactRequest(
-            $mockMethod = $this->rule->hasSample('get'),
+            $mockMethod = $this->rule->hasSample('get', StringRule::class),
             $mockPath = $this->rule->hasSample('/', StringRule::class)
         );
 
@@ -173,7 +173,7 @@ class PactRequestTest extends SerializerAwareTestCase
     public function test_it_is_normalizable_full()
     {
         $request = new PactRequest(
-            $mockMethod = $this->rule->hasSample('put'),
+            $mockMethod = $this->rule->hasSample('put', StringRule::class),
             $mockPath = $this->rule->hasSample('/path', StringRule::class),
             ['Y' => $mockHeaderValue = $this->rule->hasSample('X')],
             $mockBody = $this->rule->hasSample('Body')

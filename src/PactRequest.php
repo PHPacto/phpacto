@@ -46,7 +46,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
      * @param Rule[]           $headers
      * @param Rule|Rule[]|null $body
      */
-    public function __construct(Rule $method, StringRule $path, array $headers = [], $body = null)
+    public function __construct(StringRule $method, StringRule $path, array $headers = [], $body = null)
     {
         parent::__construct($headers, $body);
 
