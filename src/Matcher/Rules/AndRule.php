@@ -34,7 +34,7 @@ class AndRule extends AbstractRule
      * @param Rule[] $rules
      * @param mixed  $sample
      */
-    public function __construct(array $rules, $sample)
+    public function __construct(array $rules, $sample = null)
     {
         $this->assertSupport($this->rules = $rules);
 

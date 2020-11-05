@@ -25,6 +25,7 @@ use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
+use Bigfoot\PHPacto\Matcher\Rules\UrlRule;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 use Laminas\Diactoros\Request;
 use Psr\Http\Message\RequestInterface;
@@ -174,7 +175,7 @@ class PactRequestTest extends SerializerAwareTestCase
     {
         $request = new PactRequest(
             $mockMethod = $this->rule->hasSample('put', StringRule::class),
-            $mockPath = $this->rule->hasSample('/path', StringRule::class),
+            $mockPath = $this->rule->hasSample('/path', UrlRule::class),
             ['Y' => $mockHeaderValue = $this->rule->hasSample('X')],
             $mockBody = $this->rule->hasSample('Body')
         );
@@ -186,6 +187,7 @@ class PactRequestTest extends SerializerAwareTestCase
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
+                'location' => '',
                 'sample' => '/path',
             ],
             'headers' => [
@@ -222,7 +224,14 @@ class PactRequestTest extends SerializerAwareTestCase
     {
         $data = [
             'method' => 'POST',
-            'path' => '/path?query',
+            'path' => [
+                '_rule' => 'url',
+                'location' => '/path',
+                'query' => [
+                    'qp1' => 'A',
+                ],
+                'sample' => '/path?qp1=A',
+            ],
             'headers' => [
                 'x-key' => 'val',       // "x-key" will be normalized to CamelCase "X-Key"
             ],
@@ -233,7 +242,9 @@ class PactRequestTest extends SerializerAwareTestCase
         $request = $this->normalizer->denormalize($data, PactRequestInterface::class);
 
         self::assertEquals('POST', $request->getMethod()->getSample());
-        self::assertEquals('/path?query', $request->getPath()->getSample());
+        self::assertEquals('/path?qp1=A', $request->getPath()->getSample());
+        self::assertEquals('/path', $request->getPath()->getLocation());
+        self::assertEquals('A', $request->getPath()->getQuery()->getProperties()['qp1']->getSample());
         self::assertEquals('val', $request->getHeaders()['X-Key']->getSample());
         self::assertEquals('Body', $request->getBody()->getSample());
     }

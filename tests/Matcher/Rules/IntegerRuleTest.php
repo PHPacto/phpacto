@@ -27,9 +27,7 @@ class IntegerRuleTest extends SerializerAwareTestCase
 {
     public function test_it_has_a_default_sample()
     {
-        $rule = $this->getMockBuilder(IntegerRule::class)
-            ->setMethodsExcept(['getSample'])
-            ->getMock();
+        $rule = new IntegerRule();
 
         self::assertEquals(0, $rule->getSample());
     }

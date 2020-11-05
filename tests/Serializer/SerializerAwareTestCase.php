@@ -37,8 +37,10 @@ abstract class SerializerAwareTestCase extends TestCase
      */
     protected $rule;
 
-    public function setUp()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
+
         $this->normalizer = SerializerFactory::getInstance();
         $this->rule = new RuleMockFactory(SerializerFactory::getRuleMap());
     }

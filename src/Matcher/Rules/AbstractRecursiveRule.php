@@ -49,7 +49,7 @@ abstract class AbstractRecursiveRule extends AbstractRule
         return $this->rules;
     }
 
-    public function assertMatchRec($rules, $test): void
+    protected function assertMatchRec($rules, $test): void
     {
         if ($rules instanceof Rule) {
             $rules->assertMatch($test);

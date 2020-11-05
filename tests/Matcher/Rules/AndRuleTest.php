@@ -29,7 +29,7 @@ class AndRuleTest extends SerializerAwareTestCase
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
-        $rule = new AndRule([$childRule, $childRule], 'sample');
+        $rule = new AndRule([$childRule, $childRule]);
 
         $expected = [
             '_rule' => 'and',
@@ -37,7 +37,6 @@ class AndRuleTest extends SerializerAwareTestCase
                 ['_rule' => \get_class($childRule)],
                 ['_rule' => \get_class($childRule)],
             ],
-            'sample' => 'sample',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

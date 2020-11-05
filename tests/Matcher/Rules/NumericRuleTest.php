@@ -27,18 +27,16 @@ class NumericRuleTest extends SerializerAwareTestCase
 {
     public function test_it_has_a_default_sample()
     {
-        $rule = $this->getMockBuilder(NumericRule::class)
-            ->setMethodsExcept(['getSample'])
-            ->getMock();
+        $rule = new NumericRule();
 
         self::assertSame(0.0, $rule->getSample());
     }
 
     public function test_it_is_normalizable()
     {
-        $rule = new NumericRule(0.0);
+        $rule = new NumericRule(.1);
 
-        $expected = 0.0;
+        $expected = .1;
 
         self::assertSame($expected, $this->normalizer->normalize($rule));
     }
