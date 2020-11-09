@@ -24,6 +24,7 @@
         "psr/http-server-middleware": "^1.0",
         "symfony/console": "^2.8|^3|^4|^5",
         "symfony/finder": "^2.3|^3|^4|^5",
+        "symfony/routing": "^2|^3|^4|^5",
         "symfony/serializer": "^3.3|^4|^5",
         "symfony/yaml": "^2|^3|^4|^5"
     },

@@ -22,6 +22,7 @@
 namespace Bigfoot\PHPacto\Matcher\Rules;
 
 use Bigfoot\PHPacto\Matcher\Mismatches;
+use Symfony\Component\Routing\Route;
 
 class UrlRule extends StringRule
 {
@@ -164,6 +165,21 @@ class UrlRule extends StringRule
             $mismatches['PORT'] = new Mismatches\ValueMismatch('Port should be {{ expected }} but is {{ actual }}', $this->port, $parsed['port']);
         }
 
+        if ($this->parameters) {
+            $route = new Route($this->location);
+            preg_match($route->compile()->getRegex(), $parsed['path'], $matches);
+
+            if (!empty($matches)) {
+                try {
+                    $this->parameters->assertMatch($matches);
+                } catch (Mismatches\Mismatch $e) {
+                    $mismatches['LOCATION'] = $e;
+                }
+            } else {
+                $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Some keys ware not found in your path {{ actual }} but expected is {{ expected }}', $this->location, $parsed['path']);
+            }
+        }
+
         if ($this->query) {
             try {
                 $this->query->assertMatch($parsed['query']);
@@ -194,7 +210,7 @@ class UrlRule extends StringRule
             return [];
         }
 
-        preg_match_all('/(?:(?:[\w-]|({[\w-]+})+)+\/?)/', $value, $matches);
+        preg_match_all('/(?:(?:[\w-]|(\{[^\}]+\})+)+\/?)/', $value, $matches);
 
         if (empty($matches)) {
             throw new Mismatches\ValueMismatch('Invalid path, check your location syntax', 'valid path location', $value);
