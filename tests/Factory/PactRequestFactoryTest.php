@@ -22,9 +22,9 @@
 namespace Bigfoot\PHPacto\Factory;
 
 use Bigfoot\PHPacto\PactRequest;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Stream;
 
 class PactRequestFactoryTest extends TestCase
 {

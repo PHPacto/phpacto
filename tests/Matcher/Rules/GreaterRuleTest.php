@@ -39,6 +39,21 @@ class GreaterRuleTest extends SerializerAwareTestCase
         self::assertEquals($expected, $this->normalizer->normalize($rule));
     }
 
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '_rule' => 'greater',
+            'value' => 5,
+            'sample' => 6,
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(GreaterRule::class, $rule);
+        self::assertSame(5, $rule->getValue());
+        self::assertSame(6, $rule->getSample());
+    }
+
     public function supportedValuesProvider()
     {
         return [

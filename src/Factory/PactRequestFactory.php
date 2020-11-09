@@ -21,6 +21,9 @@
 
 namespace Bigfoot\PHPacto\Factory;
 
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\PactRequest;
 use Bigfoot\PHPacto\PactRequestInterface;
 use Psr\Http\Message\RequestInterface;
@@ -35,5 +38,21 @@ abstract class PactRequestFactory extends PactMessageFactory
         $body = self::getBodyRules($request);
 
         return new PactRequest($method, $uri, $headers, $body);
+    }
+
+    protected static function getMethodRule(RequestInterface $request): Rule
+    {
+        return new StringEqualsRule(strtoupper($request->getMethod()));
+    }
+
+    protected static function getUriRule(RequestInterface $request): Rule
+    {
+        $uri = $request->getUri()->getPath();
+
+        if ($request->getUri()->getQuery()) {
+            $uri .= $request->getUri()->getQuery();
+        }
+
+        return new StringEqualsRule($uri);
     }
 }

@@ -25,11 +25,6 @@ use Bigfoot\PHPacto\Matcher\Mismatches;
 
 class StringRule extends AbstractRule
 {
-    public function __construct(string $sample = null)
-    {
-        parent::__construct($sample);
-    }
-
     public function assertMatch($test): void
     {
         if (!\is_string($test)) {

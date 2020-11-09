@@ -56,9 +56,9 @@ final class RuleMockFactory extends TestCase
         return $mock;
     }
 
-    public function hasSample($sample): Rule
+    public function hasSample($sample, string $type = Rule::class): Rule
     {
-        $rule = $this->empty();
+        $rule = $this->empty($type);
         $rule->method('getSample')
             ->willReturn($sample);
 

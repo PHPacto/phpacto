@@ -50,6 +50,7 @@ final class RuleMap
         'stringEnds' => Rules\StringEndsRule::class,
         'stringEquals' => Rules\StringEqualsRule::class,
         'stringLength' => Rules\StringLengthRule::class,
+        'url' => Rules\UrlRule::class,
         'uuid' => Rules\UuidRule::class,
         'version' => Rules\VersionRule::class,
     ];

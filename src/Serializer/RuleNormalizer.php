@@ -96,8 +96,12 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
     {
         $class = rtrim($class, '[]');
 
-        if (!(Rules\Rule::class === $class || (interface_exists($class) && is_subclass_of($class, Rules\Rule::class)))) {
-            throw new InvalidArgumentException(sprintf('Interface "%s" should extends "%s"', $class, Rules\Rule::class));
+        if (!(
+            Rules\Rule::class === $class
+            || is_subclass_of($class, Rules\Rule::class)
+            || class_implements($class)[Rules\Rule::class] ?? false
+        )) {
+            throw new InvalidArgumentException(sprintf('The class "%s" should extend "%s"', $class, Rules\Rule::class));
         }
 
         if (\is_array($data)) {
@@ -214,7 +218,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 } elseif ($constructorParameter->isDefaultValueAvailable()) {
                     $params[] = $constructorParameter->getDefaultValue();
                 } else {
-                    var_dump($data);
                     $message = sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name);
 
                     // MissingConstructorArgumentsException added on Sf 4.1
@@ -267,7 +270,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         foreach ($attributes as $attribute) {
             $attributeValue = $this->getAttributeValue($rule, $attribute, $format, $context);
 
-            if (null === $attributeValue) {
+            if (null === $attributeValue || (is_array($attributeValue) && 0 === count($attributeValue))) {
                 continue;
             }
 

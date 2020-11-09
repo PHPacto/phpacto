@@ -27,6 +27,7 @@ use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\ExistsRule;
 use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
 use Bigfoot\PHPacto\Matcher\Rules\NumericRule;
+use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
 use Bigfoot\PHPacto\Matcher\Rules\StringRule;
@@ -189,6 +190,28 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         self::assertInstanceOf(GreaterRule::class, $rule);
         self::assertEquals(5, $rule->getValue());
         self::assertEquals(6, $rule->getSample());
+    }
+
+    public function test_denormalize_array()
+    {
+        $data = ['A', 'B'];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class.'[]');
+
+        self::assertIsArray($rule);
+        self::assertEquals('A', $rule[0]->getSample());
+        self::assertEquals('B', $rule[1]->getSample());
+    }
+
+    public function test_denormalize_array_associative()
+    {
+        $data = ['A' => 1, 'B' => 2];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class.'[]');
+
+        self::assertInstanceOf(ObjectRule::class, $rule);
+        self::assertEquals(1, $rule->getProperties()['A']->getSample());
+        self::assertEquals(2, $rule->getProperties()['B']->getSample());
     }
 
 //    public function test_normalize_recursive()

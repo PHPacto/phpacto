@@ -34,7 +34,6 @@ class EachItemRuleTest extends SerializerAwareTestCase
         $expected = [
             '_rule' => 'each',
             'rules' => ['_rule' => \get_class($childRule)],
-            'sample' => [],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

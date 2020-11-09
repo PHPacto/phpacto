@@ -25,6 +25,7 @@ use Bigfoot\PHPacto\Encoder\BodyEncoder;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use Bigfoot\PHPacto\Matcher\Rules\StringRule;
 use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,7 +46,7 @@ class PactRequest extends PactMessage implements PactRequestInterface
      * @param Rule[]           $headers
      * @param Rule|Rule[]|null $body
      */
-    public function __construct(Rule $method, Rule $path, array $headers = [], $body = null)
+    public function __construct(StringRule $method, StringRule $path, array $headers = [], $body = null)
     {
         parent::__construct($headers, $body);
 

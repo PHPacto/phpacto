@@ -21,6 +21,8 @@
 
 namespace Bigfoot\PHPacto\Factory;
 
+use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
+use Bigfoot\PHPacto\Matcher\Rules\Rule;
 use Bigfoot\PHPacto\PactResponse;
 use Bigfoot\PHPacto\PactResponseInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,5 +36,10 @@ abstract class PactResponseFactory extends PactMessageFactory
         $body = self::getBodyRules($response);
 
         return new PactResponse($statusCode, $headers, $body);
+    }
+
+    protected static function getStatusCodeRule(ResponseInterface $response): Rule
+    {
+        return new EqualsRule($response->getStatusCode());
     }
 }

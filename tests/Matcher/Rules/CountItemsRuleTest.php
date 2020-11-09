@@ -34,7 +34,6 @@ class CountItemsRuleTest extends SerializerAwareTestCase
         $expected = [
             '_rule' => 'count',
             'rule' => ['_rule' => \get_class($childRule)],
-            'sample' => [],
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

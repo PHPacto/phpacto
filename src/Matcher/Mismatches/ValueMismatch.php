@@ -86,6 +86,9 @@ class ValueMismatch extends Mismatch
         if (\is_int($value)) {
             return (string) $value;
         }
+        if (\is_array($value)) {
+            return sprintf('(%s)', implode(',', array_map([ValueMismatch::class, 'wrap'], $value)));
+        }
         switch ($value) {
             case 'array':
             case 'double':

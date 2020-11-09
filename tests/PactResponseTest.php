@@ -24,8 +24,8 @@ namespace Bigfoot\PHPacto;
 use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
 use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
 use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
 
 class PactResponseTest extends SerializerAwareTestCase
 {

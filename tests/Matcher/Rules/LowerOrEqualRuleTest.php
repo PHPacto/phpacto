@@ -28,14 +28,30 @@ class LowerOrEqualRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
-        $rule = new LowerOrEqualRule(5, 5);
+        $rule = new LowerOrEqualRule(5, 4);
 
         $expected = [
             '_rule' => 'lowerEqual',
             'value' => 5,
+            'sample' => 4,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_it_is_denormalizable()
+    {
+        $data = [
+            '_rule' => 'lowerEqual',
+            'value' => 5,
+            'sample' => 4,
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(LowerOrEqualRule::class, $rule);
+        self::assertSame(5, $rule->getValue());
+        self::assertSame(4, $rule->getSample());
     }
 
     public function supportedValuesProvider()

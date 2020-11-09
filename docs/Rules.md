@@ -285,6 +285,28 @@ sample: 'string value'
 
 uuid
 ----
+Asserts that an URL is matching
+```yaml
+_rule: url
+location: /your/path
+```
+With parameters
+```yaml
+_rule: url
+scheme: https
+hostname: name.local.host
+port: 4430
+location: /path/{p1}-{p2}
+parameters:
+    p1: A
+    p2: B
+query:
+    q1: C
+sample: https://name.local.host:4430/path/A-B?q1=C
+```
+
+uuid
+----
 Asserts that a string is a UUID
 ```yaml
 _rule: uuid
