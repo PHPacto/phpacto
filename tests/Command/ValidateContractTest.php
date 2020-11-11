@@ -127,7 +127,8 @@ class ValidateContractTest extends TestCase
         self::assertContains('matching.json       ✔ Valid', $output);
         self::assertContains('not-matching.json   ✖ Not valid', $output);
 
-        self::assertEquals(1, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
+        self::assertRegExp('/You have \d+ invalid contracts/', $output);
+        self::assertNotEquals(0, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
     }
 
     public function test_it_has_correct_exit_code_if_all_contracts_are_valid()

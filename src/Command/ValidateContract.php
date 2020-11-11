@@ -56,10 +56,10 @@ class ValidateContract extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getArgument('path');
-        $hasErrors = false;
+        $errors = 0;
 
         if (is_file($path) && is_readable($path)) {
-            $hasErrors |= !$this->isPactValid($output, $path, $this->defaultContractsDir);
+            $errors += (int) !$this->isPactValid($output, $path, $this->defaultContractsDir);
         } elseif (is_dir($path)) {
             $finder = new Finder();
             $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
@@ -69,7 +69,7 @@ class ValidateContract extends BaseCommand
             }
 
             foreach ($finder->files() as $file) {
-                $hasErrors |= !$this->isPactValid($output, (string) $file, $path);
+                $errors += (int) !$this->isPactValid($output, (string) $file, $path);
             }
         } else {
             throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
@@ -77,13 +77,13 @@ class ValidateContract extends BaseCommand
 
         self::getTable($output)->render();
 
-        if (!$hasErrors) {
+        if (!$errors) {
             $output->writeln('<fg=green>✔️ All your contracts are correct!</>');
-        } else {
-            $output->writeln('<fg=red>✖ Check your contracts files!</>');
+        } elseif (is_dir($path)) {
+            $output->writeln(sprintf('<fg=red>✖ You have %d invalid contracts!</>', $errors));
         }
 
-        return $hasErrors;
+        return $errors;
     }
 
     protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null): bool
