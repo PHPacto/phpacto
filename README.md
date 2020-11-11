@@ -1,7 +1,7 @@
 PHPacto
 =======
 
-Contract testing solution for your applications
+Contract testing solution for your API's and microservices
 
 If you want to know more about Contract Testing please read more [here](https://martinfowler.com/bliki/IntegrationContractTest.html) and [here](http://www.testautomationguru.com/best-practices-microservices-contract-testing).
 
@@ -28,7 +28,6 @@ You can find some contract examples in `examples` directory.
 
 First of all clone this repository `git clone git@github.com:bigfoot90/phpacto.git`
 and install vendors with composer `composer install`.
-Can use [phpdotenv](https://github.com/vlucas/phpdotenv) to load environment variables from file.
 
 Validate
 --------
@@ -48,7 +47,6 @@ Server Mock
 -----------
 You can use this server mock to provide mocked responses to your clients.
 ```bash
-export ALLOW_ORIGIN=all # This adds CORS headers to the response
 export CONTRACTS_DIR='where-are/your-contracts/stored'
 php -S 0.0.0.0:8000 bin/server_mock.php
 ```
@@ -62,6 +60,8 @@ You can create new contract file from an already working client-server applicati
 export CONTRACTS_DIR='where/new-contracts/will-be-stored/'
 php -S 0.0.0.0:8000 bin/mock_proxy_recorder.php
 ```
+
+> SUGGESTION: Can use [phpdotenv](https://github.com/vlucas/phpdotenv) to load environment variables from file.
 
 # Usage standalone CLI with Docker
 
