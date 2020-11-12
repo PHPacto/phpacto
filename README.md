@@ -58,6 +58,7 @@ Mock Proxy Recorder
 You can create new contract file from an already working client-server application.
 ```bash
 export CONTRACTS_DIR='where/new-contracts/will-be-stored/'
+export RECORDER_PROXY_TO='http://real.provider.api:80/'
 php -S 0.0.0.0:8000 bin/mock_proxy_recorder.php
 ```
 
