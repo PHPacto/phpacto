@@ -26,6 +26,14 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class EachItemRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $childRule = $this->rule->hasSample(5);
+        $rule = new EachItemRule($childRule);
+
+        self::assertEquals([5], $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();

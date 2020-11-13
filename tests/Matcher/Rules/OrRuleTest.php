@@ -26,6 +26,16 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class OrRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $one = $this->rule->hasSample('one');
+        $two = $this->rule->hasSample('two');
+
+        $rule = new OrRule([$one, $two]);
+
+        self::assertContains($rule->getSample(), ['one', 'two']);
+    }
+
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();

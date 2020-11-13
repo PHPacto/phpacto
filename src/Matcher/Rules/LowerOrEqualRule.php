@@ -55,7 +55,7 @@ class LowerOrEqualRule extends AbstractRule implements ComparisonRule
             return $this->sample;
         }
 
-        return $this->value;
+        return $this->value - 1;
     }
 
     public function assertMatch($test): void

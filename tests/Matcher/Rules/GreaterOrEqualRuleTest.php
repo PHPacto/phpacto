@@ -26,6 +26,13 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class GreaterOrEqualRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $rule = new GreaterOrEqualRule(5);
+
+        self::assertEquals(6, $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $rule = new GreaterOrEqualRule(5, 6);

@@ -49,4 +49,13 @@ class EachItemRule extends AbstractRecursiveRule
             throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} values not matching the rule');
         }
     }
+
+    public function getSample()
+    {
+        if (null !== $this->sample) {
+            return $this->sample;
+        }
+
+        return [$this->rules->getSample()];
+    }
 }

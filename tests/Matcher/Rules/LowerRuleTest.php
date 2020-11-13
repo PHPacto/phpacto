@@ -26,6 +26,13 @@ use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
 
 class LowerRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $rule = new LowerRule(5);
+
+        self::assertEquals(4, $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $rule = new LowerRule(5, 4);

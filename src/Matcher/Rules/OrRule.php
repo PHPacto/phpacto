@@ -103,6 +103,8 @@ class OrRule extends AbstractRule
         if (null !== $this->sample) {
             return $this->sample;
         }
+
+        return $this->rules[array_rand($this->rules)]->getSample();
     }
 
     /**
