@@ -19,16 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Encoder\BodyEncoder;
-use Bigfoot\PHPacto\Encoder\HeadersEncoder;
-use Bigfoot\PHPacto\Matcher\BodyMatcher;
-use Bigfoot\PHPacto\Matcher\HeadersMatcher;
-use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
-use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
-use Bigfoot\PHPacto\Matcher\Rules\OrRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use PHPacto\Encoder\BodyEncoder;
+use PHPacto\Encoder\HeadersEncoder;
+use PHPacto\Matcher\BodyMatcher;
+use PHPacto\Matcher\HeadersMatcher;
+use PHPacto\Matcher\Rules\EachItemRule;
+use PHPacto\Matcher\Rules\ObjectRule;
+use PHPacto\Matcher\Rules\OrRule;
+use PHPacto\Matcher\Rules\Rule;
 use Psr\Http\Message\MessageInterface;
 
 abstract class PactMessage implements PactMessageInterface

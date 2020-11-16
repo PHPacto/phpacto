@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Command;
+namespace PHPacto\Command;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
+use PHPacto\Factory\SerializerFactory;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
@@ -105,7 +105,7 @@ class ValidateContractTest extends TestCase
         ];
 
         // Setup and cache the virtual file system
-        $this->fs = vfsStream::setup('root', 444, $directory);
+        $this->fs = vfsStream::setup('root', 0666, $directory);
 
         $command = new ValidateContract(SerializerFactory::getInstance());
 
@@ -120,12 +120,12 @@ class ValidateContractTest extends TestCase
 
         $output = $this->tester->getDisplay();
 
-        self::assertContains('not-a-json.json     ✖ Error', $output);
-        self::assertContains('malformed.json      ✖ Error', $output);
-        self::assertContains('invalid.json        ✖ Error', $output);
-        self::assertContains('valid.json          ✔ Valid', $output);
-        self::assertContains('matching.json       ✔ Valid', $output);
-        self::assertContains('not-matching.json   ✖ Not valid', $output);
+        self::assertStringContainsString('not-a-json.json     ✖ Error', $output);
+        self::assertStringContainsString('malformed.json      ✖ Error', $output);
+        self::assertStringContainsString('invalid.json        ✖ Error', $output);
+        self::assertStringContainsString('valid.json          ✔ Valid', $output);
+        self::assertStringContainsString('matching.json       ✔ Valid', $output);
+        self::assertStringContainsString('not-matching.json   ✖ Not valid', $output);
 
         self::assertRegExp('/You have \d+ invalid contracts/', $output);
         self::assertNotEquals(0, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
@@ -147,9 +147,25 @@ class ValidateContractTest extends TestCase
 
         $output = $this->tester->getDisplay();
 
-        self::assertContains('valid.json      ✔ Valid', $output);
-        self::assertContains('matching.json   ✔ Valid', $output);
+        self::assertStringContainsString('valid.json      ✔ Valid', $output);
+        self::assertStringContainsString('matching.json   ✔ Valid', $output);
 
         self::assertEquals(0, $this->tester->getStatusCode(), 'Exit code should be 0 since all contracts are valid');
+    }
+
+    public function test_it_shows_only_failing_conctracts()
+    {
+        $this->tester->execute([
+            'path' => $this->fs->url() . '/contracts',
+            '--only-failing' => true,
+        ]);
+
+        $output = $this->tester->getDisplay();
+
+        self::assertStringNotContainsString('✔ Valid', $output);
+        self::assertStringContainsString('✖ Error', $output);
+        self::assertStringContainsString('✖ Not valid', $output);
+
+        self::assertNotEquals(0, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
     }
 }

@@ -19,14 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Encoder\HeadersEncoder;
-use Bigfoot\PHPacto\Matcher\Mismatches;
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\PactResponse;
-use Bigfoot\PHPacto\PactResponseInterface;
+use PHPacto\Encoder\HeadersEncoder;
+use PHPacto\Matcher\Mismatches;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\Rule;
+use PHPacto\PactResponse;
+use PHPacto\PactResponseInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;

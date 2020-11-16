@@ -19,12 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Guzzle;
+namespace PHPacto\Guzzle;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\PactInterface;
-use Bigfoot\PHPacto\PactRequestInterface;
-use Bigfoot\PHPacto\PactResponseInterface;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\PactInterface;
+use PHPacto\PactRequestInterface;
+use PHPacto\PactResponseInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\AssertionFailedError;

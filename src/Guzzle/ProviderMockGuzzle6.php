@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Guzzle;
+namespace PHPacto\Guzzle;
 
-use Bigfoot\PHPacto\PactInterface;
-use Bigfoot\PHPacto\Test\PHPactoTestTrait;
+use PHPacto\PactInterface;
+use PHPacto\Test\PHPactoTestTrait;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\RequestInterface;

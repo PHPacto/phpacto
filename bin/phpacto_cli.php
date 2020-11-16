@@ -21,8 +21,8 @@
 
 require __DIR__ . '/bootstrap.php';
 
-use Bigfoot\PHPacto\Command;
-use Bigfoot\PHPacto\Factory\SerializerFactory;
+use PHPacto\Command;
+use PHPacto\Factory\SerializerFactory;
 use Symfony\Component\Console\Application;
 
 print_banner();
@@ -31,8 +31,6 @@ $application = new Application('PHPacto Cli');
 
 $serializer = SerializerFactory::getInstance();
 
-//$application->add(new Command\BuilderWriteContract($serializer, CONTRACTS_DIR ?? null));
-//$application->add(new Command\BuilderValidateContract($serializer, CONTRACTS_DIR ?? null));
 $application->add(new Command\CurlCommand($serializer, CONTRACTS_DIR ?? null));
 $application->add(new Command\ValidateContract($serializer, CONTRACTS_DIR ?? null));
 

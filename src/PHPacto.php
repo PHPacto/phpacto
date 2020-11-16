@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\PactLoader;
+use PHPacto\Factory\SerializerFactory;
+use PHPacto\Loader\PactLoader;
 use GuzzleHttp\ClientInterface;
 
 class PHPacto

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Command;
+namespace PHPacto\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Serializer\Serializer;

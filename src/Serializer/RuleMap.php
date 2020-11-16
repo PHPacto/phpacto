@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Matcher\Rules;
+use PHPacto\Matcher\Rules;
 
 final class RuleMap
 {

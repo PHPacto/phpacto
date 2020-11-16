@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Command;
+namespace PHPacto\Command;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
+use PHPacto\Factory\SerializerFactory;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
@@ -78,7 +78,7 @@ class CurlCommandTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
 
-        self::assertContains('curl \'http://localhost/\'', $output);
+        self::assertStringContainsString('curl \'http://localhost/\'', $output);
     }
 
     public function test_it_generates_curl_command_for_all_files_in_directory()
@@ -89,7 +89,7 @@ class CurlCommandTest extends TestCase
 
         $output = $this->commandTester->getDisplay();
 
-        self::assertContains("first.json\ncurl 'http://localhost/'", $output);
-        self::assertContains("second.json\ncurl 'http://localhost/'", $output);
+        self::assertStringContainsString("first.json\ncurl 'http://localhost/'", $output);
+        self::assertStringContainsString("second.json\ncurl 'http://localhost/'", $output);
     }
 }

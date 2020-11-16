@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;

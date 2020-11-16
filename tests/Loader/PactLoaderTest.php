@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Loader;
+namespace PHPacto\Loader;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\Factory\SerializerFactory;
+use PHPacto\PactInterface;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;

@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher\Rules;
+namespace PHPacto\Matcher\Rules;
 
-use Bigfoot\PHPacto\Matcher\Mismatches;
+use PHPacto\Matcher\Mismatches;
 
 class RegexpRule extends StringRule
 {

@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Command;
+namespace PHPacto\Command;
 
-use Bigfoot\PHPacto\Loader\PactLoader;
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\Loader\PactLoader;
+use PHPacto\PactInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

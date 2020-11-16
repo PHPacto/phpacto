@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Test\PHPUnit;
+namespace PHPacto\Test\PHPUnit;
 
-use Bigfoot\PHPacto\PHPacto;
-use Bigfoot\PHPacto\Test\PHPactoTestTrait;
+use PHPacto\PHPacto;
+use PHPacto\Test\PHPactoTestTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Util\Blacklist;
 

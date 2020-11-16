@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use PHPacto\Matcher\Rules\Rule;
 
 interface PactMessageInterface
 {

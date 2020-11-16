@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
-use Bigfoot\PHPacto\PactRequest;
+use PHPacto\PactRequest;
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +50,7 @@ class PactRequestFactoryTest extends TestCase
 
         $pactRequest = PactRequestFactory::createFromPSR7($request);
 
-        self::assertContains('custom header', $pactRequest->getHeaders()['X-Custom']->getSample());
+        self::assertStringContainsString('custom header', $pactRequest->getHeaders()['X-Custom']->getSample());
     }
 
     /**

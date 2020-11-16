@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher\Rules;
+namespace PHPacto\Matcher\Rules;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\ValueMismatch;
-use Bigfoot\PHPacto\Serializer\RuleMap;
+use PHPacto\Matcher\Mismatches\ValueMismatch;
+use PHPacto\Serializer\RuleMap;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher;
+namespace PHPacto\Matcher;
 
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 
 class HeadersMatcherTest extends TestCase

@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Guzzle;
+namespace PHPacto\Guzzle;
 
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\PactInterface;
 
 interface ProviderMock
 {

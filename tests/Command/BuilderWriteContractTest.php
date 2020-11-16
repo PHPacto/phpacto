@@ -37,13 +37,13 @@
 // * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // */
 //
-//namespace Bigfoot\PHPacto\Factory;
+//namespace PHPacto\Factory;
 //
-//use Bigfoot\PHPacto\Command\BuilderWriteContract;
-//use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-//use Bigfoot\PHPacto\Pact;
-//use Bigfoot\PHPacto\PactRequest;
-//use Bigfoot\PHPacto\PactResponse;
+//use PHPacto\Command\BuilderWriteContract;
+//use PHPacto\Matcher\Rules\EqualsRule;
+//use PHPacto\Pact;
+//use PHPacto\PactRequest;
+//use PHPacto\PactResponse;
 //use org\bovigo\vfs\vfsStream;
 //use org\bovigo\vfs\vfsStreamDirectory;
 //use PHPUnit\Framework\TestCase;
@@ -94,7 +94,7 @@
 //            ]);
 //        } catch (\Exception $e) {
 //            $output = $this->commandTester->getDisplay();
-//            self::assertContains('empty.php', $output, 'Command should print what file is reading');
+//            self::assertStringContainsString('empty.php', $output, 'Command should print what file is reading');
 //
 //            return;
 //        }

@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Guzzle\ProviderMock;
-use Bigfoot\PHPacto\Loader\PactLoader;
+use PHPacto\Guzzle\ProviderMock;
+use PHPacto\Loader\PactLoader;
 use PHPUnit\Framework\TestCase;
 
 class PHPactoTest extends TestCase

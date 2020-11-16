@@ -19,18 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Matcher\Rules\ComparisonRule;
-use Bigfoot\PHPacto\Matcher\Rules\EachItemRule;
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\ExistsRule;
-use Bigfoot\PHPacto\Matcher\Rules\GreaterRule;
-use Bigfoot\PHPacto\Matcher\Rules\NumericRule;
-use Bigfoot\PHPacto\Matcher\Rules\ObjectRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\StringRule;
+use PHPacto\Matcher\Rules\ComparisonRule;
+use PHPacto\Matcher\Rules\EachItemRule;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\ExistsRule;
+use PHPacto\Matcher\Rules\GreaterRule;
+use PHPacto\Matcher\Rules\NumericRule;
+use PHPacto\Matcher\Rules\ObjectRule;
+use PHPacto\Matcher\Rules\Rule;
+use PHPacto\Matcher\Rules\StringEqualsRule;
+use PHPacto\Matcher\Rules\StringRule;
 
 class RuleNormalizerTest extends SerializerAwareTestCase
 {

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher\Mismatches;
+namespace PHPacto\Matcher\Mismatches;
 
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +29,7 @@ class KeyNotFoundMismatchTest extends TestCase
     {
         $miss = new KeyNotFoundMismatch('key');
 
-        self::assertContains('not found', $miss->getMessage());
+        self::assertStringContainsString('not found', $miss->getMessage());
     }
 
     public function test_is_has_expected_key_name()

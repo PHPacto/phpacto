@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\PactInterface;
-use Bigfoot\PHPacto\PactRequestInterface;
-use Bigfoot\PHPacto\PactResponseInterface;
+use PHPacto\PactInterface;
+use PHPacto\PactRequestInterface;
+use PHPacto\PactResponseInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Serializer;

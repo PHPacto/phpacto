@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\RuleMockFactory;
+use PHPacto\Factory\SerializerFactory;
+use PHPacto\Matcher\Rules\RuleMockFactory;
 use PHPUnit\Framework\TestCase;
 
 abstract class SerializerAwareTestCase extends TestCase

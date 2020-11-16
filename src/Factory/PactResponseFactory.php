@@ -19,12 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\PactResponse;
-use Bigfoot\PHPacto\PactResponseInterface;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\Rule;
+use PHPacto\PactResponse;
+use PHPacto\PactResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class PactResponseFactory extends PactMessageFactory

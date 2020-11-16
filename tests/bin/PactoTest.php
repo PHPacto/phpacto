@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
 use PHPUnit\Framework\TestCase;
 
@@ -30,13 +30,13 @@ class PactoTest extends TestCase
         exec('bin/phpacto', $output, $exitCode);
 
         self::assertEquals(0, $exitCode);
-        self::assertContains('PHPacto', $output[0]);
+        self::assertStringContainsString('PHPacto', $output[0]);
     }
 
     public function test_it_has_copyright()
     {
         $output = `bin/phpacto 2>&1`;
 
-        self::assertContains('Copyright (c) ', $output);
+        self::assertStringContainsString('Copyright (c) ', $output);
     }
 }

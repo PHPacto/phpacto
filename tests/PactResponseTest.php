@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\Serializer\SerializerAwareTestCase;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\Serializer\SerializerAwareTestCase;
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 

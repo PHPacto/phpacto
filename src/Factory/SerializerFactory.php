@@ -19,14 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
-use Bigfoot\PHPacto\Serializer\JsonEncoder;
-use Bigfoot\PHPacto\Serializer\PactNormalizer;
-use Bigfoot\PHPacto\Serializer\PactRequestNormalizer;
-use Bigfoot\PHPacto\Serializer\PactResponseNormalizer;
-use Bigfoot\PHPacto\Serializer\RuleMap;
-use Bigfoot\PHPacto\Serializer\RuleNormalizer;
+use PHPacto\Serializer\JsonEncoder;
+use PHPacto\Serializer\PactNormalizer;
+use PHPacto\Serializer\PactRequestNormalizer;
+use PHPacto\Serializer\PactResponseNormalizer;
+use PHPacto\Serializer\RuleMap;
+use PHPacto\Serializer\RuleNormalizer;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;

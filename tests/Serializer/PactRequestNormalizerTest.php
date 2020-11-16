@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Serializer;
+namespace PHPacto\Serializer;
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Matcher\Rules\StringRule;
-use Bigfoot\PHPacto\PactRequestInterface;
+use PHPacto\Factory\SerializerFactory;
+use PHPacto\Matcher\Rules\StringRule;
+use PHPacto\PactRequestInterface;
 
 class PactRequestNormalizerTest extends SerializerAwareTestCase
 {

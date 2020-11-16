@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher;
+namespace PHPacto\Matcher;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\TypeMismatch;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
+use PHPacto\Matcher\Mismatches\TypeMismatch;
+use PHPacto\Matcher\Rules\Rule;
 
 class BodyMatcher
 {

@@ -19,13 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\Matcher\Rules\StringEqualsRule;
-use Bigfoot\PHPacto\PactRequest;
-use Bigfoot\PHPacto\PactRequestInterface;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\Rule;
+use PHPacto\Matcher\Rules\StringEqualsRule;
+use PHPacto\PactRequest;
+use PHPacto\PactRequestInterface;
 use Psr\Http\Message\RequestInterface;
 
 abstract class PactRequestFactory extends PactMessageFactory

@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
 
 class Pact implements PactInterface
 {

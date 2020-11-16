@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Bigfoot\PHPacto\Factory\SerializerFactory;
-use Bigfoot\PHPacto\Loader\PactLoader;
+use PHPacto\Factory\SerializerFactory;
+use PHPacto\Loader\PactLoader;
 use EXSyst\Component\Swagger;
 
 require __DIR__ . '/bootstrap.php';

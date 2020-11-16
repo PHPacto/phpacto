@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Matcher;
+namespace PHPacto\Matcher;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\PactInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

@@ -19,13 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto;
+namespace PHPacto;
 
-use Bigfoot\PHPacto\Encoder\BodyEncoder;
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\Matcher\Rules\Rule;
-use Bigfoot\PHPacto\Matcher\Rules\StringRule;
+use PHPacto\Encoder\BodyEncoder;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\Matcher\Rules\Rule;
+use PHPacto\Matcher\Rules\StringRule;
 use Http\Factory\Discovery\HttpFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;

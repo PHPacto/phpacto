@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Test\PHPUnit\Constraint;
+namespace PHPacto\Test\PHPUnit\Constraint;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\PactInterface;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint as PHPUnitConstraint;
 use PHPUnit\Util\InvalidArgumentHelper;

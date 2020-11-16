@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Loader;
+namespace PHPacto\Loader;
 
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\PactInterface;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\PactInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
 

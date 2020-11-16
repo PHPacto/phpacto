@@ -19,12 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Factory;
+namespace PHPacto\Factory;
 
-use Bigfoot\PHPacto\Encoder\BodyEncoder;
-use Bigfoot\PHPacto\Encoder\HeadersEncoder;
-use Bigfoot\PHPacto\Matcher\Rules\EqualsRule;
-use Bigfoot\PHPacto\Matcher\Rules\StringRule;
+use PHPacto\Encoder\BodyEncoder;
+use PHPacto\Encoder\HeadersEncoder;
+use PHPacto\Matcher\Rules\EqualsRule;
+use PHPacto\Matcher\Rules\StringRule;
 use Psr\Http\Message\MessageInterface;
 
 abstract class PactMessageFactory

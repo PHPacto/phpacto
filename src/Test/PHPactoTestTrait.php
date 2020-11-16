@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Test;
+namespace PHPacto\Test;
 
-use Bigfoot\PHPacto\PactInterface;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\RequestMatchesPact;
-use Bigfoot\PHPacto\Test\PHPUnit\Constraint\ResponseMatchesPact;
+use PHPacto\PactInterface;
+use PHPacto\Test\PHPUnit\Constraint\RequestMatchesPact;
+use PHPacto\Test\PHPUnit\Constraint\ResponseMatchesPact;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

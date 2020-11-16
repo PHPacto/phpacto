@@ -19,14 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Bigfoot\PHPacto\Command;
+namespace PHPacto\Command;
 
-use Bigfoot\PHPacto\Loader\PactLoader;
-use Bigfoot\PHPacto\Matcher\Mismatches\Mismatch;
-use Bigfoot\PHPacto\Matcher\Mismatches\MismatchCollection;
+use PHPacto\Loader\PactLoader;
+use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Matcher\Mismatches\MismatchCollection;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
@@ -50,16 +51,18 @@ class ValidateContract extends BaseCommand
         $this
             ->setName('validate')
             ->setDescription('Check that all contracts rules are still matching samples')
-            ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir);
+            ->addArgument('path', InputArgument::OPTIONAL, 'The path to contracts file or directory', $this->defaultContractsDir)
+            ->addOption('only-failing', 'f', InputOption::VALUE_NONE, 'Show failing only');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getArgument('path');
+        $onlyFailing = $input->getOption('only-failing');
         $errors = 0;
 
         if (is_file($path) && is_readable($path)) {
-            $errors += (int) !$this->isPactValid($output, $path, $this->defaultContractsDir);
+            $errors += (int) !$this->isPactValid($output, $path, $this->defaultContractsDir, $onlyFailing);
         } elseif (is_dir($path)) {
             $finder = new Finder();
             $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', PactLoader::CONFIG_EXTS)));
@@ -69,13 +72,15 @@ class ValidateContract extends BaseCommand
             }
 
             foreach ($finder->files() as $file) {
-                $errors += (int) !$this->isPactValid($output, (string) $file, $path);
+                $errors += (int) !$this->isPactValid($output, (string) $file, $path, $onlyFailing);
             }
         } else {
             throw new \Exception(sprintf('Path "%s" must be a readable file or directory', $path));
         }
 
-        self::getTable($output)->render();
+        if (!$onlyFailing || 0 !== $errors) {
+            self::getTable($output)->render();
+        }
 
         if (!$errors) {
             $output->writeln('<fg=green>✔️ All your contracts are correct!</>');
@@ -86,14 +91,16 @@ class ValidateContract extends BaseCommand
         return $errors;
     }
 
-    protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null): bool
+    protected function isPactValid(OutputInterface $output, string $filePath, string $rootDir = null, bool $onlyFailing = false): bool
     {
         $shortPath = self::getShortPath($filePath, $rootDir);
 
         try {
             $pact = $this->loader->loadFromFile($filePath);
 
-            self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>');
+            if (!$onlyFailing) {
+                self::outputResult($output, $shortPath, '<fg=green>✔ Valid</>');
+            }
 
             return true;
         } catch (\Throwable $e) {
