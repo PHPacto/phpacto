@@ -138,6 +138,7 @@ class UrlRuleTest extends SerializerAwareTestCase
             'path parameters not matching' => [false, '/{a}/{b}', new ObjectRule(['a' => $this->rule->empty(), 'b' => $this->rule->notMatching()]), null, null, null, null, '/1/2'],
             'path parameters missing keys' => [false, '/{missing}', new ObjectRule(['missing' => $this->rule->empty()]), null, null, null, null, '/'],
             'path parameters missing' => [false, '/{name}', null, null, null, null, null, '/'],
+            'path without parameters not matching' => [false, '/test', null, null, null, null, null, '/other'],
             'query parameters' => [true, '/', null, new ObjectRule(['query' => $this->rule->empty()]), null, null, null, '/?query=1'],
             'query parameters not matching' => [false, '/', null, new ObjectRule(['query' => $this->rule->hasSampleNotMatching(1)]), null, null, null, '/?query=1'],
             'query parameters missing keys' => [false, '/', null, new ObjectRule(['query' => $this->rule->hasSample(1)]), null, null, null, '/'],

@@ -178,6 +178,8 @@ class UrlRule extends StringRule
             } else {
                 $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Some keys ware not found in your path {{ actual }} but expected is {{ expected }}', $this->location, $parsed['path']);
             }
+        } elseif ($this->location !== $parsed['path']) {
+            $mismatches['LOCATION'] = new Mismatches\ValueMismatch('Path location {{ actual }} does not match {{ expected }}', $this->location, $parsed['path']);
         }
 
         if ($this->query) {
