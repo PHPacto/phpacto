@@ -44,7 +44,7 @@ abstract class PHPactoTestCase extends TestCase
         Blacklist::$blacklistedClassNames[__CLASS__] = 1;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->phpacto = new PHPacto($this->contractsBasePath);
     }

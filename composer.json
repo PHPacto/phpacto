@@ -21,11 +21,11 @@
     },
     "require-dev": {
         "ext-json": "*",
-        "guzzlehttp/guzzle": ">=5.3.3",
+        "guzzlehttp/guzzle": ">=5.3.1",
         "laminas/laminas-diactoros": "^2.4",
         "mikey179/vfsstream": "^1.6.7",
         "namshi/cuzzle": ">=1.0",
-        "phpunit/phpunit": "^7.5.15"
+        "phpunit/phpunit": "^7.5.15|^8.0"
     },
     "suggest": {
         "namshi/cuzzle": "Generates cUrl command out of you PHPacto contracts",

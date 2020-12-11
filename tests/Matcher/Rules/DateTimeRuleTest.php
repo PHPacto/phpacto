@@ -102,8 +102,7 @@ class DateTimeRuleTest extends SerializerAwareTestCase
 
         $rule->expects(self::once())
             ->method('assertMatch')
-            ->with('23-03-1990')
-            ->willReturn(true);
+            ->with('23-03-1990');
 
         $rule->__construct('d-m-Y', '23-03-1990');
     }

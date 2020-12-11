@@ -108,8 +108,7 @@ class GreaterRuleTest extends SerializerAwareTestCase
 
         $rule->expects(self::once())
             ->method('assertMatch')
-            ->with(6)
-            ->willReturn(true);
+            ->with(6);
 
         $rule->__construct(5, 6);
     }

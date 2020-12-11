@@ -108,8 +108,7 @@ class LowerRuleTest extends SerializerAwareTestCase
 
         $rule->expects(self::once())
             ->method('assertMatch')
-            ->with(4)
-            ->willReturn(true);
+            ->with(4);
 
         $rule->__construct(5, 4);
     }

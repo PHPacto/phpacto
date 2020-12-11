@@ -131,7 +131,7 @@ class PactLoaderTest extends TestCase
         self::expectException(\Exception::class);
 
         // This method doesn't work on PhpUnit:6 without calling `expectException` before. (Dont'ask my why?!)
-        self::expectExceptionMessageRegExp('/^Directory .* does not exist$/');
+        self::expectExceptionMessageMatches('/^Directory .* does not exist$/');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/not-a-directory');
 
@@ -164,5 +164,18 @@ class PactLoaderTest extends TestCase
             ->willReturn([]);
 
         $pacts = $loader->loadFromPath($this->fs->url() . '/empty-directory');
+    }
+
+    /**
+     * PHPUnit 7 backward compatibility layer.
+     */
+    public function expectExceptionMessageMatches(string $pattern): void
+    {
+        if (method_exists(TestCase::class, 'expectExceptionMessageMatches')) {
+            parent::expectExceptionMessageMatches($pattern);
+            return;
+        }
+
+        parent::expectExceptionMessageRegExp($pattern);
     }
 }

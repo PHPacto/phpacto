@@ -87,7 +87,7 @@ class ProviderMockGuzzle6Test extends TestCase
         $this->server->handlePact($pact);
 
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessageRegExp('/Failed asserting that request `.*` matches Pact/');
+        $this->expectExceptionMessageMatches('/Failed asserting that request `.*` matches Pact/');
 
         $this->client->request('GET', '/');
     }
@@ -123,5 +123,18 @@ class ProviderMockGuzzle6Test extends TestCase
 
         $resp = $this->client->request('GET', '/');
         self::assertSame($psr7Response, $resp);
+    }
+
+    /**
+     * PHPUnit 7 backward compatibility layer.
+     */
+    public function expectExceptionMessageMatches(string $pattern): void
+    {
+        if (method_exists(TestCase::class, 'expectExceptionMessageMatches')) {
+            parent::expectExceptionMessageMatches($pattern);
+            return;
+        }
+
+        parent::expectExceptionMessageRegExp($pattern);
     }
 }

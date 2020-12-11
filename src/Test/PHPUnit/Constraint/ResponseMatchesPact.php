@@ -36,19 +36,8 @@ class ResponseMatchesPact extends PHPUnitConstraint
      */
     protected $pact;
 
-    /**
-     * @param PactInterface $pact
-     *
-     * @throws \PHPUnit\Framework\Exception
-     */
-    public function __construct($pact)
+    public function __construct(PactInterface $pact)
     {
-        parent::__construct();
-
-        if (!$pact instanceof PactInterface) {
-            throw InvalidArgumentHelper::factory(1, PactInterface::class);
-        }
-
         $this->pact = $pact;
     }
 

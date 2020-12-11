@@ -44,7 +44,7 @@ bin/phpacto curl path-to/directory-or-single-file
 
 > SUGGESTION: Can use [phpdotenv](https://github.com/vlucas/phpdotenv) to load environment variables from file.
 
-# Usage standalone CLI with Docker
+# Usage with Docker
 
 Validate
 --------
@@ -54,7 +54,7 @@ docker run -it --rm \
     -v $PWD/contracts:/srv/data \
     -e CONTRACTS_DIR=data \
     -p 8000:8000 \
-    90bigfoot/phpacto \
+    phpacto/mock-server \
     validate
 ```
 
@@ -66,7 +66,7 @@ docker run -it --rm \
     -v $PWD/contracts:/srv/data \
     -e CONTRACTS_DIR=data \
     -p 8000:8000 \
-    90bigfoot/phpacto \
+    phpacto/mock-server \
     curl
 ```
 
@@ -77,7 +77,10 @@ See https://github.com/PHPacto/mock-server
 See https://github.com/PHPacto/recorder
 
 # Testing your application
-PHPacto is compatible with `PHP ^7.1`, `PHPUnit ^7.0`, `Guzzle ^5.3.1|^6.0|^7.0` or any other `PSR-17` implementation.
+Compatibility table
+| PHPacto  | PHP  | PHPUnit   | Guzzle  | PSR-17 |
+| -------- | ---- | --------- | ------- | ------ |
+| master   | `^7.1` | `^7.0`&`^8.0` | `>=5.3.1` | `*`      |
 
 If your project satisfies these requirements, you can run `composer require --dev bigfoot90/phpacto` and test 
 your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any kind of application.
