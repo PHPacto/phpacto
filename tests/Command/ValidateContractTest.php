@@ -42,7 +42,7 @@ class ValidateContractTest extends TestCase
      */
     private $tester;
 
-    public function setUp()
+    public function setUp(): void
     {
         // Define my virtual file system
         $directory = [

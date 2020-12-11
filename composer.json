@@ -12,18 +12,19 @@
     ],
     "require": {
         "php": ">=7.1",
-        "ext-json": "*",
         "http-interop/http-factory-discovery": "^1.5",
-        "symfony/console": "^2.8|^3|^4|^5",
-        "symfony/finder": "^2.3|^3|^4|^5",
-        "symfony/routing": "^2.1|^3|^4|^5",
-        "symfony/serializer": "^3.3|^4|^5",
-        "symfony/yaml": "^2|^3|^4|^5"
+        "symfony/console": ">=2.5",
+        "symfony/finder": ">=2.1",
+        "symfony/routing": ">=2.1",
+        "symfony/serializer": ">=3.3",
+        "symfony/yaml": ">=2.0"
     },
     "require-dev": {
+        "ext-json": "*",
+        "guzzlehttp/guzzle": ">=5.3.3",
         "laminas/laminas-diactoros": "^2.4",
         "mikey179/vfsstream": "^1.6.7",
-        "namshi/cuzzle": "^1|^2",
+        "namshi/cuzzle": ">=1.0",
         "phpunit/phpunit": "^7.5.15"
     },
     "suggest": {

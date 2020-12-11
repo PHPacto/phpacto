@@ -40,7 +40,7 @@ class PactLoaderTest extends TestCase
      */
     private $serializer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->serializer = SerializerFactory::getInstance();
 

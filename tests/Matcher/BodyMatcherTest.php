@@ -35,7 +35,7 @@ class BodyMatcherTest extends TestCase
      */
     private $rule;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->matcher = new BodyMatcher();
         $this->rule = new RuleMockFactory();

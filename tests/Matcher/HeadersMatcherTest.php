@@ -35,7 +35,7 @@ class HeadersMatcherTest extends TestCase
      */
     private $rule;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->matcher = new HeadersMatcher();
         $this->rule = new RuleMockFactory();

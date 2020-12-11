@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace PHPacto\Factory;
+namespace PHPacto\Bin;
 
 use PHPUnit\Framework\TestCase;
 

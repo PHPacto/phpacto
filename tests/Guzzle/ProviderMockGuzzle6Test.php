@@ -46,7 +46,7 @@ class ProviderMockGuzzle6Test extends TestCase
      */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         switch (true) {
             case \defined(ClientInterface::class . '::MAJOR_VERSION'):

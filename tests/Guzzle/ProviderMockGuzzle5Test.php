@@ -41,7 +41,7 @@ class ProviderMockGuzzle5Test extends TestCase
      */
     private $server;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!\defined(ClientInterface::class . '::VERSION')) {
             self::markTestSkipped('Incompatible Guzzle version');

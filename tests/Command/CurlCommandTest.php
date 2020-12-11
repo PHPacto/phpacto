@@ -39,7 +39,7 @@ class CurlCommandTest extends TestCase
      */
     private $commandTester;
 
-    public function setUp()
+    public function setUp(): void
     {
         $contract = json_encode([
             'version' => 'dev',
