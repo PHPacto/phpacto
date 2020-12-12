@@ -28,12 +28,8 @@ use PHPacto\Matcher\Rules\StringEqualsRule;
 use PHPacto\PactRequest;
 use PHPacto\PactRequestInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class PactRequestNormalizer extends GetSetMethodNormalizer implements NormalizerInterface, DenormalizerInterface
+class PactRequestNormalizer extends AbstractNormalizer
 {
     /**
      * {@inheritdoc}
@@ -85,11 +81,6 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
         }
 
         return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return \in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizeObject(PactRequestInterface $object, $format = null, array $context = [])
@@ -197,58 +188,4 @@ class PactRequestNormalizer extends GetSetMethodNormalizer implements Normalizer
 
         return $object;
     }
-
-    private function recursiveNormalization($data, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof NormalizerInterface) {
-            throw new LogicException('Cannot normalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->normalize($data, $format, $context);
-    }
-
-    private function recursiveDenormalization($data, $class, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof DenormalizerInterface) {
-            throw new LogicException('Cannot denormalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->denormalize($data, $class, $format, $context);
-    }
-
-    /**
-     * Gets the cache key to use.
-     *
-     * @param string|null $format
-     *
-     * @return bool|string
-     */
-    private function getCacheKey($format, array $context)
-    {
-        try {
-            return md5($format . serialize($context));
-        } catch (\Exception $exception) {
-            // The context cannot be serialized, skip the cache
-            return false;
-        }
-    }
-
-    /*
-     * Gets attributes to normalize using groups.
-     *
-     * @param string|object $classOrObject
-     * @param array         $context
-     * @param bool          $attributesAsString If false, return an array of {@link AttributeMetadataInterface}
-     *
-     * @throws LogicException if the 'allow_extra_attributes' context variable is false and no class metadata factory is provided
-     *
-     * @return string[]|AttributeMetadataInterface[]|bool
-     */
-//    protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false)
-//    {
-//        return [
-//            'body',
-//            'headers',
-//        ];
-//    }
 }

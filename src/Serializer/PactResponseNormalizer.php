@@ -28,12 +28,8 @@ use PHPacto\Matcher\Rules\Rule;
 use PHPacto\PactResponse;
 use PHPacto\PactResponseInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class PactResponseNormalizer extends GetSetMethodNormalizer implements NormalizerInterface, DenormalizerInterface
+class PactResponseNormalizer extends AbstractNormalizer
 {
     /**
      * {@inheritdoc}
@@ -85,11 +81,6 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         }
 
         return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return \in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizeObject(PactResponseInterface $object, $format = null, array $context = [])
@@ -181,40 +172,5 @@ class PactResponseNormalizer extends GetSetMethodNormalizer implements Normalize
         $object = new PactResponse($data['status_code'], $data['headers'], $data['body'] ?? null);
 
         return $object;
-    }
-
-    private function recursiveNormalization($data, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof NormalizerInterface) {
-            throw new LogicException('Cannot normalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->normalize($data, $format, $context);
-    }
-
-    private function recursiveDenormalization($data, $class, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof DenormalizerInterface) {
-            throw new LogicException('Cannot denormalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->denormalize($data, $class, $format, $context);
-    }
-
-    /**
-     * Gets the cache key to use.
-     *
-     * @param string|null $format
-     *
-     * @return bool|string
-     */
-    private function getCacheKey($format, array $context)
-    {
-        try {
-            return md5($format . serialize($context));
-        } catch (\Exception $exception) {
-            // The context cannot be serialized, skip the cache
-            return false;
-        }
     }
 }

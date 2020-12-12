@@ -25,17 +25,13 @@ use PHPacto\Matcher\Mismatches;
 use PHPacto\Matcher\Rules;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterface, DenormalizerInterface
+class RuleNormalizer extends AbstractNormalizer
 {
     /**
      * @var RuleMap
@@ -126,7 +122,7 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                 throw new Mismatches\MismatchCollection($mismatches, 'There are {{ count }} errors');
             }
 
-            if (($context['parent'] ?? null) !== Rules\ObjectRule::class && \count($data) && $this->isArrayAssociative($data)) {
+            if (($context['parent'] ?? null) !== Rules\ObjectRule::class && \count($data) && self::isArrayAssociative($data)) {
                 return new Rules\ObjectRule($data);
             }
 
@@ -194,12 +190,10 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
                         continue;
                     }
                     try {
-                        if (null !== $constructorParameter->getClass()) {
-                            if (!$this->serializer instanceof DenormalizerInterface) {
-                                throw new LogicException(sprintf('Cannot create an instance of %s from serialized data because the serializer inject in "%s" is not a denormalizer', $constructorParameter->getClass(), static::class));
-                            }
-                            $parameterClass = $constructorParameter->getClass()->getName();
-                            $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $paramName, $format));
+                        $parameterType = self::getParameterReflectionClass($constructorParameter);
+
+                        if (null !== $parameterType) {
+                            $parameterData = $this->recursiveDenormalization($parameterData, $parameterType->getName(), $format, $this->createChildContext($context, $paramName, $format));
                         }
                     } catch (Mismatches\Mismatch $e) {
                         $mismatches[strtoupper($key)] = $e;
@@ -248,11 +242,6 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         $class = rtrim($class, '[]');
 
         return Rules\Rule::class === $class || is_subclass_of($class, Rules\Rule::class);
-    }
-
-    private static function isFormatSupported(?string $format): bool
-    {
-        return \in_array($format, [null, 'json', 'yaml'], true);
     }
 
     private function normalizeRuleObject(Rules\Rule $rule, $format = null, array $context = [])
@@ -330,43 +319,8 @@ class RuleNormalizer extends GetSetMethodNormalizer implements NormalizerInterfa
         return $object;
     }
 
-    private function recursiveNormalization($data, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof NormalizerInterface) {
-            throw new LogicException('Cannot normalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->normalize($data, $format, $context);
-    }
-
-    private function recursiveDenormalization($data, $class, $format = null, array $context = [])
-    {
-        if (!$this->serializer instanceof DenormalizerInterface) {
-            throw new LogicException('Cannot denormalize data because the injected serializer is not a normalizer');
-        }
-
-        return $this->serializer->denormalize($data, $class, $format, $context);
-    }
-
-    private function isArrayAssociative(array $array): bool
+    private static function isArrayAssociative(array $array): bool
     {
         return array_values($array) !== $array;
-    }
-
-    /**
-     * Gets the cache key to use.
-     *
-     * @param string|null $format
-     *
-     * @return bool|string
-     */
-    private function getCacheKey($format, array $context)
-    {
-        try {
-            return md5($format . serialize($context));
-        } catch (\Exception $exception) {
-            // The context cannot be serialized, skip the cache
-            return false;
-        }
     }
 }
