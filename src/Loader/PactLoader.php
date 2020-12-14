@@ -95,7 +95,13 @@ class PactLoader
 
         if (is_dir($path)) {
             $finder = new Finder();
-            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)));
+            $finder->files()->in($path)->name(sprintf('*.{%s}', implode(',', self::CONFIG_EXTS)))
+                ->sort(static function (\SplFileInfo $a, \SplFileInfo $b) {
+                    $pathA = rtrim(substr($a->getRealPath(), 0, -strlen($a->getExtension())), '.');
+                    $pathB = rtrim(substr($b->getRealPath(), 0, -strlen($b->getExtension())), '.');
+
+                    return strnatcmp($pathA, $pathB);
+                });
 
             if (0 === $finder->count()) {
                 throw new \Exception(sprintf('No contracts found in `%s`', $path));
