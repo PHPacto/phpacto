@@ -5,8 +5,10 @@ request:
     method: PATCH
     path: /api/v1/categorie/
     headers:
-        Content-Type: text/html; Charset=UTF-8
-        Content-Disposition: form-data; name="immagine"; filename="image.jpg"
+        Content-Disposition:
+            form-data:
+            name: immagine
+            filename: image.jpg
 
 response:
     status_code: 204

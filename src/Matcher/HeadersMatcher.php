@@ -22,6 +22,7 @@
 namespace PHPacto\Matcher;
 
 use PHPacto\Matcher\Rules\ContainsItemRule;
+use PHPacto\Matcher\Rules\ObjectRule;
 use PHPacto\Matcher\Rules\Rule;
 
 class HeadersMatcher
@@ -73,7 +74,7 @@ class HeadersMatcher
             }
 
             if ($mismatches) {
-                throw new Mismatches\MismatchCollection($mismatches, '{{ count }} Headers do not match');
+                throw new Mismatches\MismatchCollection($mismatches, '{{ count }} headers do not match');
             }
         } else {
             throw new \Exception('Headers should be a Rule or an array of Rules');

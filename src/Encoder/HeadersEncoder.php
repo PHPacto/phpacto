@@ -38,11 +38,7 @@ abstract class HeadersEncoder
 
         foreach ($headers as $name => $value) {
             if (\is_array($value)) {
-                if ('Content-Type' === $name) {
-                    $encoded[$name] = self::encodeLevel1($value);
-                } else {
-                    $encoded[$name] = self::encodeLevel0($value);
-                }
+                $encoded[$name] = self::encodeLevel0($value);
             } else {
                 $encoded[$name] = $value;
             }
@@ -60,15 +56,25 @@ abstract class HeadersEncoder
     {
         $encoded = [];
 
-        foreach ($values as $value) {
-            if (\is_array($value)) {
-                $encoded[] = self::encodeLevel1($value);
-            } else {
-                $encoded[] = $value;
+        foreach ($values as $key => $value) {
+            if (null === $value) {
+                $encoded[$key] = $key;
+                continue;
             }
+
+            if (\is_array($value)) {
+                $value = self::encodeLevel1($value);
+            }
+
+            if (is_int($key)) {
+                $encoded[$key] = $value;
+                continue;
+            }
+
+            $encoded[$key] = sprintf('%s="%s"', $key, $value);
         }
 
-        return implode(', ', $encoded);
+        return implode('; ', $encoded);
     }
 
     /**
@@ -79,7 +85,7 @@ abstract class HeadersEncoder
     public static function encodeLevel1($values)
     {
         if (\is_array($values)) {
-            return implode('; ', $values);
+            return implode(', ', $values);
         }
 
         return $values;
@@ -94,14 +100,13 @@ abstract class HeadersEncoder
                 continue;
             }
 
+            if (is_array($value) && 1 === count($value) && 0 === array_key_last($value)) {
+                $value = $value[0];
+            }
+
             $name = self::normalizeName($name);
             $value = self::decodeLevel0($value);
-
-            if (\array_key_exists($name, $decoded)) {
-                $decoded[$name] = array_merge_recursive($decoded[$name], $value);
-            } else {
-                $decoded[$name] = $value;
-            }
+            $decoded[$name] = $value;
         }
 
         return $decoded;
@@ -112,12 +117,12 @@ abstract class HeadersEncoder
      *
      * @return array|string
      */
-    private static function decodeLevel0($raw)
+    public static function decodeLevel0($raw)
     {
         $decoded = [];
 
         if (\is_string($raw)) {
-            $raw = explode(',', $raw);
+            $raw = explode(';', $raw);
         }
 
         if (\is_array($raw)) {
@@ -145,7 +150,7 @@ abstract class HeadersEncoder
         $decoded = [];
 
         if (\is_string($raw)) {
-            $raw = explode(';', $raw);
+            $raw = explode(',', $raw);
         }
 
         if (\is_array($raw)) {
@@ -163,7 +168,7 @@ abstract class HeadersEncoder
         return $decoded;
     }
 
-    private static function normalizeName(string $name): string
+    public static function normalizeName(string $name): string
     {
         return ucwords(strtolower($name), "- \t\r\n\f\v");
     }

@@ -62,7 +62,7 @@ class HeadersEncoderTest extends TestCase
     public function test_decode_headers_with_multiple_values_will_be_exploded()
     {
         $headers = [
-            'x' => 'a; b=c, d, e=f',
+            'x' => 'a, b=c; d; e=f',
         ];
 
         $decoded = HeadersEncoder::decode($headers);
@@ -81,7 +81,7 @@ class HeadersEncoderTest extends TestCase
 
         self::assertCount(2, $encoded);
         self::assertEquals('val', $encoded['x']);
-        self::assertEquals('a; b=c, d, e=f', $encoded['y']);
+        self::assertEquals('a, b=c; d; e=f', $encoded['y']);
     }
 
     public function test_encode_content_type()
@@ -96,5 +96,20 @@ class HeadersEncoderTest extends TestCase
         $encoded = HeadersEncoder::encode($headers);
 
         self::assertEquals('application/json; charset=UTF-8', $encoded['Content-Type']);
+    }
+
+    public function test_encode_content_disposition()
+    {
+        $headers = [
+            'Content-Disposition' => [
+                'form-data' => null,
+                'name' => 'immagine',
+                'filename' => 'image.jpg',
+            ],
+        ];
+
+        $encoded = HeadersEncoder::encode($headers);
+
+        self::assertEquals('form-data; name="immagine"; filename="image.jpg"', $encoded['Content-Disposition']);
     }
 }

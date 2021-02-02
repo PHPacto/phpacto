@@ -98,10 +98,30 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
         self::assertEquals('/path', $pact->getPath()->getSample());
     }
 
+    public function test_denormalize_html()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'method' => 'get',
+            'path' => '/',
+            'headers' => [
+                'Content-Type' => 'text/html; Charset=UTF-8',
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactRequestInterface $pact */
+        $pact = $serializer->denormalize($data, PactRequestInterface::class);
+
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type']);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
+    }
+
     /**
      * @depends test_denormalize
      */
-    public function test_denormalize_html()
+    public function test_denormalize_html_exploded_headers()
     {
         $serializer = SerializerFactory::getInstance();
 
@@ -113,30 +133,6 @@ class PactRequestNormalizerTest extends SerializerAwareTestCase
                     'text/html',
                     'Charset=UTF-8',
                 ],
-            ],
-            'body' => '<html></html>',
-        ];
-
-        /** @var PactRequestInterface $pact */
-        $pact = $serializer->denormalize($data, PactRequestInterface::class);
-
-        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][0]);
-        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type'][1]);
-        self::assertInstanceOf(StringRule::class, $pact->getBody());
-    }
-
-    /**
-     * @-depends test_denormalize
-     */
-    public function test_denormalize_html2()
-    {
-        $serializer = SerializerFactory::getInstance();
-
-        $data = [
-            'method' => 'get',
-            'path' => '/',
-            'headers' => [
-                'Content-Type' => 'text/html; Charset=UTF-8',
             ],
             'body' => '<html></html>',
         ];

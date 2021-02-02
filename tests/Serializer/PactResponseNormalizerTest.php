@@ -96,10 +96,29 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
         self::assertSame(200, $response->getStatusCode()->getSample());
     }
 
+    public function test_denormalize_html()
+    {
+        $serializer = SerializerFactory::getInstance();
+
+        $data = [
+            'status_code' => 200,
+            'headers' => [
+                'Content-Type' => 'text/html; Charset=UTF-8',
+            ],
+            'body' => '<html></html>',
+        ];
+
+        /** @var PactResponseInterface $pact */
+        $pact = $serializer->denormalize($data, PactResponseInterface::class);
+
+        self::assertInstanceOf(StringRule::class, $pact->getHeaders()['Content-Type']);
+        self::assertInstanceOf(StringRule::class, $pact->getBody());
+    }
+
     /**
      * @depends test_denormalize
      */
-    public function test_denormalize_html()
+    public function test_denormalize_html_exploded_headers()
     {
         $serializer = SerializerFactory::getInstance();
 

@@ -143,10 +143,10 @@ class PactResponseNormalizer extends AbstractNormalizer
 
         try {
             if (\array_key_exists('headers', $data) && \is_array($data['headers'])) {
-                $data['headers'] = HeadersEncoder::decode($data['headers']);
                 $headers = [];
 
                 foreach ($data['headers'] as $headerKey => $headerValue) {
+                    $headerKey = HeadersEncoder::normalizeName($headerKey);
                     $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
                 }
                 $data['headers'] = $headers;
