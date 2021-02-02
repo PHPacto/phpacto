@@ -15,6 +15,10 @@
         "http-interop/http-factory-discovery": "^1.5",
         "symfony/console": ">=2.5",
         "symfony/finder": ">=2.1",
+        "symfony/polyfill-php72": "^1.22",
+        "symfony/polyfill-php73": "^1.22",
+        "symfony/polyfill-php74": "^1.22",
+        "symfony/polyfill-php80": "^1.22",
         "symfony/routing": ">=2.1",
         "symfony/serializer": ">=3.3",
         "symfony/yaml": ">=2.0"

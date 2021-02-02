@@ -1,12 +1,19 @@
 version: dev
-description: 'Carica foto'
+description: 'My first contract'
 
 request:
-    method: PATCH
-    path: /api/v1/categorie/
-    headers:
-        Content-Type: text/html; Charset=UTF-8
-        Content-Disposition: form-data; name="immagine"; filename="image.jpg"
+    method: GET
+    path: /
 
 response:
-    status_code: 204
+    status_code: 200
+    headers:
+        Content-Type: application/json; charset=UTF-8
+#        Content-Type:
+#            - application/json
+#            - charset=UTF-8
+    body:
+        status: OK
+        messages:
+            - This is your first API contract
+            - Read more on https://github.com/bigfoot90/phpacto

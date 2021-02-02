@@ -1,0 +1,21 @@
+{
+    "version": "dev",
+    "description": "My first contract",
+    "request": {
+        "method": "GET",
+        "path": "/"
+    },
+    "response": {
+        "status_code": 200,
+        "headers": {
+            "Content-Type": ["application/json", "charset=UTF-8"]
+        },
+        "body": {
+            "status": "OK",
+            "messages": [
+                "This is your first API contract",
+                "Read more on https://github.com/bigfoot90/phpacto"
+            ]
+        }
+    }
+}
