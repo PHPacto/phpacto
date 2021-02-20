@@ -44,7 +44,7 @@ class ResponseMatchesPact extends PHPUnitConstraint
     /**
      * {@inheritdoc}
      */
-    public function evaluate($response, $description = '', $returnResult = false)
+    public function evaluate($response, $description = '', $returnResult = false): bool
     {
         try {
             $this->pact->getResponse()->assertMatch($response);

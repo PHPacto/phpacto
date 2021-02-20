@@ -44,7 +44,7 @@ class RequestMatchesPact extends PHPUnitConstraint
     /**
      * {@inheritdoc}
      */
-    public function evaluate($request, $description = '', $returnResult = false)
+    public function evaluate($request, $description = '', $returnResult = false): bool
     {
         try {
             $this->pact->getRequest()->assertMatch($request);
