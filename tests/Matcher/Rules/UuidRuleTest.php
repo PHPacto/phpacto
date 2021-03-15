@@ -32,7 +32,18 @@ class UuidRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '_rule' => 'uuid',
-            'sample' => '00000000-0000-0000-0000-000000000000',
+        ];
+
+        self::assertEquals($expected, $this->normalizer->normalize($rule));
+    }
+
+    public function test_it_is_normalizable_full()
+    {
+        $rule = new UuidRule('a3911bca-30f5-452f-8d40-b4d8cbd81faa');
+
+        $expected = [
+            '_rule' => 'uuid',
+            'sample' => 'a3911bca-30f5-452f-8d40-b4d8cbd81faa',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));

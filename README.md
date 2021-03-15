@@ -80,7 +80,7 @@ See https://github.com/PHPacto/recorder
 Compatibility table
 | PHPacto  | PHP  | PHPUnit   | Guzzle  | PSR-17 |
 | -------- | ---- | --------- | ------- | ------ |
-| master   | `^7.1` | `^7.0`&`^8.0` | `>=5.3.1` | `*`      |
+| master   | `^7.2` | `^7.0`&`^8.0`&`^9.0` | `>=5.3.1` | `*`      |
 
 If your project satisfies these requirements, you can run `composer require --dev bigfoot90/phpacto` and test 
 your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any kind of application.

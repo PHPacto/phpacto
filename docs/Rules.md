@@ -302,7 +302,9 @@ parameters:
     p2: B
 query:
     q1: C
-sample: https://name.local.host:4430/path/A-B?q1=C
+    filters:
+      a: 5
+sample: https://name.local.host:4430/path/A-B?q1=C&filters[a]=5
 ```
 
 uuid

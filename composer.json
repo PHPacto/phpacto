@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "http-interop/http-factory-discovery": "^1.5",
         "symfony/console": ">=2.5",
         "symfony/finder": ">=2.1",

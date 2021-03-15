@@ -1,0 +1,37 @@
+version: dev
+description: 'My first contract'
+
+request:
+    method: GET
+    path:
+        _rule: url
+        location: /api/v1/utenti/{id}/cliente
+        parameters:
+            id:
+                _rule: uuid
+        query:
+            filters:
+                username:
+                    _rule: string
+                    sample: user.name
+                email:
+                    _rule: string
+                    sample: email@example.com
+
+response:
+    status_code:
+        _rule: or
+        rules:
+            - 200
+            - 201
+    headers:
+        Content-Type:
+            - application/json
+            - charset=UTF-8
+    body:
+        status: OK
+        messages:
+            - This is your first API contract
+            - Read more on https://github.com/bigfoot90/phpacto
+        id:
+            _rule: uuid

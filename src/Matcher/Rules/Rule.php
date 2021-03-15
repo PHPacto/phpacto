@@ -26,6 +26,11 @@ use PHPacto\Matcher\Mismatches\Mismatch;
 interface Rule
 {
     /**
+     * Return TRUE if rule has a custom sample that shloud be dumped into file
+     */
+    public function hasSample(): bool;
+
+    /**
      * Get rule sample.
      *
      * @return mixed

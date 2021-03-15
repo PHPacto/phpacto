@@ -78,7 +78,7 @@ class RuleNormalizer extends AbstractNormalizer
             return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample', $format));
         }
 
-        if ($object instanceof Rules\ObjectRule && null === $object->getSample()) {
+        if ($object instanceof Rules\ObjectRule && !$object->hasSample()) {
             return $this->recursiveNormalization($object->getProperties(), $format, $this->createChildContext($context, 'properties', $format));
         }
 
@@ -257,6 +257,10 @@ class RuleNormalizer extends AbstractNormalizer
         $attributes = $this->getAttributes($rule, $format, $context);
 
         foreach ($attributes as $attribute) {
+            if ($attribute === 'sample' && !$rule->hasSample()) {
+                continue;
+            }
+
             $attributeValue = $this->getAttributeValue($rule, $attribute, $format, $context);
 
             if (null === $attributeValue || (is_array($attributeValue) && 0 === count($attributeValue))) {

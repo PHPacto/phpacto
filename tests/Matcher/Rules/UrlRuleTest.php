@@ -37,12 +37,11 @@ class UrlRuleTest extends SerializerAwareTestCase
 
     public function test_it_is_normalizable()
     {
-        $rule = new UrlRule('/path/location', null, null, null, null, null, 'http://localhost:80/path/location');
+        $rule = new UrlRule('/path/location');
 
         $expected = [
             '_rule' => 'url',
             'location' => '/path/location',
-            'sample' => 'http://localhost:80/path/location',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -52,8 +51,9 @@ class UrlRuleTest extends SerializerAwareTestCase
     {
         $childRule = $this->rule->empty();
         $parametersRule = new ObjectRule(['path' => $childRule]);
-        $queryRule = new ObjectRule(['qp1' => $childRule]);
-        $rule = new UrlRule('/{path}/location', $parametersRule, $queryRule, 'https', 'hostname', 443, 'https://hostname:443/path/location?qp1=A');
+        $filterRule = new ObjectRule(['a' => $childRule]);
+        $queryRule = new ObjectRule(['qp1' => $childRule, 'filters' => $filterRule]);
+        $rule = new UrlRule('/{path}/location', $parametersRule, $queryRule, 'https', 'hostname', 443, 'https://hostname:443/path/location?qp1=A&filters[a]=1');
 
         $expected = [
             '_rule' => 'url',
@@ -66,8 +66,11 @@ class UrlRuleTest extends SerializerAwareTestCase
             ],
             'query' => [
                 'qp1' => ['_rule' => \get_class($childRule)],
+                'filters' => [
+                    'a' => ['_rule' => \get_class($childRule)],
+                ],
             ],
-            'sample' => 'https://hostname:443/path/location?qp1=A',
+            'sample' => 'https://hostname:443/path/location?qp1=A&filters[a]=1',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -78,7 +81,6 @@ class UrlRuleTest extends SerializerAwareTestCase
         $data = [
             '_rule' => 'url',
             'location' => '/path/location',
-            'sample' => 'http://localhost:80/path/location',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);

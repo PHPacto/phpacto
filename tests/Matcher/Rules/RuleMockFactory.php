@@ -61,6 +61,8 @@ final class RuleMockFactory extends TestCase
         $rule = $this->empty($type);
         $rule->method('getSample')
             ->willReturn($sample);
+        $rule->method('hasSample')
+            ->willReturn(true);
 
         return $rule;
     }

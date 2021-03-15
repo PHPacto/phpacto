@@ -36,4 +36,9 @@ abstract class AbstractRule implements Rule
     {
         return $this->sample;
     }
+
+    public function hasSample(): bool
+    {
+        return $this->sample !== null;
+    }
 }
