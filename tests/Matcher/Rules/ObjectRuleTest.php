@@ -26,6 +26,17 @@ use PHPacto\Serializer\SerializerAwareTestCase;
 
 class ObjectRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $rule = new ObjectRule(['property' => $this->rule->hasSample('one')]);
+
+        $expected = [
+            'property' => 'one',
+        ];
+
+        self::assertSame($expected, $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
