@@ -52,4 +52,9 @@ class BooleanRule extends AbstractRule
             throw new Mismatches\TypeMismatch('boolean', \gettype($value), 'Should be an instance of {{ expected }}');
         }
     }
+
+    public function getSample()
+    {
+        return $this->sample ?? false;
+    }
 }
