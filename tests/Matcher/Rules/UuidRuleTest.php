@@ -26,6 +26,13 @@ use PHPacto\Serializer\SerializerAwareTestCase;
 
 class UuidRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $rule = new UuidRule();
+
+        self::assertSame('00000000-0000-0000-0000-000000000000', $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $rule = new UuidRule();
