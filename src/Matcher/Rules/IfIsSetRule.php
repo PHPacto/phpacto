@@ -32,11 +32,13 @@ class IfIsSetRule extends AbstractRecursiveRule
         if (null === $test) {
             return;
         }
+
         if ($this->rules instanceof Rule) {
             $this->rules->assertMatch($test);
 
             return;
         }
+
         if (!\is_array($test)) {
             throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
@@ -62,5 +64,24 @@ class IfIsSetRule extends AbstractRecursiveRule
         if ($mismatches) {
             throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} values not matching the rule');
         }
+    }
+
+    public function getSample()
+    {
+        if (null !== $this->sample) {
+            return $this->sample;
+        }
+
+        if ($this->rules instanceof Rule) {
+            return $this->rules->getSample();
+        }
+
+        $sample = [];
+
+        foreach ($this->rules as $key => $rule) {
+            $sample[$key] = $rule->getSample();
+        }
+
+        return $sample;
     }
 }

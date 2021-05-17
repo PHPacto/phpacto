@@ -26,6 +26,14 @@ use PHPacto\Serializer\SerializerAwareTestCase;
 
 class IfIsSetRuleTest extends SerializerAwareTestCase
 {
+    public function test_it_has_a_default_sample()
+    {
+        $childRule = $this->rule->hasSample('sample');
+        $rule = new IfIsSetRule($childRule);
+
+        self::assertSame('sample', $rule->getSample());
+    }
+
     public function test_it_is_normalizable()
     {
         $childRule = $this->rule->empty();
