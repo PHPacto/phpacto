@@ -132,17 +132,6 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 
-    public function testMatchArray()
-    {
-        $matching = $this->rule->matching();
-
-        $rule = new IfIsSetRule([$matching]);
-
-        $rule->assertMatch(['This value is matching the first Rule', 'Another value']);
-
-        self::assertTrue(true, 'No exceptions should be thrown if matching');
-    }
-
     public function testMatchArrayObject()
     {
         $matching = $this->rule->matching();
@@ -160,26 +149,8 @@ class IfIsSetRuleTest extends SerializerAwareTestCase
 
         $rule = new IfIsSetRule($mismatching);
 
-        self::expectException(Mismatches\Mismatch::class);
+        $this->expectException(Mismatches\Mismatch::class);
         $rule->assertMatch('A Mismatch should be thrown');
-    }
-
-    public function testMismatchArray()
-    {
-        $matching = $this->rule->matching();
-        $mismatching = $this->rule->notMatching();
-
-        $rule = new IfIsSetRule([[$matching, $mismatching]]);
-
-        try {
-            $rule->assertMatch(['A Mismatch should be thrown']);
-        } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(1, \count($mismatches));
-
-            return;
-        }
-
-        self::fail('An MismatchCollection should been thrown');
     }
 
     public function testMismatchArrayMissingKey()

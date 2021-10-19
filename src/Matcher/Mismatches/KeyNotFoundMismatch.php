@@ -33,7 +33,7 @@ class KeyNotFoundMismatch extends Mismatch
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getKeyName()
     {

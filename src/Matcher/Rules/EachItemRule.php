@@ -31,22 +31,35 @@ class EachItemRule extends AbstractRecursiveRule
             throw new Mismatches\TypeMismatch('array', \gettype($test));
         }
 
-        if (!\count($test)) {
-            return;
-        }
 
         $mismatches = [];
 
-        foreach ($test as $key => $value) {
-            try {
-                $this->assertMatchRec($this->rules, $value);
-            } catch (Mismatches\Mismatch $e) {
-                $mismatches[$key] = $e;
+        foreach ($test as $i => $value) {
+            if ($this->rules instanceof Rule) {
+                try {
+                    $this->rules->assertMatch($value);
+                } catch (Mismatches\Mismatch $e) {
+                    $mismatches[$i] = $e;
+                }
+
+                continue;
+            }
+
+            foreach ($this->rules as $key => $rule) {
+                try {
+                    if (!\array_key_exists($key, $value)) {
+                        throw new Mismatches\KeyNotFoundMismatch($key);
+                    }
+
+                    $rule->assertMatch($value[$key]);
+                } catch (Mismatches\Mismatch $e) {
+                    $mismatches[$i.'.'.$key] = $e;
+                }
             }
         }
 
         if ($mismatches) {
-            throw new Mismatches\MismatchCollection($mismatches, 'One or more of the {{ count }} values not matching the rule');
+            throw new Mismatches\MismatchCollection($mismatches, sprintf('{{ count }} items of %d elements doesn\'t match the rule', count($test)));
         }
     }
 

@@ -38,7 +38,7 @@ class BodyEncoderTest extends TestCase
 
     public function test_it_throws_exception_when_invalid_form_data()
     {
-        self::expectException(ValueMismatch::class);
+        $this->expectException(ValueMismatch::class);
 
         BodyEncoder::decode('', 'application/x-www-form-urlencoded');
     }
@@ -73,7 +73,7 @@ class BodyEncoderTest extends TestCase
 
     public function test_it_throws_exception_when_invalid_json_string()
     {
-        self::expectException(ValueMismatch::class);
+        $this->expectException(ValueMismatch::class);
 
         BodyEncoder::decode('', 'application/json');
     }

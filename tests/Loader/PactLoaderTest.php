@@ -75,7 +75,7 @@ class PactLoaderTest extends TestCase
     {
         $loader = new PactLoader($this->serializer);
 
-        self::expectExceptionMessage('not exist');
+        $this->expectExceptionMessage('not exist');
 
         $loader->loadFromFile($this->fs->url() . '/not-exist.json');
 
@@ -86,7 +86,7 @@ class PactLoaderTest extends TestCase
     {
         $loader = new PactLoader($this->serializer);
 
-        self::expectExceptionMessage('does not contain a valid pact');
+        $this->expectExceptionMessage('does not contain a valid pact');
 
         $loader->loadFromFile($this->fs->url() . '/empty.json');
 
@@ -128,10 +128,10 @@ class PactLoaderTest extends TestCase
             ->getMock();
 
         // This line is for PhpUnit:6 back-compatibility
-        self::expectException(\Exception::class);
+        $this->expectException(\Exception::class);
 
         // This method doesn't work on PhpUnit:6 without calling `expectException` before. (Dont'ask my why?!)
-        self::expectExceptionMessageMatches('/^Directory .* does not exist$/');
+        $this->expectExceptionMessageMatches('/^Directory .* does not exist$/');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/not-a-directory');
 
@@ -145,7 +145,7 @@ class PactLoaderTest extends TestCase
             ->setMethodsExcept(['loadFromDirectory'])
             ->getMock();
 
-        self::expectExceptionMessage('No contracts found');
+        $this->expectExceptionMessage('No contracts found');
 
         $pacts = $loader->loadFromDirectory($this->fs->url() . '/empty-directory');
 

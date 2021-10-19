@@ -133,25 +133,24 @@ class EachItemRuleTest extends SerializerAwareTestCase
     {
         $childRule = $this->rule->matching();
         $childRule->method('assertMatch')
-            ->withConsecutive([4], [5], [6]);
-
-        $childRule = new IntegerRule();
-        $childRule = new OrRule([$childRule]);
+            ->with(5);
 
         $rule = new EachItemRule($childRule);
 
-        $rule->assertMatch([4, 5, 6]);
+        $rule->assertMatch([5, 5]);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
 
     public function testMatchArray()
     {
-        $matching = $this->rule->matching();
+        $childRule = $this->rule->matching();
+        $childRule->method('assertMatch')
+            ->with(5);
 
-        $rule = new EachItemRule(['key' => $matching]);
+        $rule = new EachItemRule(['key' => $childRule]);
 
-        $rule->assertMatch([['key' => 'No Mismatch is thrown']]);
+        $rule->assertMatch([0 => ['key' => 5], 1 => ['key' => 5]]);
 
         self::assertTrue(true, 'No exceptions should be thrown if matching');
     }
@@ -165,7 +164,7 @@ class EachItemRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch([4, 5, 6]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(2, \count($mismatches));
+            self::assertEquals(['0', '2'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
@@ -227,9 +226,10 @@ class EachItemRuleTest extends SerializerAwareTestCase
         try {
             $rule->assertMatch([
                 ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
+                ['A' => 'X', 'B' => 'Y', 'C' => 'Z'],
             ]);
         } catch (Mismatches\MismatchCollection $mismatches) {
-            self::assertEquals(['0.B'], array_keys($mismatches->toArrayFlat()));
+            self::assertEquals(['0.B', '1.B'], array_keys($mismatches->toArrayFlat()));
 
             return;
         }
