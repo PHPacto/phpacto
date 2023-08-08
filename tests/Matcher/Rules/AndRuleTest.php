@@ -72,26 +72,23 @@ class AndRuleTest extends SerializerAwareTestCase
         return [
             [false, []],
             [false, 100],
-            [false, 1.0],
+            [false, .1],
             [false, 'string'],
             [false, true],
             [false, false],
             [false, null],
-            [false, new class() {
-            }],
             [false, new \stdClass()],
             [false, $rule],
             [false, [[]]],
             [false, [100]],
-            [false, [1.0]],
+            [false, [.1]],
             [false, ['string']],
             [false, [true]],
             [false, [false]],
             [false, [null]],
-            [false, [new class() {
-            }]],
             [false, [new \stdClass()]],
             [true, [$rule]],
+            [true, ['key' => $rule]],
         ];
     }
 

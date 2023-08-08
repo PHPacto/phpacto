@@ -29,7 +29,7 @@ class ObjectRule extends AbstractRecursiveRule
      * @param Rule[] $properties
      * @param mixed  $sample
      */
-    public function __construct(array $properties, $sample = null)
+    public function __construct(array $properties = [], $sample = null)
     {
         parent::__construct($properties, $sample);
     }
@@ -72,10 +72,6 @@ class ObjectRule extends AbstractRecursiveRule
      */
     protected function assertSupport($properties): void
     {
-        if (!\count($properties)) {
-            throw new Mismatches\ValueMismatch('The array is empty', 'An array with values', 'An empty array');
-        }
-
         foreach ($properties as $item) {
             if (!(\is_array($item) || $item instanceof Rule)) {
                 throw new Mismatches\TypeMismatch('Rule', \gettype($properties), 'Each item should be an instance of {{ expected }}');

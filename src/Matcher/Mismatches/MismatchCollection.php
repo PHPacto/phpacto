@@ -91,17 +91,17 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
         return $result;
     }
 
-    public function count()
+    public function count(): int
     {
         return \count($this->mismatches);
     }
 
-    public function countAll()
+    public function countAll(): int
     {
         return \count($this->toArrayFlat());
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->mismatches);
     }
@@ -112,7 +112,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \Exception('This is cannot be accepted');
     }
@@ -132,7 +132,7 @@ class MismatchCollection extends Mismatch implements \ArrayAccess, \Countable, \
      *
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \Exception('This is cannot be accepted');
     }

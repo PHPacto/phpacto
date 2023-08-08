@@ -44,7 +44,7 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
         /** @var PactResponseNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactResponseNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $pact = $this->createMock(PactResponseInterface::class);
@@ -60,7 +60,7 @@ class PactResponseNormalizerTest extends SerializerAwareTestCase
         /** @var PactResponseNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactResponseNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], PactResponseInterface::class, $format));

@@ -34,7 +34,18 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            PactResponseInterface::class => true,
+            PactResponseInterface::class.'[]' => true,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof PactResponseInterface && self::isFormatSupported($format);
     }
@@ -42,7 +53,7 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return PactResponseInterface::class === $type && \is_array($data) && self::isFormatSupported($format);
     }

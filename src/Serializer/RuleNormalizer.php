@@ -34,6 +34,17 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 class RuleNormalizer extends AbstractNormalizer
 {
     /**
+     * {@inheritdoc}
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Rules\Rule::class => true,
+            Rules\Rule::class.'[]' => true,
+        ];
+    }
+
+    /**
      * @var RuleMap
      */
     private $ruleMap;
@@ -48,7 +59,7 @@ class RuleNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return \is_object($data) && self::isRule(\get_class($data)) && self::isFormatSupported($format);
     }
@@ -56,7 +67,7 @@ class RuleNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || is_scalar($data));
     }
