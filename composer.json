@@ -15,10 +15,6 @@
         "http-interop/http-factory-discovery": "^1.5",
         "symfony/console": ">=2.5",
         "symfony/finder": ">=2.1",
-        "symfony/polyfill-php72": "^1.22",
-        "symfony/polyfill-php73": "^1.22",
-        "symfony/polyfill-php74": "^1.22",
-        "symfony/polyfill-php80": "^1.22",
         "symfony/routing": ">=2.1",
         "symfony/serializer": ">=3.3",
         "symfony/yaml": ">=2.0"
@@ -26,10 +22,20 @@
     "require-dev": {
         "ext-json": "*",
         "guzzlehttp/guzzle": ">=5.3.1",
-        "laminas/laminas-diactoros": "^2.4",
+        "laminas/laminas-diactoros": "^2.0|^3.0",
         "mikey179/vfsstream": "^1.6.7",
         "namshi/cuzzle": ">=1.0",
-        "phpunit/phpunit": "^7.5.15|^8.0"
+        "nyholm/psr7": "^1.8",
+        "phpunit/phpunit": "^8.0|^9.0",
+        "symfony/polyfill-php72": "^1.22",
+        "symfony/polyfill-php73": "^1.22",
+        "symfony/polyfill-php74": "^1.22",
+        "symfony/polyfill-php80": "^1.22",
+        "symfony/polyfill-php81": "^1.22",
+        "symfony/polyfill-php82": "^1.22",
+        "symfony/polyfill-php83": "^1.22",
+        "symfony/psr-http-message-bridge": "^2.3",
+        "yoast/phpunit-polyfills": "^2.0"
     },
     "suggest": {
         "namshi/cuzzle": "Generates cUrl command out of you PHPacto contracts",

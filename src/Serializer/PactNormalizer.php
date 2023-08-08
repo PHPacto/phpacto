@@ -35,7 +35,18 @@ class PactNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            PactInterface::class => true,
+            PactInterface::class.'[]' => true,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof PactInterface && self::isFormatSupported($format);
     }
@@ -43,7 +54,7 @@ class PactNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return \is_array($data) && PactInterface::class === $type && self::isFormatSupported($format);
     }
@@ -66,7 +77,7 @@ class PactNormalizer extends AbstractNormalizer
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if (!(\is_array($data) && PactInterface::class === $class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class, PactInterface::class));
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class));
         }
 
         return $this->denormalizeArray($data, Pact::class, $format, $context);

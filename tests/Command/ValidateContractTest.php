@@ -24,7 +24,7 @@ namespace PHPacto\Command;
 use PHPacto\Factory\SerializerFactory;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -127,7 +127,7 @@ class ValidateContractTest extends TestCase
         self::assertStringContainsString('matching.json       ✔ Valid', $output);
         self::assertStringContainsString('not-matching.json   ✖ Not valid', $output);
 
-        self::assertRegExp('/You have \d+ invalid contracts/', $output);
+        self::assertMatchesRegularExpression('/You have \d+ invalid contracts/', $output);
         self::assertNotEquals(0, $this->tester->getStatusCode(), 'Exit code should be different than 0 since there are failed contracts');
     }
 

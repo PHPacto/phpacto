@@ -143,7 +143,7 @@ class UrlRule extends StringRule
             'host' => 'localhost',
             'port' => 'https' === ($parsed['scheme'] ?? 'http') ? 443 : 80,
             'path' => '/',
-            'query' => null,
+            'query' => '',
         ], $parsed);
         parse_str($parsed['query'], $parsed['query']);
 

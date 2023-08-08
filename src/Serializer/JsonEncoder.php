@@ -60,8 +60,7 @@ class JsonEncoder extends BaseJsonEncoder implements EncoderInterface, DecoderIn
     /**
      * Instantiates a JsonDecode instance.
      *
-     * @internal this exists to bridge Symfony 3 to Symfony 4, and can be removed
-     *   once Drupal requires Symfony 4.2 or higher.
+     * @internal this exists to bridge Symfony 3 to Symfony >= 4
      */
     private function getJsonDecode()
     {
@@ -70,6 +69,7 @@ class JsonEncoder extends BaseJsonEncoder implements EncoderInterface, DecoderIn
             return new JsonDecode([JsonDecode::ASSOCIATIVE => true]);
         }
 
+        // Symfony/Serializer 3.3
         return new JsonDecode(true);
     }
 }

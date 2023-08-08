@@ -51,7 +51,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $rule = $this->rule->empty();
@@ -67,7 +67,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $rule = $this->rule->empty(ComparisonRule::class);
@@ -83,7 +83,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], Rule::class, $format));
@@ -97,7 +97,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         /** @var RuleNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(RuleNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], ComparisonRule::class, $format));
@@ -196,7 +196,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
     {
         $data = ['A', 'B'];
 
-        $rule = $this->normalizer->denormalize($data, Rule::class.'[]');
+        $rule = $this->normalizer->denormalize($data, Rule::class);
 
         self::assertIsArray($rule);
         self::assertEquals('A', $rule[0]->getSample());
@@ -207,7 +207,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
     {
         $data = ['A' => 1, 'B' => 2];
 
-        $rule = $this->normalizer->denormalize($data, Rule::class.'[]');
+        $rule = $this->normalizer->denormalize($data, Rule::class);
 
         self::assertInstanceOf(ObjectRule::class, $rule);
         self::assertEquals(1, $rule->getProperties()['A']->getSample());

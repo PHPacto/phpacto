@@ -89,9 +89,15 @@ abstract class SerializerFactory
      */
     protected static function getEncoders(): array
     {
-        return [
+        $encoders = [
             new JsonEncoder(),
-            new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]),
         ];
+
+        // YamlEncoder was introduced in Symfony/Serializer 3.2
+        if (class_exists(YamlEncoder::class)) {
+            $encoders[] = new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]);
+        }
+
+        return $encoders;
     }
 }

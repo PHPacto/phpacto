@@ -29,7 +29,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Http\Factory\Discovery\HttpFactory;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * @group guzzle
@@ -81,7 +81,7 @@ class ProviderMockGuzzle5Test extends TestCase
             $client->get('/');
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             self::assertInstanceOf(AssertionFailedError::class, $e->getPrevious());
-            self::assertRegExp('/Failed asserting that request `.*` matches Pact/', $e->getPrevious()->getMessage());
+            self::assertMatchesRegularExpression('/Failed asserting that request `.*` matches Pact/', $e->getPrevious()->getMessage());
 
             return;
         }

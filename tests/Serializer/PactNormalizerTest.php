@@ -47,7 +47,7 @@ class PactNormalizerTest extends TestCase
         /** @var PactNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $pact = $this->createMock(PactInterface::class);
@@ -63,7 +63,7 @@ class PactNormalizerTest extends TestCase
         /** @var PactNormalizer $normalizer */
         $normalizer = $this->getMockBuilder(PactNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         self::assertTrue($normalizer->supportsDenormalization([], PactInterface::class, $format));
@@ -73,12 +73,12 @@ class PactNormalizerTest extends TestCase
     {
         $requestNormalizer = $this->getMockBuilder(PactRequestNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $responseNormalizer = $this->getMockBuilder(PactResponseNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsNormalization'])
+            ->setMethodsExcept(['supportsNormalization', 'getSupportedTypes'])
             ->getMock();
 
         $requestNormalizer
@@ -118,12 +118,12 @@ class PactNormalizerTest extends TestCase
     {
         $requestNormalizer = $this->getMockBuilder(PactRequestNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         $responseNormalizer = $this->getMockBuilder(PactResponseNormalizer::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['supportsDenormalization'])
+            ->setMethodsExcept(['supportsDenormalization', 'getSupportedTypes'])
             ->getMock();
 
         $requestNormalizer
