@@ -70,7 +70,6 @@ class UrlRuleTest extends SerializerAwareTestCase
                     'a' => ['_rule' => \get_class($childRule)],
                 ],
             ],
-            'sample' => 'https://hostname:443/path/location?qp1=A&filters[a]=1',
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -110,7 +109,6 @@ class UrlRuleTest extends SerializerAwareTestCase
             'query' => [
                 'qp1' => ['_rule' => \get_class($childRule)],
             ],
-            'sample' => 'https://hostname:443/path/location?qp1=A',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);

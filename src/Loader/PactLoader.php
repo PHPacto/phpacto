@@ -22,6 +22,7 @@
 namespace PHPacto\Loader;
 
 use PHPacto\Matcher\Mismatches\Mismatch;
+use PHPacto\Pact;
 use PHPacto\PactInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Serializer;
@@ -61,9 +62,6 @@ class PactLoader
 
     public function loadFromFile(string $path): PactInterface
     {
-//        PHP >= 7.2
-//        $format = self::getExtensionFromPath($path)
-//            |> self::getFormatFromFileExtension($$);
         $format = self::getFormatFromFileExtension(self::getExtensionFromPath($path));
 
         $fileContents = @file_get_contents($path);

@@ -45,23 +45,23 @@ class PactRequestNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof PactRequestInterface && self::isFormatSupported($format);
+        return $data instanceof PactRequestInterface;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_array($data) && PactRequestInterface::class === $type && self::isFormatSupported($format);
+        return \is_array($data) && PactRequestInterface::class === $type;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (!$object instanceof PactRequestInterface) {
             throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), PactRequestInterface::class));
@@ -73,9 +73,9 @@ class PactRequestNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        if (!(\is_array($data) && PactRequestInterface::class === $class)) {
+        if (!(\is_array($data) && PactRequestInterface::class === $type)) {
             throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactRequestInterface::class));
         }
 
@@ -85,7 +85,7 @@ class PactRequestNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
+    protected function isAllowedAttribute(object|string $classOrObject, string $attribute, ?string $format = null, array $context = []): bool
     {
         if (\in_array($attribute, ['sample', 'sampleHeaders', 'sampleBody'], true)) {
             return false;
@@ -97,7 +97,7 @@ class PactRequestNormalizer extends AbstractNormalizer
     private function normalizeObject(PactRequestInterface $object, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         $data = [];
@@ -112,7 +112,7 @@ class PactRequestNormalizer extends AbstractNormalizer
             }
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
+                $data[$attribute] = $this->serializer->normalize($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             } else {
                 $data[$attribute] = $attributeValue;
             }
@@ -144,14 +144,14 @@ class PactRequestNormalizer extends AbstractNormalizer
         $mismatches = [];
 
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         try {
             if (\is_string($data['path'])) {
                 $data['path'] = new StringEqualsRule($data['path']);
             } else {
-                $data['path'] = $this->recursiveDenormalization($data['path'], Rule::class, $format, $this->createChildContext($context, 'path', $format));
+                $data['path'] = $this->serializer->denormalize($data['path'], Rule::class, $format, $this->createChildContext($context, 'path', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['PATH'] = $e;
@@ -161,7 +161,7 @@ class PactRequestNormalizer extends AbstractNormalizer
             if (\is_string($data['method'])) {
                 $data['method'] = new StringEqualsRule(strtoupper($data['method']));
             } else {
-                $data['method'] = $this->recursiveDenormalization($data['method'], Rule::class, $format, $this->createChildContext($context, 'method', $format));
+                $data['method'] = $this->serializer->denormalize($data['method'], Rule::class, $format, $this->createChildContext($context, 'method', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['METHOD'] = $e;
@@ -173,7 +173,7 @@ class PactRequestNormalizer extends AbstractNormalizer
 
                 foreach ($data['headers'] as $headerKey => $headerValue) {
                     $headerKey = HeadersEncoder::normalizeName($headerKey);
-                    $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
+                    $headers[$headerKey] = $this->serializer->denormalize($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
                 }
                 $data['headers'] = $headers;
             } else {
@@ -185,7 +185,7 @@ class PactRequestNormalizer extends AbstractNormalizer
 
         try {
             if (isset($data['body'])) {
-                $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body', $format));
+                $data['body'] = $this->serializer->denormalize($data['body'], Rule::class, $format, $this->createChildContext($context, 'body', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['BODY'] = $e;

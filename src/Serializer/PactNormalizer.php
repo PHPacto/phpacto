@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+use Webmozart\Assert\Assert;
 
 class PactNormalizer extends AbstractNormalizer
 {
@@ -39,34 +40,31 @@ class PactNormalizer extends AbstractNormalizer
     {
         return [
             PactInterface::class => true,
-            PactInterface::class.'[]' => true,
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof PactInterface && self::isFormatSupported($format);
+        return $data instanceof PactInterface;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_array($data) && PactInterface::class === $type && self::isFormatSupported($format);
+        return \is_array($data) && PactInterface::class === $type;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        if (!$object instanceof PactInterface) {
-            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), PactInterface::class));
-        }
+        Assert::isInstanceOf($object, PactInterface::class);
 
         return $this->normalizePactObject($object, $format, $context);
     }
@@ -74,15 +72,16 @@ class PactNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        if (!(\is_array($data) && PactInterface::class === $class)) {
-            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $class));
+        if (!(\is_array($data) && PactInterface::class === $type)) {
+            throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', $type));
         }
 
         return $this->denormalizeArray($data, Pact::class, $format, $context);
     }
 
+/*
     protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
     {
         $constructor = $this->getConstructor($data, $class, $context, $reflectionClass, $allowedAttributes);
@@ -119,7 +118,7 @@ class PactNormalizer extends AbstractNormalizer
                        $parameterType = self::getParameterReflectionClass($constructorParameter);
 
                         if (null !== $parameterType) {
-                            $parameterData = $this->recursiveDenormalization($parameterData, $parameterType->getName(), $format, $this->createChildContext($context, $paramName, $format));
+                            $parameterData = $this->serializer->denormalize($parameterData, $parameterType->getName(), $format, $this->createChildContext($context, $paramName, $format));
                         }
                     } catch (Mismatches\Mismatch $e) {
                         $mismatches[strtoupper($key)] = $e;
@@ -161,12 +160,12 @@ class PactNormalizer extends AbstractNormalizer
         }
 
         return new $class();
-    }
+    }*/
 
     private function normalizePactObject(PactInterface $object, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         $data = [];
@@ -182,7 +181,7 @@ class PactNormalizer extends AbstractNormalizer
             }
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
+                $data[$attribute] = $this->serializer->normalize($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             } else {
                 $data[$attribute] = $attributeValue;
             }
@@ -193,10 +192,6 @@ class PactNormalizer extends AbstractNormalizer
 
     private function denormalizeArray($data, $class, $format = null, array $context = []): PactInterface
     {
-        if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
-        }
-
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
 
         $reflectionClass = new \ReflectionClass($class);

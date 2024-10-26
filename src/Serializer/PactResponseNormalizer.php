@@ -45,23 +45,23 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof PactResponseInterface && self::isFormatSupported($format);
+        return $data instanceof PactResponseInterface;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return PactResponseInterface::class === $type && \is_array($data) && self::isFormatSupported($format);
+        return PactResponseInterface::class === $type && \is_array($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (!$object instanceof PactResponseInterface) {
             throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), PactResponseInterface::class));
@@ -73,9 +73,9 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        if (!(\is_array($data) && PactResponseInterface::class === $class)) {
+        if (!(\is_array($data) && PactResponseInterface::class === $type)) {
             throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactResponseInterface::class));
         }
 
@@ -85,7 +85,7 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
+    protected function isAllowedAttribute(object|string $classOrObject, string $attribute, ?string $format = null, array $context = []): bool
     {
         if (\in_array($attribute, ['sample', 'sampleHeaders', 'sampleBody'], true)) {
             return false;
@@ -97,7 +97,7 @@ class PactResponseNormalizer extends AbstractNormalizer
     private function normalizeObject(PactResponseInterface $object, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         $data = [];
@@ -112,7 +112,7 @@ class PactResponseNormalizer extends AbstractNormalizer
             }
 
             if (null !== $attributeValue && !is_scalar($attributeValue)) {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
+                $data[$attribute] = $this->serializer->normalize($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             } else {
                 $data[$attribute] = $attributeValue;
             }
@@ -139,14 +139,14 @@ class PactResponseNormalizer extends AbstractNormalizer
         $mismatches = [];
 
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         try {
             if (\is_int($data['status_code'])) {
                 $data['status_code'] = new EqualsRule($data['status_code']);
             } else {
-                $data['status_code'] = $this->recursiveDenormalization($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code', $format));
+                $data['status_code'] = $this->serializer->denormalize($data['status_code'], Rule::class, $format, $this->createChildContext($context, 'status_code', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['STATUS_CODE'] = $e;
@@ -158,7 +158,7 @@ class PactResponseNormalizer extends AbstractNormalizer
 
                 foreach ($data['headers'] as $headerKey => $headerValue) {
                     $headerKey = HeadersEncoder::normalizeName($headerKey);
-                    $headers[$headerKey] = $this->recursiveDenormalization($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
+                    $headers[$headerKey] = $this->serializer->denormalize($headerValue, Rule::class, $format, $this->createChildContext($context, 'headers.' . $headerKey, $format));
                 }
                 $data['headers'] = $headers;
             } else {
@@ -170,7 +170,7 @@ class PactResponseNormalizer extends AbstractNormalizer
 
         try {
             if (isset($data['body'])) {
-                $data['body'] = $this->recursiveDenormalization($data['body'], Rule::class, $format, $this->createChildContext($context, 'body', $format));
+                $data['body'] = $this->serializer->denormalize($data['body'], Rule::class, $format, $this->createChildContext($context, 'body', $format));
             }
         } catch (Mismatches\Mismatch $e) {
             $mismatches['BODY'] = $e;

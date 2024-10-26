@@ -23,16 +23,47 @@ namespace PHPacto\Serializer;
 
 use PHPacto\Matcher\Mismatches;
 use PHPacto\Matcher\Rules;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
+use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
+use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
+use Webmozart\Assert\Assert;
 
 class RuleNormalizer extends AbstractNormalizer
 {
+    public function __construct(
+        private RuleMap $ruleMap,
+        ?ClassMetadataFactoryInterface $classMetadataFactory = null,
+        ?NameConverterInterface $nameConverter = null,
+        ?PropertyAccessorInterface $propertyAccessor = null,
+        ?PropertyTypeExtractorInterface $propertyTypeExtractor = null,
+        ?ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null,
+        ?callable $objectClassResolver = null,
+        array $defaultContext = [],
+        ?PropertyInfoExtractorInterface $propertyInfoExtractor = null
+    ) {
+        parent::__construct(
+            $classMetadataFactory,
+            $nameConverter,
+            $propertyAccessor,
+            $propertyTypeExtractor,
+            $classDiscriminatorResolver,
+            $objectClassResolver,
+            $defaultContext,
+            $propertyInfoExtractor
+        );
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,52 +76,34 @@ class RuleNormalizer extends AbstractNormalizer
     }
 
     /**
-     * @var RuleMap
+     * {@inheritdoc}
      */
-    private $ruleMap;
-
-    public function __construct(RuleMap $ruleMap, ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        parent::__construct($classMetadataFactory, $nameConverter);
-
-        $this->ruleMap = $ruleMap;
+        return \is_object($data) && self::isRule(\get_class($data));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_object($data) && self::isRule(\get_class($data)) && self::isFormatSupported($format);
+        return self::isRule($type) && (null === $data || \is_array($data) || is_scalar($data));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null): bool
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        return self::isRule($type) && self::isFormatSupported($format) && (null === $data || \is_array($data) || is_scalar($data));
-    }
+        Assert::isInstanceOf($object, Rules\Rule::class);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($object, $format = null, array $context = [])
-    {
-        if (!$object instanceof Rules\Rule) {
-            throw new InvalidArgumentException(sprintf('The object "%s" must implement "%s".', \get_class($object), Rules\Rule::class));
-        }
-
-        if ($this->isCircularReference($object, $context)) {
-            return $this->handleCircularReference($object);
-        }
-
-        if ($object instanceof Rules\BooleanRule || Rules\StringRule::class === \get_class($object) || $object instanceof Rules\NumericRule) {
-            return $this->recursiveNormalization($object->getSample(), $format, $this->createChildContext($context, 'sample', $format));
+        if (Rules\StringRule::class === \get_class($object) || $object instanceof Rules\NumericRule || $object instanceof Rules\BooleanRule) {
+            return $this->serializer->normalize($object->getSample(), $format, $this->createChildContext($context, 'sample', $format));
         }
 
         if ($object instanceof Rules\ObjectRule && !$object->hasSample()) {
-            return $this->recursiveNormalization($object->getProperties(), $format, $this->createChildContext($context, 'properties', $format));
+            return $this->serializer->normalize($object->getProperties(), $format, $this->createChildContext($context, 'properties', $format));
         }
 
         return $this->normalizeRuleObject($object, $format, $context);
@@ -99,16 +112,16 @@ class RuleNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        $class = rtrim($class, '[]');
+        $type = rtrim($type, '[]');
 
         if (!(
-            Rules\Rule::class === $class
-            || is_subclass_of($class, Rules\Rule::class)
-            || class_implements($class)[Rules\Rule::class] ?? false
+            Rules\Rule::class === $type
+            || is_subclass_of($type, Rules\Rule::class)
+            || class_implements($type)[Rules\Rule::class] ?? false
         )) {
-            throw new InvalidArgumentException(sprintf('The class "%s" should extend "%s"', $class, Rules\Rule::class));
+            throw new InvalidArgumentException(sprintf('The class "%s" should extend "%s"', $type, Rules\Rule::class));
         }
 
         if (\is_array($data)) {
@@ -123,7 +136,7 @@ class RuleNormalizer extends AbstractNormalizer
 
             foreach ($data as $key => $value) {
                 try {
-                    $data[$key] = $this->recursiveDenormalization($data[$key], $class, $format, $this->createChildContext($context, $key, $format));
+                    $data[$key] = $this->serializer->denormalize($data[$key], $type, $format, $this->createChildContext($context, $key, $format));
                 } catch (Mismatches\Mismatch $e) {
                     $mismatches[$key] = $e;
                 }
@@ -155,7 +168,10 @@ class RuleNormalizer extends AbstractNormalizer
         return new Rules\EqualsRule($data);
     }
 
-    protected function isAllowedAttribute($object, $attribute, $format = null, array $context = [])
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAllowedAttribute(object|string $object, string $attribute, ?string $format = null, array $context = []): bool
     {
         if (\is_object($object) && 'sample' === $attribute && method_exists($object, 'getValue')) {
             if ($object->getValue() === $object->getSample()) {
@@ -170,6 +186,7 @@ class RuleNormalizer extends AbstractNormalizer
         return parent::isAllowedAttribute($object, $attribute, $format, $context);
     }
 
+    /*
     protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
     {
         $constructor = $this->getConstructor($data, $class, $context, $reflectionClass, $allowedAttributes);
@@ -246,19 +263,15 @@ class RuleNormalizer extends AbstractNormalizer
         }
 
         return new $class();
-    }
+    }*/
 
-    private static function isRule(string $class): bool
-    {
-        $class = rtrim($class, '[]');
-
-        return Rules\Rule::class === $class || is_subclass_of($class, Rules\Rule::class);
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     private function normalizeRuleObject(Rules\Rule $rule, $format = null, array $context = [])
     {
         if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
+            $context['cache_key'] = false;
         }
 
         $data = [
@@ -285,23 +298,22 @@ class RuleNormalizer extends AbstractNormalizer
             if (is_scalar($attributeValue)) {
                 $data[$attribute] = $attributeValue;
             } else {
-                $data[$attribute] = $this->recursiveNormalization($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
+                $data[$attribute] = $this->serializer->normalize($attributeValue, $format, $this->createChildContext($context, $attribute, $format));
             }
         }
 
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     private function denormalizeRuleArray($data, $class, $format = null, array $context = []): Rules\Rule
     {
-        if (!isset($context['cache_key'])) {
-            $context['cache_key'] = $this->getCacheKey($format, $context);
-        }
-
         if (\array_key_exists('rules', $data) && \is_array($data['rules'])) {
-            $data['rules'] = $this->recursiveDenormalization($data['rules'], Rules\Rule::class . '[]', $format, $this->createChildContext($context, 'rules', $format));
+            $data['rules'] = $this->serializer->denormalize($data['rules'], Rules\Rule::class . '[]', $format, $this->createChildContext($context, 'rules', $format));
         } elseif (Rules\ObjectRule::class === $class && \array_key_exists('properties', $data) && \is_array($data['properties'])) {
-            $data['properties'] = $this->recursiveDenormalization($data['properties'], Rules\Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties', $format));
+            $data['properties'] = $this->serializer->denormalize($data['properties'], Rules\Rule::class . '[]', $format, ['parent' => $class] + $this->createChildContext($context, 'properties', $format));
         }
 
         $allowedAttributes = $this->getAllowedAttributes($class, $context, true);
@@ -332,6 +344,13 @@ class RuleNormalizer extends AbstractNormalizer
         }
 
         return $object;
+    }
+
+    private static function isRule(string $class): bool
+    {
+        $class = rtrim($class, '[]');
+
+        return Rules\Rule::class === $class || is_subclass_of($class, Rules\Rule::class);
     }
 
     private static function isArrayAssociative(array $array): bool

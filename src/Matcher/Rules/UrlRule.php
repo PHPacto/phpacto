@@ -23,6 +23,7 @@ namespace PHPacto\Matcher\Rules;
 
 use PHPacto\Matcher\Mismatches;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 class UrlRule extends StringRule
 {
@@ -99,6 +100,7 @@ class UrlRule extends StringRule
         return $this->query;
     }
 
+    #[Ignore]
     public function getSample()
     {
         if (null === $this->sample) {

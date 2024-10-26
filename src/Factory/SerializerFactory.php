@@ -21,20 +21,31 @@
 
 namespace PHPacto\Factory;
 
+use PHPacto\Serializer\ClassResolver;
 use PHPacto\Serializer\JsonEncoder;
 use PHPacto\Serializer\PactNormalizer;
 use PHPacto\Serializer\PactRequestNormalizer;
 use PHPacto\Serializer\PactResponseNormalizer;
 use PHPacto\Serializer\RuleMap;
 use PHPacto\Serializer\RuleNormalizer;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Encoder\YamlEncoder;
+use Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Yaml\Yaml;
 
-abstract class SerializerFactory
+final class SerializerFactory
 {
     /**
      * @var Serializer
@@ -45,10 +56,6 @@ abstract class SerializerFactory
      * @var RuleMap
      */
     private static $ruleMap;
-
-    private function __construct()
-    {
-    }
 
     public static function getInstance(): Serializer
     {
@@ -74,13 +81,34 @@ abstract class SerializerFactory
      */
     protected static function getNormalizers(): array
     {
+        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
         $nameConverter = new CamelCaseToSnakeCaseNameConverter();
+        $discriminator = new ClassDiscriminatorFromClassMetadata($classMetadataFactory);
+        $resolver = new ClassResolver();
+
+        $context = [
+            DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+            ObjectNormalizer::ALLOW_EXTRA_ATTRIBUTES => false,
+            ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+            ObjectNormalizer::SKIP_NULL_VALUES => true,
+        ];
 
         return [
-            new RuleNormalizer(self::$ruleMap, null, $nameConverter),
-            new PactResponseNormalizer(null, $nameConverter),
-            new PactRequestNormalizer(null, $nameConverter),
-            new PactNormalizer(null, $nameConverter),
+            //new UnwrappingDenormalizer(),
+            //new ArrayDenormalizer(),
+            new RuleNormalizer(self::$ruleMap, classMetadataFactory: $classMetadataFactory, nameConverter: $nameConverter, defaultContext: $context),
+            new PactResponseNormalizer(classMetadataFactory: $classMetadataFactory, nameConverter: $nameConverter, defaultContext: $context),
+            new PactRequestNormalizer(classMetadataFactory: $classMetadataFactory, nameConverter: $nameConverter, defaultContext: $context),
+            new PactNormalizer(classMetadataFactory: $classMetadataFactory, nameConverter: $nameConverter, defaultContext: $context),
+            /*new ObjectNormalizer(
+                classMetadataFactory: $classMetadataFactory,
+                nameConverter: $nameConverter,
+                defaultContext: $defaultContext,
+                classDiscriminatorResolver: $discriminator,
+                objectClassResolver: $resolver,
+            ),
+            new GetSetMethodNormalizer($classMetadataFactory, $nameConverter),
+            new JsonSerializableNormalizer($classMetadataFactory, $nameConverter)*/
         ];
     }
 
@@ -89,15 +117,12 @@ abstract class SerializerFactory
      */
     protected static function getEncoders(): array
     {
-        $encoders = [
+        return [
             new JsonEncoder(),
+            new YamlEncoder(null, null, [
+                YamlEncoder::YAML_INLINE => 999,
+                YamlEncoder::YAML_FLAGS => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
+            ]),
         ];
-
-        // YamlEncoder was introduced in Symfony/Serializer 3.2
-        if (class_exists(YamlEncoder::class)) {
-            $encoders[] = new YamlEncoder(null, null, ['yaml_inline' => 999, 'yaml_flags' => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK, 'allow_extra_attributes' => false]);
-        }
-
-        return $encoders;
     }
 }

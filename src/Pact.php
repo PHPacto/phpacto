@@ -26,25 +26,10 @@ use PHPacto\Matcher\Mismatches\MismatchCollection;
 
 class Pact implements PactInterface
 {
-    /**
-     * @var PactRequestInterface
-     */
-    private $request;
-
-    /**
-     * @var PactResponseInterface
-     */
-    private $response;
-
-    /**
-     * @var string
-     */
-    private $description;
-
-    /**
-     * @var string
-     */
-    private $version;
+    private PactRequestInterface $request;
+    private PactResponseInterface $response;
+    private string $description;
+    private string $version;
 
     public function __construct(PactRequestInterface $request, PactResponseInterface $response, string $description = '', string $version = PactInterface::VERSION)
     {

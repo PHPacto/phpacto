@@ -25,7 +25,6 @@ use PHPacto\Matcher\Mismatches\Mismatch;
 use PHPacto\Matcher\Mismatches\MismatchCollection;
 use PHPacto\Matcher\Rules\StringEqualsRule;
 use PHPacto\Matcher\Rules\StringRule;
-use PHPacto\Matcher\Rules\UrlRule;
 use PHPacto\Serializer\SerializerAwareTestCase;
 use Laminas\Diactoros\Request;
 use Psr\Http\Message\RequestInterface;
@@ -175,7 +174,7 @@ class PactRequestTest extends SerializerAwareTestCase
     {
         $request = new PactRequest(
             $mockMethod = $this->rule->hasSample('put', StringRule::class),
-            $mockPath = $this->rule->hasSample('/path', UrlRule::class),
+            $mockPath = $this->rule->hasSample('/path', StringRule::class),
             ['Y' => $mockHeaderValue = $this->rule->hasSample('X')],
             $mockBody = $this->rule->hasSample('Body')
         );
@@ -187,7 +186,6 @@ class PactRequestTest extends SerializerAwareTestCase
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
-                'location' => '',
                 'sample' => '/path',
             ],
             'headers' => [
@@ -230,7 +228,6 @@ class PactRequestTest extends SerializerAwareTestCase
                 'query' => [
                     'qp1' => 'A',
                 ],
-                'sample' => '/path?qp1=A',
             ],
             'headers' => [
                 'x-key' => 'val',       // "x-key" will be normalized to CamelCase "X-Key"

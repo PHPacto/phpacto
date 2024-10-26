@@ -124,17 +124,4 @@ class ProviderMockGuzzle6Test extends TestCase
         $resp = $this->client->request('GET', '/');
         self::assertSame($psr7Response, $resp);
     }
-
-    /**
-     * PHPUnit 7 backward compatibility layer.
-     */
-    public function expectExceptionMessageMatches(string $pattern): void
-    {
-        if (method_exists(TestCase::class, 'expectExceptionMessageMatches')) {
-            parent::expectExceptionMessageMatches($pattern);
-            return;
-        }
-
-        parent::expectExceptionMessageRegExp($pattern);
-    }
 }

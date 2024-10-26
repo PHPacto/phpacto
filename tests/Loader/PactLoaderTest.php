@@ -165,17 +165,4 @@ class PactLoaderTest extends TestCase
 
         $pacts = $loader->loadFromPath($this->fs->url() . '/empty-directory');
     }
-
-    /**
-     * PHPUnit 7 backward compatibility layer.
-     */
-    public function expectExceptionMessageMatches(string $pattern): void
-    {
-        if (method_exists(TestCase::class, 'expectExceptionMessageMatches')) {
-            parent::expectExceptionMessageMatches($pattern);
-            return;
-        }
-
-        parent::expectExceptionMessageRegExp($pattern);
-    }
 }
