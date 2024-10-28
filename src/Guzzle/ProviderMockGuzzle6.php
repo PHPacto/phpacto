@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Guzzle;
@@ -44,7 +41,7 @@ class ProviderMockGuzzle6 implements ProviderMock
 
     public function handlePact(PactInterface $pact): void
     {
-        $this->mock->append(function(RequestInterface $request) use ($pact): ResponseInterface {
+        $this->mock->append(function (RequestInterface $request) use ($pact): ResponseInterface {
             self::assertRequestMatchesPact($pact, $request);
 
             return $pact->getResponse()->getSample();

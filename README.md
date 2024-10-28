@@ -78,9 +78,10 @@ See https://github.com/PHPacto/recorder
 
 # Testing your application
 Compatibility table
-| PHPacto  | PHP  | PHPUnit   | Guzzle  | PSR-17 |
+| PHPacto  | PHP  | PHPUnit   | Guzzle  | Symfony Serializer |
 | -------- | ---- | --------- | ------- | ------ |
-| master   | `^7.2` | `^7.0`&`^8.0`&`^9.0` | `>=5.3.1` | `*`      |
+| 0.5.4   | `>=7.2` | `^7.0||^8.0||^9.0` | `>=5.3.1` | `>=3.3`      |
+| 1.0.0   | `>=8.2` | `^7.0||^8.0||^9.0` | `>=6.0` | `>=7.0`      |
 
 If your project satisfies these requirements, you can run `composer require --dev bigfoot90/phpacto` and test 
 your contracts with phpunit, else you need to run contracts testing with PHPacto's CLI wich is slower but works with any kind of application.

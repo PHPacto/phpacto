@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -60,11 +57,16 @@ class VersionRule extends AbstractRule
 
         if (!version_compare($test, $this->value, $this->operator)) {
             switch ($this->operator) {
-                case '<': $operatorString = 'lower than'; break;
-                case '<=': $operatorString = 'lower than or equal to'; break;
-                case '=': $operatorString = 'equal to'; break;
-                case '>=': $operatorString = 'greater than or equal to'; break;
-                case '>': $operatorString = 'greater than'; break;
+                case '<': $operatorString = 'lower than';
+                    break;
+                case '<=': $operatorString = 'lower than or equal to';
+                    break;
+                case '=': $operatorString = 'equal to';
+                    break;
+                case '>=': $operatorString = 'greater than or equal to';
+                    break;
+                case '>': $operatorString = 'greater than';
+                    break;
                 default: $operatorString = '';
             }
 

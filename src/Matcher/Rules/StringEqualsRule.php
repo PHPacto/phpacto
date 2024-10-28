@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -25,35 +22,18 @@ use PHPacto\Matcher\Mismatches;
 
 class StringEqualsRule extends StringComparisonRule
 {
-    public function __construct($value, $caseSensitive = true)
-    {
-        $this->assertSupport($value);
-
-        $this->caseSensitive = $caseSensitive;
-        $this->value = $value;
-    }
-
-    public function getSample()
-    {
-        return $this->value;
-    }
-
     public function assertMatch($test): void
     {
         parent::assertMatch($test);
 
         if ($this->caseSensitive) {
-            if ($this->value !== $test) {
-                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->value, $test);
+            if ($this->sample !== $test) {
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         } else {
-            if (strtolower($this->value) !== strtolower($test)) {
-                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->value, $test);
+            if ($this->sample !== strtolower($test)) {
+                throw new Mismatches\ValueMismatch('String {{ actual }} should be equal to {{ expected }}', $this->sample, $test);
             }
         }
-    }
-
-    protected function assertSupport(string $value): void
-    {
     }
 }

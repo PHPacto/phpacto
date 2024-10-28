@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto;
@@ -37,7 +34,7 @@ class PHPactoTest extends TestCase
     public function test_it_returns_loader()
     {
         // PHPacto mock
-        $phpacto = new class() extends PHPacto {
+        $phpacto = new class () extends PHPacto {
             // Mock getLoader() protected method
             public function getLoaderPublic()
             {
@@ -55,7 +52,7 @@ class PHPactoTest extends TestCase
         $loader = $this->createMock(PactLoader::class);
 
         // PHPacto mock
-        $phpacto = new class($base_path, $loader) extends PHPacto {
+        $phpacto = new class ($base_path, $loader) extends PHPacto {
             public function __construct(string $contractsBasePath = null, PactLoader $loader)
             {
                 parent::__construct($contractsBasePath);

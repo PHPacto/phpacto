@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Serializer;
@@ -99,11 +96,11 @@ abstract class AbstractNormalizer extends AbstractObjectNormalizer implements No
             $attributeName = null;
 
             if (3 < \strlen($name) && match ($name[0]) {
-                    'g' => str_starts_with($name, 'get'),
-                    'h' => str_starts_with($name, 'has'),
-                    'c' => str_starts_with($name, 'can'),
-                    default => false,
-                }) {
+                'g' => str_starts_with($name, 'get'),
+                'h' => str_starts_with($name, 'has'),
+                'c' => str_starts_with($name, 'can'),
+                default => false,
+            }) {
                 // getters, hassers and canners
                 $attributeName = substr($name, 3);
 

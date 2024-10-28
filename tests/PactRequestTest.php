@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto;
@@ -156,10 +153,12 @@ class PactRequestTest extends SerializerAwareTestCase
         $expected = [
             'method' => [
                 '_rule' => \get_class($mockMethod),
+                'case_sensitive' => false,
                 'sample' => 'get',
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
+                'case_sensitive' => false,
                 'sample' => '/',
             ],
         ];
@@ -182,10 +181,12 @@ class PactRequestTest extends SerializerAwareTestCase
         $expected = [
             'method' => [
                 '_rule' => \get_class($mockMethod),
+                'case_sensitive' => false,
                 'sample' => 'put',
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
+                'case_sensitive' => false,
                 'sample' => '/path',
             ],
             'headers' => [

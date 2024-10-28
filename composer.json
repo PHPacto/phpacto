@@ -16,18 +16,18 @@
         "symfony/console": ">=2.5",
         "symfony/finder": ">=2.1",
         "symfony/routing": ">=2.1",
-        "symfony/serializer": ">=7.0",
+        "symfony/serializer": ">=6.4",
         "symfony/serializer-pack": "*",
         "symfony/yaml": ">=2.0"
     },
     "require-dev": {
         "ext-json": "*",
-        "guzzlehttp/guzzle": ">=5.3.1",
+        "guzzlehttp/guzzle": ">=6.0",
         "laminas/laminas-diactoros": "^2.0|^3.0",
         "mikey179/vfsstream": "^1.6.7",
-        "namshi/cuzzle": ">=1.0",
+        "namshi/cuzzle": ">=2.0.1",
         "nyholm/psr7": "^1.8",
-        "phpunit/phpunit": "^8.0|^9.0",
+        "phpunit/phpunit": "^9.5",
         "symfony/psr-http-message-bridge": "^2.3",
         "yoast/phpunit-polyfills": "^2.0"
     },
@@ -52,5 +52,10 @@
     "bin": ["bin/phpacto"],
     "archive": {
         "exclude": ["docs/", "examples/", "tests/", "vendor/", "composer.lock", ".circleci/", ".travis.yml"]
+    },
+    "scripts": {
+        "csfix": [
+            "php-cs-fixer fix -v"
+        ]
     }
 }

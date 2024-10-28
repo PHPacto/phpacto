@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Serializer;
@@ -81,86 +78,86 @@ class PactNormalizer extends AbstractNormalizer
         return $this->denormalizeArray($data, Pact::class, $format, $context);
     }
 
-/*
-    protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
-    {
-        $constructor = $this->getConstructor($data, $class, $context, $reflectionClass, $allowedAttributes);
-        if ($constructor) {
-            $constructorParameters = $constructor->getParameters();
+    /*
+        protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
+        {
+            $constructor = $this->getConstructor($data, $class, $context, $reflectionClass, $allowedAttributes);
+            if ($constructor) {
+                $constructorParameters = $constructor->getParameters();
 
-            $mismatches = [];
-            $params = [];
-            foreach ($constructorParameters as $constructorParameter) {
-                $paramName = $constructorParameter->name;
-                $key = $this->nameConverter ? $this->nameConverter->normalize($paramName) : $paramName;
+                $mismatches = [];
+                $params = [];
+                foreach ($constructorParameters as $constructorParameter) {
+                    $paramName = $constructorParameter->name;
+                    $key = $this->nameConverter ? $this->nameConverter->normalize($paramName) : $paramName;
 
-                $allowed = false === $allowedAttributes || \in_array($paramName, $allowedAttributes, true);
-                $ignored = !$this->isAllowedAttribute($class, $paramName, $format, $context);
-                if ($constructorParameter->isVariadic()) {
-                    if ($allowed && !$ignored && (isset($data[$key]) || \array_key_exists($key, $data))) {
-                        if (!\is_array($data[$paramName])) {
-                            throw new RuntimeException(sprintf('Cannot create an instance of %s from serialized data because the variadic parameter %s can only accept an array.', $class, $constructorParameter->name));
+                    $allowed = false === $allowedAttributes || \in_array($paramName, $allowedAttributes, true);
+                    $ignored = !$this->isAllowedAttribute($class, $paramName, $format, $context);
+                    if ($constructorParameter->isVariadic()) {
+                        if ($allowed && !$ignored && (isset($data[$key]) || \array_key_exists($key, $data))) {
+                            if (!\is_array($data[$paramName])) {
+                                throw new RuntimeException(sprintf('Cannot create an instance of %s from serialized data because the variadic parameter %s can only accept an array.', $class, $constructorParameter->name));
+                            }
+
+                            $params = array_merge($params, $data[$paramName]);
+                        }
+                    } elseif ($allowed && !$ignored && (isset($data[$key]) || \array_key_exists($key, $data))) {
+                        $parameterData = $data[$key];
+
+                        if (null === $parameterData && $constructorParameter->allowsNull()) {
+                            $params[] = null;
+                            // Don't run set for a parameter passed to the constructor
+                            unset($data[$key]);
+                            continue;
                         }
 
-                        $params = array_merge($params, $data[$paramName]);
-                    }
-                } elseif ($allowed && !$ignored && (isset($data[$key]) || \array_key_exists($key, $data))) {
-                    $parameterData = $data[$key];
+                        try {
+                           $parameterType = self::getParameterReflectionClass($constructorParameter);
 
-                    if (null === $parameterData && $constructorParameter->allowsNull()) {
-                        $params[] = null;
+                            if (null !== $parameterType) {
+                                $parameterData = $this->serializer->denormalize($parameterData, $parameterType->getName(), $format, $this->createChildContext($context, $paramName, $format));
+                            }
+                        } catch (Mismatches\Mismatch $e) {
+                            $mismatches[strtoupper($key)] = $e;
+                        } catch (\ReflectionException $e) {
+                            throw new RuntimeException(sprintf('Could not determine the class of the parameter "%s".', $key), 0, $e);
+                        } catch (MissingConstructorArgumentsException $e) {
+                            if (!$constructorParameter->getType()->allowsNull()) {
+                                throw $e;
+                            }
+                            $parameterData = null;
+                        }
+
                         // Don't run set for a parameter passed to the constructor
+                        $params[] = $parameterData;
                         unset($data[$key]);
-                        continue;
-                    }
+                    } elseif ($constructorParameter->isDefaultValueAvailable()) {
+                        $params[] = $constructorParameter->getDefaultValue();
+                    } else {
+                        $message = sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name);
 
-                    try {
-                       $parameterType = self::getParameterReflectionClass($constructorParameter);
-
-                        if (null !== $parameterType) {
-                            $parameterData = $this->serializer->denormalize($parameterData, $parameterType->getName(), $format, $this->createChildContext($context, $paramName, $format));
+                        // MissingConstructorArgumentsException added on Sf 4.1
+                        if (class_exists(MissingConstructorArgumentsException::class)) {
+                            throw new MissingConstructorArgumentsException($message);
                         }
-                    } catch (Mismatches\Mismatch $e) {
-                        $mismatches[strtoupper($key)] = $e;
-                    } catch (\ReflectionException $e) {
-                        throw new RuntimeException(sprintf('Could not determine the class of the parameter "%s".', $key), 0, $e);
-                    } catch (MissingConstructorArgumentsException $e) {
-                        if (!$constructorParameter->getType()->allowsNull()) {
-                            throw $e;
-                        }
-                        $parameterData = null;
+
+                        throw new RuntimeException($message);
                     }
-
-                    // Don't run set for a parameter passed to the constructor
-                    $params[] = $parameterData;
-                    unset($data[$key]);
-                } elseif ($constructorParameter->isDefaultValueAvailable()) {
-                    $params[] = $constructorParameter->getDefaultValue();
-                } else {
-                    $message = sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name);
-
-                    // MissingConstructorArgumentsException added on Sf 4.1
-                    if (class_exists(MissingConstructorArgumentsException::class)) {
-                        throw new MissingConstructorArgumentsException($message);
-                    }
-
-                    throw new RuntimeException($message);
                 }
+
+                if ($mismatches) {
+                    throw new Mismatches\MismatchCollection($mismatches, 'There are {{ count }} errors');
+                }
+
+                if ($constructor->isConstructor()) {
+                    return $reflectionClass->newInstanceArgs($params);
+                }
+
+                return $constructor->invokeArgs(null, $params);
             }
 
-            if ($mismatches) {
-                throw new Mismatches\MismatchCollection($mismatches, 'There are {{ count }} errors');
-            }
-
-            if ($constructor->isConstructor()) {
-                return $reflectionClass->newInstanceArgs($params);
-            }
-
-            return $constructor->invokeArgs(null, $params);
-        }
-
-        return new $class();
-    }*/
+            return new $class();
+        }*/
 
     private function normalizePactObject(PactInterface $object, $format = null, array $context = [])
     {

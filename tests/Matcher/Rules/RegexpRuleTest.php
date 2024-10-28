@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -28,7 +25,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
 {
     public function test_it_is_normalizable()
     {
-        $rule = new RegexpRule('^$', true, false, '');
+        $rule = new RegexpRule('^$', false, '');
 
         $expected = [
             '_rule' => 'regex',
@@ -63,16 +60,10 @@ class RegexpRuleTest extends SerializerAwareTestCase
     public function supportedValuesProvider()
     {
         return [
-            [false, 5],
-            [false, 0.1],
             [true, 'string'],
             [true, '^(some|pattern)$'],
             [false, ')'],
             [false, '['],
-            [false, true],
-            [false, false],
-            [false, null],
-            [false, []],
         ];
     }
 
@@ -102,7 +93,7 @@ class RegexpRuleTest extends SerializerAwareTestCase
             ->method('assertMatch')
             ->with('content');
 
-        $rule->__construct('pattern', true, false, 'content');
+        $rule->__construct('pattern', false, 'content');
     }
 
     public function testExceptionIsTrhownIfSampleIsNotMatching()
@@ -132,11 +123,8 @@ class RegexpRuleTest extends SerializerAwareTestCase
     /**
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
-     *
-     * @param mixed $ruleValue
-     * @param mixed $testValue
      */
-    public function testMatch(bool $shouldMatch, $ruleValue, $testValue)
+    public function testMatch(bool $shouldMatch, string $ruleValue, string $testValue)
     {
         $rule = new RegexpRule($ruleValue);
 

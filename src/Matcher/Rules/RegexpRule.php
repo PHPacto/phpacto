@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -25,38 +22,20 @@ use PHPacto\Matcher\Mismatches;
 
 class RegexpRule extends StringRule
 {
-    /**
-     * @var string
-     */
-    protected $pattern;
+    public function __construct(
+        protected string $pattern,
+        protected bool $multiLine = false,
+        $sample = null,
+        bool $caseSensitive = true
+    ) {
+        $this->assertSupport($pattern);
 
-    /**
-     * @var bool
-     */
-    protected $caseSensitive;
-
-    /**
-     * @var bool
-     */
-    protected $multiLine;
-
-    public function __construct($pattern, bool $caseSensitive = true, bool $multiLine = false, $sample = null)
-    {
-        $this->assertSupport($this->pattern = $pattern);
-        $this->caseSensitive = $caseSensitive;
-        $this->multiLine = $multiLine;
-
-        parent::__construct($sample);
+        parent::__construct($sample, $caseSensitive);
     }
 
     public function getPattern(): string
     {
         return $this->pattern;
-    }
-
-    public function isCaseSensitive(): bool
-    {
-        return $this->caseSensitive;
     }
 
     public function isMultiLine(): bool
@@ -80,8 +59,10 @@ class RegexpRule extends StringRule
             $modifiers .= 'm';
         }
 
-        if (!preg_match('/' . $this->pattern . '/' . $modifiers, $test)) {
-            throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $this->pattern, $test);
+        $pattern = '/' . $this->pattern . '/' . $modifiers;
+
+        if (!preg_match($pattern, $test)) {
+            throw new Mismatches\ValueMismatch('Value {{ actual }} is not matching the regex expression {{ expected }}', $pattern, $test);
         }
     }
 

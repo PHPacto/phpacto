@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -27,47 +24,19 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 
 class UrlRule extends StringRule
 {
-    /**
-     * @var string|null
-     */
-    private $scheme;
-
-    /**
-     * @var string|null
-     */
-    private $hostname;
-
-    /**
-     * @var int|null
-     */
-    private $port;
-
-    /**
-     * @var string
-     */
-    private $location;
-
-    /**
-     * @var ObjectRule|null
-     */
-    private $parameters;
-
-    /**
-     * @var ObjectRule|null
-     */
-    private $query;
-
-    public function __construct(string $location, ObjectRule $parameters = null, ObjectRule $query = null, string $scheme = null, string $hostname = null, int $port = null, string $sample = null)
-    {
+    public function __construct(
+        private string $location,
+        private ?ObjectRule $parameters = null,
+        private ?ObjectRule $query = null,
+        private ?string $scheme = null,
+        private ?string $hostname = null,
+        private ?int $port = null,
+        ?string $sample = null,
+        bool $caseSensitive = true
+    ) {
         $this->assertSupport($location, $parameters);
-        $this->scheme = $scheme;
-        $this->hostname = $hostname;
-        $this->port = $port;
-        $this->location = $location;
-        $this->parameters = $parameters;
-        $this->query = $query;
-
-        parent::__construct($sample);
+        $this->sample = $caseSensitive ? $sample : strtolower($sample);
+        $this->caseSensitive = $caseSensitive;
     }
 
     public function getScheme(): ?string
@@ -117,7 +86,8 @@ class UrlRule extends StringRule
             }
 
             if ($this->scheme || $this->hostname || $this->port) {
-                $this->sample = sprintf('%s://%s:%s',
+                $this->sample = sprintf(
+                    '%s://%s:%s',
                     $this->scheme ?? 'http',
                     $this->hostname ?? 'localhost',
                     $this->port ?? ($this->scheme === 'https' ? 443 : 80)
@@ -223,7 +193,7 @@ class UrlRule extends StringRule
         $placeholders = array_filter($matches[1] ?? []);
 
         $map = static function ($input) {
-            return substr($input, 1 , -1);
+            return substr($input, 1, -1);
         };
 
         $names = array_map($map, $placeholders);
