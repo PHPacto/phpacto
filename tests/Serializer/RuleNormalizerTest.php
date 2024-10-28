@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Serializer;
@@ -168,7 +165,7 @@ class RuleNormalizerTest extends SerializerAwareTestCase
     {
         $data = [
             '_rule' => 'stringEquals',
-            'value' => 'test',
+            'sample' => 'test',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
@@ -214,45 +211,45 @@ class RuleNormalizerTest extends SerializerAwareTestCase
         self::assertEquals(2, $rule->getProperties()['B']->getSample());
     }
 
-//    public function test_normalize_recursive()
-//    {
-//        $rule = new EachItemRule(new StringEqualsRule('a'), ['a']);
-//
-//        $data = $this->normalizer->normalize($rule);
-//        var_dump($data);
-//
-//        $rule = $this->normalizer->denormalize($data, Rule::class);
-//
-//        self::assertInstanceOf(EachItemRule::class, $rule);
-//        self::assertInstanceOf(StringEqualsRule::class, $stringRule = $rule->getValue());
-//    }
-//
-//    public function test_normalize_array()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $rule = [new EqualsRule(0)];
-//
-//        $data = $serializer->normalize($rule);
-//
-//        $rule = $serializer->denormalize($data, Rule::class);
-//
-//        self::assertCount(1, $rule);
-//        self::assertInstanceOf(EqualsRule::class, $rule[0]);
-//    }
-//
-//    public function test_denormalize_nested_array()
-//    {
-//        $serializer = SerializerFactory::getInstance();
-//
-//        $data = [1, [2]];
-//
-//        $rules = $serializer->denormalize($data, Rule::class);
-//
-//        self::assertCount(2, $rules);
-//        self::assertInstanceOf(EqualsRule::class, $rules[0]);
-//
-//        self::assertCount(1, $rules[1]);
-//        self::assertInstanceOf(EqualsRule::class, $rules[1][0]);
-//    }
+    //    public function test_normalize_recursive()
+    //    {
+    //        $rule = new EachItemRule(new StringEqualsRule('a'), ['a']);
+    //
+    //        $data = $this->normalizer->normalize($rule);
+    //        var_dump($data);
+    //
+    //        $rule = $this->normalizer->denormalize($data, Rule::class);
+    //
+    //        self::assertInstanceOf(EachItemRule::class, $rule);
+    //        self::assertInstanceOf(StringEqualsRule::class, $stringRule = $rule->getValue());
+    //    }
+    //
+    //    public function test_normalize_array()
+    //    {
+    //        $serializer = SerializerFactory::getInstance();
+    //
+    //        $rule = [new EqualsRule(0)];
+    //
+    //        $data = $serializer->normalize($rule);
+    //
+    //        $rule = $serializer->denormalize($data, Rule::class);
+    //
+    //        self::assertCount(1, $rule);
+    //        self::assertInstanceOf(EqualsRule::class, $rule[0]);
+    //    }
+    //
+    //    public function test_denormalize_nested_array()
+    //    {
+    //        $serializer = SerializerFactory::getInstance();
+    //
+    //        $data = [1, [2]];
+    //
+    //        $rules = $serializer->denormalize($data, Rule::class);
+    //
+    //        self::assertCount(2, $rules);
+    //        self::assertInstanceOf(EqualsRule::class, $rules[0]);
+    //
+    //        self::assertCount(1, $rules[1]);
+    //        self::assertInstanceOf(EqualsRule::class, $rules[1][0]);
+    //    }
 }

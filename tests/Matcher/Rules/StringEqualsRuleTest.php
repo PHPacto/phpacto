@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -35,7 +32,7 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
         $expected = [
             '_rule' => 'stringEquals',
             'case_sensitive' => true,
-            'value' => 'S',
+            'sample' => 'S',
         ];
 
         self::assertEquals($expected, $data);
@@ -46,14 +43,13 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
         $data = [
             '_rule' => 'stringEquals',
             'case_sensitive' => true,
-            'value' => 'S',
+            'sample' => 'S',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
 
         self::assertInstanceOf(StringEqualsRule::class, $rule);
         self::assertSame('S', $rule->getSample());
-        self::assertSame('S', $rule->getValue());
         self::assertTrue($rule->isCaseSensitive());
     }
 
@@ -81,11 +77,8 @@ class StringEqualsRuleTest extends SerializerAwareTestCase
     /**
      * @dataProvider matchesTrueProvider
      * @dataProvider matchesFalseProvider
-     *
-     * @param mixed $ruleValue
-     * @param mixed $testValue
      */
-    public function testMatch(bool $shouldMatch, $ruleValue, $testValue, bool $caseSensitive)
+    public function testMatch(bool $shouldMatch, string $ruleValue, string $testValue, bool $caseSensitive)
     {
         $rule = new StringEqualsRule($ruleValue, $caseSensitive);
 

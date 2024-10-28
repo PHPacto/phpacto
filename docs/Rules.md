@@ -265,7 +265,7 @@ stringEquals
 Asserts that a string equals to a given value
 ```yaml
 _rule: stringEquals
-value: 'string value'
+sample: 'string value'
 ```
 
 stringLength

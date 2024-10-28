@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -39,6 +36,8 @@ class UuidRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '_rule' => 'uuid',
+            'case_sensitive' => false,
+            'sample' => '00000000-0000-0000-0000-000000000000'
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -50,6 +49,7 @@ class UuidRuleTest extends SerializerAwareTestCase
 
         $expected = [
             '_rule' => 'uuid',
+            'case_sensitive' => false,
             'sample' => 'a3911bca-30f5-452f-8d40-b4d8cbd81faa',
         ];
 

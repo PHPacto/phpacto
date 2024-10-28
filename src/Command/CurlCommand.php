@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Command;
@@ -89,11 +86,11 @@ class CurlCommand extends BaseCommand
             foreach ($finder->files() as $file) {
                 $shortPath = self::getShortPath((string) $file, $path);
 
-                try {
+                //try {
                     $output->writeln($shortPath);
                     $pact = $this->loadPact((string) $file);
                     $this->printCurlCommand($output, $curlFormatter, $pact, $host, $port, $shortPath);
-                } catch (\Throwable $e) {
+                /*} catch (\Throwable $e) {
                     if ($e instanceof Mismatch) {
                         $output->writeln('<fg=red>✖ Not valid</>');
                     } elseif ($e->getPrevious() && 'Syntax error' === $e->getPrevious()->getMessage()) {
@@ -103,7 +100,7 @@ class CurlCommand extends BaseCommand
                     }
 
                     $hasErrors = true;
-                }
+                }*/
 
                 $output->writeln('');
             }

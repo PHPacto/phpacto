@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -54,5 +51,24 @@ class StringRuleTest extends SerializerAwareTestCase
 
         self::assertInstanceOf(StringRule::class, $rule);
         self::assertSame('Sample', $rule->getSample());
+    }
+    public function test_it_is_case_sensitive_by_default()
+    {
+        $rule = $this->getMockBuilder(StringRule::class)
+            ->setConstructorArgs(['sample'])
+            ->setMethodsExcept(['isCaseSensitive'])
+            ->getMock();
+
+        self::assertTrue($rule->isCaseSensitive());
+    }
+
+    public function test_it_can_be_case_insensitive()
+    {
+        $rule = $this->getMockBuilder(StringRule::class)
+            ->setConstructorArgs(['sample', false])
+            ->setMethodsExcept(['isCaseSensitive'])
+            ->getMock();
+
+        self::assertFalse($rule->isCaseSensitive());
     }
 }

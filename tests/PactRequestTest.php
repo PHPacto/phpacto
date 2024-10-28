@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto;
@@ -25,7 +22,6 @@ use PHPacto\Matcher\Mismatches\Mismatch;
 use PHPacto\Matcher\Mismatches\MismatchCollection;
 use PHPacto\Matcher\Rules\StringEqualsRule;
 use PHPacto\Matcher\Rules\StringRule;
-use PHPacto\Matcher\Rules\UrlRule;
 use PHPacto\Serializer\SerializerAwareTestCase;
 use Laminas\Diactoros\Request;
 use Psr\Http\Message\RequestInterface;
@@ -157,10 +153,12 @@ class PactRequestTest extends SerializerAwareTestCase
         $expected = [
             'method' => [
                 '_rule' => \get_class($mockMethod),
+                'case_sensitive' => false,
                 'sample' => 'get',
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
+                'case_sensitive' => false,
                 'sample' => '/',
             ],
         ];
@@ -175,7 +173,7 @@ class PactRequestTest extends SerializerAwareTestCase
     {
         $request = new PactRequest(
             $mockMethod = $this->rule->hasSample('put', StringRule::class),
-            $mockPath = $this->rule->hasSample('/path', UrlRule::class),
+            $mockPath = $this->rule->hasSample('/path', StringRule::class),
             ['Y' => $mockHeaderValue = $this->rule->hasSample('X')],
             $mockBody = $this->rule->hasSample('Body')
         );
@@ -183,11 +181,12 @@ class PactRequestTest extends SerializerAwareTestCase
         $expected = [
             'method' => [
                 '_rule' => \get_class($mockMethod),
+                'case_sensitive' => false,
                 'sample' => 'put',
             ],
             'path' => [
                 '_rule' => \get_class($mockPath),
-                'location' => '',
+                'case_sensitive' => false,
                 'sample' => '/path',
             ],
             'headers' => [
@@ -230,7 +229,6 @@ class PactRequestTest extends SerializerAwareTestCase
                 'query' => [
                     'qp1' => 'A',
                 ],
-                'sample' => '/path?qp1=A',
             ],
             'headers' => [
                 'x-key' => 'val',       // "x-key" will be normalized to CamelCase "X-Key"

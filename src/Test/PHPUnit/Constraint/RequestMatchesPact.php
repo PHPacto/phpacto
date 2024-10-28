@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Test\PHPUnit\Constraint;
@@ -92,11 +89,11 @@ class RequestMatchesPact extends PHPUnitConstraint
      */
     protected function failureDescription($other, Mismatch $mismatch = null): string
     {
-        $array_map_assoc = function(callable $f, array $a) {
+        $array_map_assoc = function (callable $f, array $a) {
             return array_column(array_map($f, array_keys($a), $a), 1, 0);
         };
 
-        $func = function($k, $v) {
+        $func = function ($k, $v) {
             return [$k, $k . ":\n" . $v];
         };
 

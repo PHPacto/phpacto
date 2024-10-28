@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -25,52 +22,14 @@ use PHPacto\Matcher\Mismatches;
 
 abstract class StringComparisonRule extends StringRule
 {
-    /**
-     * @var bool
-     */
-    protected $caseSensitive;
-
-    /**
-     * @var string
-     */
-    protected $value;
-
-    public function __construct(string $value, string $sample = null, bool $caseSensitive = true)
-    {
-        $this->assertSupport($value);
-
-        $this->caseSensitive = $caseSensitive;
-        $this->value = !$caseSensitive ? strtolower($value) : $value;
-
-        parent::__construct($sample);
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function isCaseSensitive(): bool
-    {
-        return $this->caseSensitive;
-    }
-
-    public function assertMatch($test): void
-    {
-        if (!\is_string($test)) {
-            throw new Mismatches\TypeMismatch('string', \gettype($test));
-        }
-    }
-
     public function getSample()
     {
-        return $this->sample;
-    }
+        $sample =  parent::getSample();
 
-    protected function assertSupport(string $value): void
-    {
-        if ('' === $value) {
+        if ('' === $sample) {
             throw new Mismatches\TypeMismatch('string', 'empty', 'Cannot compare empty strings');
         }
+
+        return $sample;
     }
 }

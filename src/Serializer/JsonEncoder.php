@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Serializer;
@@ -42,34 +39,17 @@ class JsonEncoder extends BaseJsonEncoder implements EncoderInterface, DecoderIn
 
     /**
      * Instantiates a JsonEncode instance.
-     *
-     * @internal this exists to bridge Symfony Serializer 3 to Symfony Serializer 4, and can be removed
-     *   once PHPacto requires Symfony 4.2 or higher.
      */
     private function getJsonEncode()
     {
-        $json_encoding_options = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE;
-        $reflection = new \ReflectionClass(JsonEncode::class);
-        if (\array_key_exists('OPTIONS', $reflection->getConstants())) {
-            return new JsonEncode([JsonEncode::OPTIONS => $json_encoding_options]);
-        }
-
-        return new JsonEncode($json_encoding_options);
+        return new JsonEncode([JsonEncode::OPTIONS => JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE]);
     }
 
     /**
      * Instantiates a JsonDecode instance.
-     *
-     * @internal this exists to bridge Symfony 3 to Symfony >= 4
      */
     private function getJsonDecode()
     {
-        $reflection = new \ReflectionClass(JsonDecode::class);
-        if (\array_key_exists('ASSOCIATIVE', $reflection->getConstants())) {
-            return new JsonDecode([JsonDecode::ASSOCIATIVE => true]);
-        }
-
-        // Symfony/Serializer 3.3
-        return new JsonDecode(true);
+        return new JsonDecode([JsonDecode::ASSOCIATIVE => true]);
     }
 }

@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto;
@@ -26,25 +23,10 @@ use PHPacto\Matcher\Mismatches\MismatchCollection;
 
 class Pact implements PactInterface
 {
-    /**
-     * @var PactRequestInterface
-     */
-    private $request;
-
-    /**
-     * @var PactResponseInterface
-     */
-    private $response;
-
-    /**
-     * @var string
-     */
-    private $description;
-
-    /**
-     * @var string
-     */
-    private $version;
+    private PactRequestInterface $request;
+    private PactResponseInterface $response;
+    private string $description;
+    private string $version;
 
     public function __construct(PactRequestInterface $request, PactResponseInterface $response, string $description = '', string $version = PactInterface::VERSION)
     {

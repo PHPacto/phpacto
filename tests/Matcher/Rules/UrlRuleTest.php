@@ -12,11 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  */
 
 namespace PHPacto\Matcher\Rules;
@@ -42,6 +39,7 @@ class UrlRuleTest extends SerializerAwareTestCase
         $expected = [
             '_rule' => 'url',
             'location' => '/path/location',
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -70,7 +68,7 @@ class UrlRuleTest extends SerializerAwareTestCase
                     'a' => ['_rule' => \get_class($childRule)],
                 ],
             ],
-            'sample' => 'https://hostname:443/path/location?qp1=A&filters[a]=1',
+            'case_sensitive' => true,
         ];
 
         self::assertEquals($expected, $this->normalizer->normalize($rule));
@@ -110,7 +108,6 @@ class UrlRuleTest extends SerializerAwareTestCase
             'query' => [
                 'qp1' => ['_rule' => \get_class($childRule)],
             ],
-            'sample' => 'https://hostname:443/path/location?qp1=A',
         ];
 
         $rule = $this->normalizer->denormalize($data, Rule::class);
@@ -150,7 +147,7 @@ class UrlRuleTest extends SerializerAwareTestCase
     /**
      * @dataProvider matchesProvider
      */
-    public function testMatch(bool $shouldMatch, $location, $parameters, $query, $scheme, $hostname, $port, $testValue)
+    public function testMatch(bool $shouldMatch, string $location, ?ObjectRule $parameters, ?ObjectRule $query, ?string $scheme, ?string $hostname, ?int $port, string $testValue)
     {
         if (!$shouldMatch) {
             $this->expectException(Mismatches\Mismatch::class);
