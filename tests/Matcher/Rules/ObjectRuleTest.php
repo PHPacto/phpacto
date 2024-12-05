@@ -77,6 +77,7 @@ class ObjectRuleTest extends SerializerAwareTestCase
         $two = new EqualsRule(2);
 
         return [
+            [true, [], []],
             [true, ['two' => $two], ['one' => 1, 'two' => 2, 'three' => 3]],
         ];
     }
