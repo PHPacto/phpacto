@@ -72,6 +72,19 @@ class ObjectRuleTest extends SerializerAwareTestCase
         self::assertSame(['prop' => 'value'], $rule->getSample());
     }
 
+    public function test_it_is_denormalizable_empty()
+    {
+        $data = [
+            '_rule' => 'object',
+            'sample' => [],
+        ];
+
+        $rule = $this->normalizer->denormalize($data, Rule::class);
+
+        self::assertInstanceOf(ObjectRule::class, $rule);
+        self::assertSame([], $rule->getSample());
+    }
+
     public function matchesTrueProvider()
     {
         $two = new EqualsRule(2);

@@ -26,7 +26,7 @@ class ObjectRule extends AbstractRecursiveRule
      * @param Rule[] $properties
      * @param mixed  $sample
      */
-    public function __construct(array $properties, $sample = null)
+    public function __construct(array $properties = [], $sample = null)
     {
         parent::__construct($properties, $sample);
     }
