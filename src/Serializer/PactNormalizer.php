@@ -37,6 +37,7 @@ class PactNormalizer extends AbstractNormalizer
     {
         return [
             PactInterface::class => true,
+            PactInterface::class.'[]' => true,
         ];
     }
 

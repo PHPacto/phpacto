@@ -119,6 +119,7 @@ final class SerializerFactory
             new YamlEncoder(null, null, [
                 YamlEncoder::YAML_INLINE => 999,
                 YamlEncoder::YAML_FLAGS => Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK,
+                'allow_extra_attributes' => false
             ]),
         ];
     }
