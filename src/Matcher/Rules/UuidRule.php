@@ -22,7 +22,7 @@ use PHPacto\Matcher\Mismatches;
 
 class UuidRule extends StringRule
 {
-    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-6][0-9A-F]{3}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/';
+    private const PATTERN = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[089ab][0-9A-F]{3}-[0-9A-F]{12}$/';
 
     public function __construct(string $sample = null, bool $caseSensitive = false)
     {
