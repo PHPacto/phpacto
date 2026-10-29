@@ -1,61 +1,79 @@
 {
-    "name": "bigfoot90/phpacto",
-    "description": "Contract testing tool integrated with Guzzle and Phpunit",
-    "license": "GPL-3.0",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Damian Długosz",
-            "email": "bigfootdd@gmail.com",
-            "homepage": "https://github.com/bigfoot90"
-        }
-    ],
-    "require": {
-        "php": ">=8.2",
-        "http-interop/http-factory-discovery": "^1.5",
-        "symfony/console": ">=2.5",
-        "symfony/finder": ">=2.1",
-        "symfony/routing": ">=2.1",
-        "symfony/serializer": "^6.4",
-        "symfony/serializer-pack": "*",
-        "symfony/yaml": ">=2.0"
-    },
-    "require-dev": {
-        "ext-json": "*",
-        "guzzlehttp/guzzle": ">=6.0",
-        "laminas/laminas-diactoros": "^2.0|^3.0",
-        "mikey179/vfsstream": "^1.6.7",
-        "namshi/cuzzle": ">=2.0.1",
-        "nyholm/psr7": "^1.8",
-        "phpunit/phpunit": "^9.5",
-        "symfony/psr-http-message-bridge": "^2.3",
-        "yoast/phpunit-polyfills": "^2.0"
-    },
-    "suggest": {
-        "namshi/cuzzle": "Generates cUrl command out of you PHPacto contracts",
-        "phpunit/phpunit": "Integration with PHPUnit testing framework"
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
-    "autoload": {
-        "psr-4": {
-            "PHPacto\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "PHPacto\\": "tests/"
-        }
-    },
-    "bin": ["bin/phpacto"],
-    "archive": {
-        "exclude": ["docs/", "examples/", "tests/", "vendor/", "composer.lock", ".circleci/", ".travis.yml"]
-    },
-    "scripts": {
-        "csfix": [
-            "php-cs-fixer fix -v"
-        ]
+  "name": "bigfoot90/phpacto",
+  "description": "Contract testing tool integrated with Guzzle and Phpunit",
+  "license": "GPL-3.0",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Damian D\u0142ugosz",
+      "email": "bigfootdd@gmail.com",
+      "homepage": "https://github.com/bigfoot90"
     }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "http-interop/http-factory-discovery": "^1.5",
+    "symfony/console": ">=2.5",
+    "symfony/finder": ">=2.1",
+    "symfony/routing": ">=2.1",
+    "symfony/serializer": "^6.4",
+    "symfony/serializer-pack": "*",
+    "symfony/yaml": ">=2.0"
+  },
+  "require-dev": {
+    "ext-json": "*",
+    "guzzlehttp/guzzle": ">=6.0",
+    "laminas/laminas-diactoros": "^2.0|^3.0",
+    "mikey179/vfsstream": "^1.6.7",
+    "namshi/cuzzle": ">=2.0.1",
+    "nyholm/psr7": "^1.8",
+    "phpunit/phpunit": "^9.5",
+    "symfony/psr-http-message-bridge": "^2.3",
+    "yoast/phpunit-polyfills": "^2.0"
+  },
+  "suggest": {
+    "namshi/cuzzle": "Generates cUrl command out of you PHPacto contracts",
+    "phpunit/phpunit": "Integration with PHPUnit testing framework"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "advisories": {
+      "block": false
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "PHPacto\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PHPacto\\": "tests/"
+    }
+  },
+  "bin": [
+    "bin/phpacto"
+  ],
+  "archive": {
+    "exclude": [
+      "docs/",
+      "examples/",
+      "tests/",
+      "vendor/",
+      "composer.lock",
+      ".circleci/",
+      ".travis.yml"
+    ]
+  },
+  "scripts": {
+    "csfix": [
+      "php-cs-fixer fix -v"
+    ]
+  },
+  "extra": {
+    "advisories": {
+      "block": []
+    }
+  }
 }
