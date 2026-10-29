@@ -13,6 +13,7 @@
   "require": {
     "php": ">=8.2",
     "http-interop/http-factory-discovery": "^1.5",
+
     "symfony/console": ">=2.5",
     "symfony/finder": ">=2.1",
     "symfony/routing": ">=2.1",
@@ -27,7 +28,7 @@
     "mikey179/vfsstream": "^1.6.7",
     "namshi/cuzzle": ">=2.0.1",
     "nyholm/psr7": "^1.8",
-    "phpunit/phpunit": "^9.5",
+    "phpunit/phpunit": "^9.6",
     "symfony/psr-http-message-bridge": "^2.3",
     "yoast/phpunit-polyfills": "^2.0"
   },

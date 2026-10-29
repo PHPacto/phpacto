@@ -44,7 +44,7 @@ class CurlCommand extends BaseCommand
         $this->loader = new PactLoader($serializer);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('curl')

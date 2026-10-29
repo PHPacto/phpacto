@@ -29,7 +29,7 @@ class BuilderValidateContract extends BuilderWriteContract
 {
     private $exitCode = 0;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('builder:validate')

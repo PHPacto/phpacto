@@ -28,7 +28,7 @@ use Symfony\Component\Finder\Finder;
 
 class BuilderWriteContract extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('builder:write')

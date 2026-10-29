@@ -43,7 +43,7 @@ class ValidateContract extends BaseCommand
         $this->loader = new PactLoader($serializer);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('validate')
