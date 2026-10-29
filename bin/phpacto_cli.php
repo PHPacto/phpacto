@@ -28,7 +28,9 @@ $application = new Application('PHPacto Cli');
 
 $serializer = SerializerFactory::getInstance();
 
-$application->addCommand(new Command\CurlCommand($serializer, CONTRACTS_DIR ?? null));
-$application->addCommand(new Command\ValidateContract($serializer, CONTRACTS_DIR ?? null));
+// BC: `add()` removed in symfony/console 6.x, replaced by `addCommand()`.
+$method = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+$application->$method(new Command\CurlCommand($serializer, CONTRACTS_DIR ?? null));
+$application->$method(new Command\ValidateContract($serializer, CONTRACTS_DIR ?? null));
 
 $application->run();
