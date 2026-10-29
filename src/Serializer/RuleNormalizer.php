@@ -109,7 +109,7 @@ class RuleNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): object|array|string|int|float|bool|null
     {
         $type = rtrim($type, '[]');
 

@@ -70,7 +70,7 @@ class PactResponseNormalizer extends AbstractNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): object|array|string|int|float|bool|null
     {
         if (!(\is_array($data) && PactResponseInterface::class === $type)) {
             throw new InvalidArgumentException(sprintf('Data must be array type and class equal to "%s".', PactResponseInterface::class));
