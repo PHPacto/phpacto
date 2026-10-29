@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3', '8.4', '8.5']
+        dependency-version: [highest, lowest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: intl, mbstring, json, pdo
+          coverage: xdebug
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor/
+          key: composer-${{ matrix.php-version }}-${{ matrix.dependency-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-${{ matrix.php-version }}-${{ matrix.dependency-version }}-
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+
+      - name: Install lowest dependencies
+        if: matrix.dependency-version == 'lowest'
+        run: composer update --prefer-lowest --prefer-stable --no-interaction
+
+      - name: Run tests with coverage
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          file: coverage.xml
