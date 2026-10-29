@@ -16,13 +16,23 @@
  * See the GNU General Public License for more details.
  */
 
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_STRICT);
+// BC: E_STRICT constant removed in PHP 8.4 — suppress it conditionally.
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+if (defined('E_STRICT')) {
+    error_reporting(error_reporting() & ~E_STRICT);
+}
 
 function print_banner()
 {
     $banner = file_get_contents(__DIR__ . '/../BANNER');
 
     echo str_replace("\n\n", PHP_EOL, $banner) . PHP_EOL;
+    // Flush output buffer when output_buffering=On (common in CI environments).
+    // Only applies here in CLI context; PHPUnit manages its own buffers.
+    if (function_exists('ob_flush')) {
+        @ob_flush();
+    }
+    flush();
 }
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $autoloader) {
