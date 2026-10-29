@@ -13,7 +13,6 @@
   "require": {
     "php": ">=8.2",
     "http-interop/http-factory-discovery": "^1.5",
-
     "symfony/console": ">=2.5",
     "symfony/finder": ">=2.1",
     "symfony/routing": ">=2.1",

@@ -170,7 +170,7 @@ class RuleNormalizer extends AbstractNormalizer
      */
     protected function isAllowedAttribute(object|string $object, string $attribute, ?string $format = null, array $context = []): bool
     {
-        if (\is_object($object) && 'sample' === $attribute && method_exists($object, 'getValue')) {
+        if (\is_object($object) && 'value' === $attribute && method_exists($object, 'getValue')) {
             if ($object->getValue() === $object->getSample()) {
                 return false;
             }

@@ -22,6 +22,11 @@ use PHPacto\Matcher\Mismatches;
 
 class StringEqualsRule extends StringComparisonRule
 {
+    public function getValue()
+    {
+        return $this->getSample();
+    }
+
     public function assertMatch($test): void
     {
         parent::assertMatch($test);

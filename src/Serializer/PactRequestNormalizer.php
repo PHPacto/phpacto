@@ -117,12 +117,12 @@ class PactRequestNormalizer extends AbstractNormalizer
 
         $methodRule = $object->getMethod();
         if ($methodRule instanceof StringEqualsRule) {
-            $data['method'] = $methodRule->getValue();
+            $data['method'] = $methodRule->getSample();
         }
 
         $pathRule = $object->getPath();
         if ($pathRule instanceof StringEqualsRule) {
-            $data['path'] = $pathRule->getValue();
+            $data['path'] = $pathRule->getSample();
         }
 
         if (empty($data['body'])) {

@@ -22,6 +22,11 @@ use PHPacto\Matcher\Mismatches;
 
 class EqualsRule extends AbstractRule implements ComparisonRule
 {
+    public function getValue()
+    {
+        return $this->getSample();
+    }
+
     public function __construct($sample)
     {
         $this->assertSupport($sample);
